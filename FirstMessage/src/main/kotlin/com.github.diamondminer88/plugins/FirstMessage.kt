@@ -5,7 +5,7 @@ import com.aliucord.Http
 import com.aliucord.Logger
 import com.aliucord.Utils
 import com.aliucord.annotations.AliucordPlugin
-import com.aliucord.api.CommandsAPI
+import com.aliucord.api.CommandsAPI.CommandResult
 import com.aliucord.entities.Plugin
 import com.aliucord.utils.ReflectUtils
 import com.discord.api.channel.Channel
@@ -21,12 +21,12 @@ import java.util.*
 class FirstMessage : Plugin() {
     private val LOGGER = Logger("FirstMessage")
     private val GSON = Gson()
-    private val CMD_COULD_NOT_FIND_MSG = PrivateCommandResult("This user has not sent a message!")
+    private val CMD_COULD_NOT_FIND_MSG =
+        CommandResult("This user has not sent a message!", null, false)
+    private val CMD_GUILD_ONLY =
+        CommandResult("This combination cannot be used in dms!", null, false)
 
-    private fun PrivateCommandResult(content: String) =
-        CommandsAPI.CommandResult(content, null, false)
-
-    override fun start(ctx: Context) {
+    override fun start(startCtx: Context) {
         val options = listOf(
             Utils.createCommandOption(
                 ApplicationCommandType.USER,
@@ -38,6 +38,11 @@ class FirstMessage : Plugin() {
                 "channel",
                 "Target channel to get first message of",
                 channelTypes = listOf(Channel.GUILD_TEXT)
+            ),
+            Utils.createCommandOption(
+                ApplicationCommandType.BOOLEAN,
+                "send",
+                "Whether to send the resulting url"
             )
         )
 
@@ -45,54 +50,80 @@ class FirstMessage : Plugin() {
             "firstmessage",
             "Get the link to the first message in a channel/from a user.",
             options
-        ) {
-            if (it.containsArg("channel") && it.containsArg("user")) {
-                if (it.channel.isDM()) return@registerCommand PrivateCommandResult("This combination cannot be used in dms!")
+        ) { ctx ->
+            val send = ctx.getBoolOrDefault("send", false)
 
-                val user = it.getRequiredUser("user")
-                val channel = it.getRequired("channel") as String
+            if (ctx.containsArg("channel") && ctx.containsArg("user")) {
+                if (ctx.channel.isDM()) return@registerCommand CMD_GUILD_ONLY
+
+                val user = ctx.getRequiredUser("user")
+                val channel = ctx.getRequired("channel") as String
 
                 val firstMessageId =
-                    getFirstMessageInGuildByUser(it.channel.guildId, user.id, channel)
+                    getFirstMessageInGuildByUser(ctx.channel.guildId, user.id, channel)
                         ?: return@registerCommand CMD_COULD_NOT_FIND_MSG
-                return@registerCommand PrivateCommandResult("https://discord.com/channels/${it.channel.guildId}/$channel/$firstMessageId")
+                return@registerCommand CommandResult(
+                    "https://discord.com/channels/${ctx.channel.guildId}/$channel/$firstMessageId",
+                    null,
+                    send
+                )
             }
 
-            if (it.containsArg("channel")) {
-                if (it.channel.isDM()) return@registerCommand PrivateCommandResult("This option cannot be used in dms!")
-                val channelId = it.getRequired("channel") as String
+            if (ctx.containsArg("channel")) {
+                if (ctx.channel.isDM()) return@registerCommand CMD_GUILD_ONLY
+                val channelId = ctx.getRequired("channel") as String
 
                 // messageid = 0 does not work on mobile and as such we will have to fetch a real id instead
                 val firstMessageId = getFirstMessageInGuildByUser(
-                    it.channel.guildId,
+                    ctx.channel.guildId,
                     channelId = channelId,
                     minId = 0
                 )
                     ?: return@registerCommand CMD_COULD_NOT_FIND_MSG
-                return@registerCommand PrivateCommandResult("https://discord.com/channels/${it.channel.guildId}/$channelId/$firstMessageId")
+                return@registerCommand CommandResult(
+                    "https://discord.com/channels/${ctx.channel.guildId}/$channelId/$firstMessageId",
+                    null,
+                    send
+                )
             }
 
-            if (it.containsArg("user")) {
-                val user = it.getRequiredUser("user")
-                if (it.channel.isDM()) {
-                    val firstMessageId = getFirstDMMessage(it.channelId, user.id)
+            if (ctx.containsArg("user")) {
+                val user = ctx.getRequiredUser("user")
+                if (ctx.channel.isDM()) {
+                    val firstMessageId = getFirstDMMessage(ctx.channelId, user.id)
                         ?: return@registerCommand CMD_COULD_NOT_FIND_MSG
-                    return@registerCommand PrivateCommandResult("https://discord.com/channels/@me/${it.channelId}/$firstMessageId")
+                    return@registerCommand CommandResult(
+                        "https://discord.com/channels/@me/${ctx.channelId}/$firstMessageId",
+                        null,
+                        send
+                    )
                 } else {
-                    val firstMessageId = getFirstMessageInGuildByUser(it.channel.guildId, user.id)
+                    val firstMessageId = getFirstMessageInGuildByUser(ctx.channel.guildId, user.id)
                         ?: return@registerCommand CMD_COULD_NOT_FIND_MSG
-                    return@registerCommand PrivateCommandResult("https://discord.com/channels/@me/${it.channelId}/$firstMessageId")
+                    return@registerCommand CommandResult(
+                        "https://discord.com/channels/@me/${ctx.channelId}/$firstMessageId",
+                        null,
+                        send
+                    )
                 }
             }
 
-            if (it.channel.isDM()) {
-                val firstMessageId = getFirstDMMessage(it.channelId, minId = 0)
+            if (ctx.channel.isDM()) {
+                val firstMessageId = getFirstDMMessage(ctx.channelId, minId = 0)
                     ?: return@registerCommand CMD_COULD_NOT_FIND_MSG
-                return@registerCommand PrivateCommandResult("https://discord.com/channels/@me/${it.channelId}/$firstMessageId")
+                return@registerCommand CommandResult(
+                    "https://discord.com/channels/@me/${ctx.channelId}/$firstMessageId",
+                    null,
+                    send
+                )
             } else {
-                val firstMessageId = getFirstMessageInGuildByUser(it.channel.guildId, minId = 0)
+                val firstMessageId = getFirstMessageInGuildByUser(ctx.channel.guildId, minId = 0)
                     ?: return@registerCommand CMD_COULD_NOT_FIND_MSG
-                return@registerCommand PrivateCommandResult("https://discord.com/channels/${it.channel.guildId}/${it.channelId}/$firstMessageId")
+                return@registerCommand CommandResult(
+                    "https://discord.com/channels/${ctx.channel.guildId}/${ctx.channelId}/$firstMessageId",
+                    null,
+                    send
+                )
             }
         }
     }
