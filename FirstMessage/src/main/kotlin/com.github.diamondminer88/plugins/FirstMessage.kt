@@ -11,7 +11,10 @@ import com.aliucord.utils.ReflectUtils
 import com.discord.api.channel.Channel
 import com.discord.api.commands.ApplicationCommandType
 import com.discord.stores.StoreStream
+import com.discord.utilities.analytics.AnalyticSuperProperties
+import com.discord.utilities.rest.RestAPI
 import com.google.gson.Gson
+import java.util.*
 
 @Suppress("unused")
 @AliucordPlugin
@@ -92,7 +95,6 @@ class FirstMessage : Plugin() {
                 return@registerCommand PrivateCommandResult("https://discord.com/channels/${it.channel.guildId}/${it.channelId}/$firstMessageId")
             }
         }
-
     }
 
     override fun stop(context: Context) {
@@ -153,16 +155,16 @@ class FirstMessage : Plugin() {
     // this is used for the search functionality
     @Suppress("UNCHECKED_CAST")
     private fun <T : Map<String, *>> sendAuthenticatedGETRequest(url: String): T {
-        val req = Http.Request(
-            url,
-            "GET"
-        )
-        req.conn.addRequestProperty(
-            "authorization", ReflectUtils.getField(
-                StoreStream.getAuthentication(),
-                "authToken"
-            ) as String?
-        )
+        val token = ReflectUtils.getField(StoreStream.getAuthentication(), "authToken") as String?
+        val req = Http.Request(url, "GET")
+            .setHeader("Authorization", token)
+            .setHeader("User-Agent", RestAPI.AppHeadersProvider.INSTANCE.userAgent)
+            .setHeader(
+                "X-Super-Properties",
+                AnalyticSuperProperties.INSTANCE.superPropertiesStringBase64
+            )
+            .setHeader("Accept", "*/*")
+
         return GSON.f(req.execute().text(), Map::class.java) as T
     }
 }
