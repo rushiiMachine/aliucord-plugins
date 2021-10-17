@@ -167,4 +167,60 @@ class FirstMessage : Plugin() {
 
         return GSON.f(req.execute().text(), Map::class.java) as T
     }
+
+//    fun _getFirstDmMessage(
+//        dmId: Long,
+//        userId: Long? = null,
+//        minId: Long? = null
+//    ): Long? {
+//        val options = mutableMapOf(
+//            "sort_by" to listOf("timestamp"),
+//            "sort_order" to listOf("asc"),
+//            "offset" to listOf("0")
+//        )
+//        if (userId != null) options["author_id"] = listOf(userId.toString())
+//        if (minId != null) options["min_id"] = listOf(minId.toString())
+//
+//        val query = SearchFetcher().makeQuery(
+//            StoreSearch.SearchTarget(
+//                StoreSearch.SearchTarget.Type.CHANNEL,
+//                dmId
+//            ), null, SearchQuery(options, true)
+//        )
+//
+//        val (data, err) = query.await()
+//        if (err != null) {
+//            LOGGER.error(err)
+//            return null
+//        }
+//
+//        if (data == null) return null
+//
+//        if (data.errorCode != null) {
+//            LOGGER.error("Error code ${data.errorCode}", null)
+//            return null
+//        }
+//
+//        return data.messages[0][0].o()
+//    }
+//
+//    fun a {
+//        patcher.patch(
+//            SearchFetcher::class.java.getDeclaredMethod(
+//                "makeQuery",
+//                StoreSearch.SearchTarget::class.java,
+//                java.lang.Long::class.java,
+//                SearchQuery::class.java
+//            ),
+//            Hook {
+//                val result = it.args[2]
+//
+//                val f = result.javaClass.getDeclaredField("params")
+//                f.isAccessible = true
+//                val map = f.get(result) as HashMap<String, List<String>>
+//
+//                LOGGER.info(map.toString())
+//            }
+//        )
+//    }
 }
