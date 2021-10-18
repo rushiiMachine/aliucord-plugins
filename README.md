@@ -9,4 +9,4 @@ Click on one of the plugins below and then move the downloaded file to the Aliuc
 # Plugins
 
 ### [FirstMessage](https://github.com/DiamondMiner88/aliucord-plugins/raw/builds/FirstMessage.zip)
-Get the link to the first message in a channel/from a user
+Finds the first message from a user/channel. (/firstmessage)

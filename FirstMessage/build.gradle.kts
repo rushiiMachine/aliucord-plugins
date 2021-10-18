@@ -1,8 +1,11 @@
-version = "1.1.0"
-description = "Get the link to the first message in a channel/from a user."
+version = "1.1.1"
+description = "Finds the first message from a user/channel. (/firstmessage)"
 
 aliucord {
     changelog.set("""
+        # 1.1.1
+        * Fix description
+        
         # 1.1.0
         * Add missing parameters to requests
         * Option to send the url
