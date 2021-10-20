@@ -71,17 +71,15 @@ class FirstMessage : Plugin() {
 
             if (ctx.containsArg("channel")) {
                 if (ctx.channel.isDM()) return@registerCommand CMD_GUILD_ONLY
-                val channelId = ctx.getRequired("channel") as String
-
                 // messageid = 0 does not work on mobile and as such we will have to fetch a real id instead
-                val firstMessageId = getFirstMessageInGuildByUser(
+                val (channel, message) = getFirstMessageInGuildByUser(
                     ctx.channel.guildId,
-                    channelId = channelId,
+                    channelId = ctx.getRequired("channel") as String,
                     minId = 0
                 )
                     ?: return@registerCommand CMD_COULD_NOT_FIND_MSG
                 return@registerCommand CommandResult(
-                    "https://discord.com/channels/${ctx.channel.guildId}/$channelId/$firstMessageId",
+                    "https://discord.com/channels/${ctx.channel.guildId}/$channel/$message",
                     null,
                     send
                 )
@@ -98,10 +96,13 @@ class FirstMessage : Plugin() {
                         send
                     )
                 } else {
-                    val firstMessageId = getFirstMessageInGuildByUser(ctx.channel.guildId, user.id)
+                    val (channel, message) = getFirstMessageInGuildByUser(
+                        ctx.channel.guildId,
+                        user.id
+                    )
                         ?: return@registerCommand CMD_COULD_NOT_FIND_MSG
                     return@registerCommand CommandResult(
-                        "https://discord.com/channels/@me/${ctx.channelId}/$firstMessageId",
+                        "https://discord.com/channels/@me/$channel/$message",
                         null,
                         send
                     )
@@ -117,10 +118,13 @@ class FirstMessage : Plugin() {
                     send
                 )
             } else {
-                val firstMessageId = getFirstMessageInGuildByUser(ctx.channel.guildId, minId = 0)
+                val (channel, message) = getFirstMessageInGuildByUser(
+                    ctx.channel.guildId,
+                    minId = 0
+                )
                     ?: return@registerCommand CMD_COULD_NOT_FIND_MSG
                 return@registerCommand CommandResult(
-                    "https://discord.com/channels/${ctx.channel.guildId}/${ctx.channelId}/$firstMessageId",
+                    "https://discord.com/channels/${ctx.channel.guildId}/$channel/$message",
                     null,
                     send
                 )
@@ -128,14 +132,13 @@ class FirstMessage : Plugin() {
         }
     }
 
-    override fun stop(context: Context) {
+    override fun stop(context: Context) =
         commands.unregisterAll()
-    }
 
     /**
      * Gets the first message by a user in a dm
      * The RestAPI#searchChannelMessages/searchGuildMessages does not support sort order, so I will instead do it manually and easier
-     * @return Message Id or null if failed
+     * @return Channel ID -> Message ID or null if message/channel not found
      */
     @Suppress("UNCHECKED_CAST")
     private fun getFirstMessageInGuildByUser(
@@ -143,7 +146,7 @@ class FirstMessage : Plugin() {
         userId: Long? = null,
         channelId: String? = null,
         minId: Long? = null
-    ): String? {
+    ): Pair<String, String>? {
         try {
             val channelParam = if (channelId != null) "&channel_id=$channelId" else ""
             val userParam = if (userId != null) "author_id=$userId" else ""
@@ -151,8 +154,8 @@ class FirstMessage : Plugin() {
 
             val data =
                 sendAuthenticatedGETRequest<Map<String, *>>("https://discord.com/api/v9/guilds/$guildId/messages/search?$userParam$minIdParam&include_nsfw=true&sort_by=timestamp&sort_order=asc&offset=0$channelParam")
-            return (data["messages"] as List<List<Map<String, *>>>?)?.get(0)?.get(0)
-                ?.get("id") as String?
+            val message = (data["messages"] as List<List<Map<String, *>>>?)?.get(0)?.get(0)
+            return if (message != null) (message["channel_id"] as String) to (message["id"] as String) else null
         } catch (e: Error) {
             return null
         }

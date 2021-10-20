@@ -3,6 +3,9 @@ description = "Finds the first message from a user/channel. (/firstmessage)"
 
 aliucord {
     changelog.set("""
+        # 1.1.2
+        # Fix wrong channel on user searches
+        
         # 1.1.1
         * Fix description
         
