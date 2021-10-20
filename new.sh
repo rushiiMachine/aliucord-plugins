@@ -12,8 +12,10 @@ new="$d/$name.kt"
 set -x
 cp -r Template "$name"
 
-# Renaming file
+# Rename file
 mv "$d/Template.kt" "$new"
+# Replace "Template" in file
+sed -i -e "s/Template/$name/g" "$new"
 # Change class name
 sed -i "s/Template/$name/" "$new"
 
