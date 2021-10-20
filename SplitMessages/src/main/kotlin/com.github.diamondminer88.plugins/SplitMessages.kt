@@ -65,10 +65,10 @@ class SplitMessages : Plugin() {
                 var content = textContentField.get(messageContent) as String
 
                 if (content.length > maxMessageSize)
-                    textContentField.set(messageContent, content.take(2000))
+                    textContentField.set(messageContent, content.take(maxMessageSize))
                 else return@PreHook
 
-                content = content.drop(2000)
+                content = content.drop(maxMessageSize)
 
                 Executors.newSingleThreadExecutor().submit {
                     var splits = 1
@@ -83,7 +83,7 @@ class SplitMessages : Plugin() {
                         Thread.sleep(1000)
 
                         val message = RestAPIParams.Message(
-                            content.take(2000),
+                            content.take(maxMessageSize),
                             NonceGenerator.computeNonce(ClockFactory.get()).toString(),
                             null,
                             null,
@@ -103,7 +103,7 @@ class SplitMessages : Plugin() {
                         ).await()
                         if (err != null) LOGGER.error(err)
 
-                        content = content.drop(2000)
+                        content = content.drop(maxMessageSize)
                     }
                 }
             })
