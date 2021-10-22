@@ -30,12 +30,11 @@ import com.discord.widgets.chat.input.ChatInputViewModel
 import com.lytefast.flexinput.R
 import java.util.concurrent.Executors
 
-
 @Suppress("unused")
 @AliucordPlugin
 class SplitMessages : Plugin() {
-    private val LOGGER = Logger("SplitMessages")
-    val textContentField = MessageContent::class.java.getDeclaredField("textContent")
+    private val logger = Logger("SplitMessages")
+    private val textContentField = MessageContent::class.java.getDeclaredField("textContent")
 
     init {
         settingsTab = SettingsTab(
@@ -101,7 +100,7 @@ class SplitMessages : Plugin() {
                             StoreStream.getChannelsSelected().id,
                             message
                         ).await()
-                        if (err != null) LOGGER.error(err)
+                        if (err != null) logger.error(err)
 
                         content = content.drop(maxMessageSize)
                     }
