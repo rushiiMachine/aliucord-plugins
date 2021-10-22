@@ -112,7 +112,7 @@ class ConfigurableStickerSizesSettings(private val settings: SettingsAPI) : Bott
         // TODO: reload messages after closing window
         addView(TextView(ctx, null, 0, R.h.UiKit_Settings_Item_Label).apply {
             text = "Changes will apply after reloading the current channel"
-            textSize = 10f
+            textSize = DimenUtils.dpToPx(4).toFloat()
         })
     }
 }
