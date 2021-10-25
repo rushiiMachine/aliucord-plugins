@@ -66,7 +66,6 @@ class ConfigurableStickerSizes : Plugin() {
 }
 
 @SuppressLint("SetTextI18n")
-@RequiresApi(Build.VERSION_CODES.O) // "min" im too lazy
 class ConfigurableStickerSizesSettings(private val settings: SettingsAPI) : BottomSheet() {
     override fun onViewCreated(view: View, bundle: Bundle?) {
         super.onViewCreated(view, bundle)
@@ -84,22 +83,22 @@ class ConfigurableStickerSizesSettings(private val settings: SettingsAPI) : Bott
                 ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.WRAP_CONTENT
             )
-            min = 100
-            max = 800
+            max = 700
             progress = stickerSize
             setPadding(DimenUtils.dpToPx(12), 0, DimenUtils.dpToPx(12), 0)
             setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
                 override fun onStartTrackingTouch(seekBar: SeekBar) {}
 
                 override fun onProgressChanged(seekBar: SeekBar, progress: Int, fromUser: Boolean) {
-                    currentSplits.text = "$progress px"
+                    currentSplits.text = "${progress + 100} px"
                 }
 
                 override fun onStopTrackingTouch(seekBar: SeekBar) =
-                    settings.setInt("stickerSize", progress)
+                    settings.setInt("stickerSize", progress + 100)
             })
         }
 
+        // TODO: add reset button
         addView(TextView(ctx, null, 0, R.h.UiKit_Settings_Item_Label).apply {
             text = "Sticker size (pixels)"
         })
