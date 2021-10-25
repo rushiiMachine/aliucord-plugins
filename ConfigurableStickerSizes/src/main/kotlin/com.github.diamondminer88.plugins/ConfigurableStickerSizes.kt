@@ -2,20 +2,20 @@ package com.github.diamondminer88.plugins
 
 import android.annotation.SuppressLint
 import android.content.Context
-import android.os.Build
 import android.os.Bundle
 import android.view.View
-import android.view.ViewGroup
+import android.view.ViewGroup.LayoutParams.MATCH_PARENT
+import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
 import android.widget.LinearLayout
 import android.widget.SeekBar
 import android.widget.TextView
-import androidx.annotation.RequiresApi
 import com.aliucord.Logger
 import com.aliucord.annotations.AliucordPlugin
 import com.aliucord.api.SettingsAPI
 import com.aliucord.entities.Plugin
 import com.aliucord.patcher.Hook
 import com.aliucord.utils.DimenUtils
+import com.aliucord.views.Button
 import com.aliucord.widgets.BottomSheet
 import com.discord.databinding.WidgetChatListAdapterItemStickerBinding
 import com.discord.widgets.chat.list.adapter.WidgetChatListAdapterItemSticker
@@ -73,24 +73,24 @@ class ConfigurableStickerSizesSettings(private val settings: SettingsAPI) : Bott
 
         val stickerSize = settings.getInt("stickerSize", DEFAULT_STICKER_SIZE)
 
-        val currentSplits = TextView(ctx, null, 0, R.h.UiKit_TextView).apply {
+        val currentSize = TextView(ctx, null, 0, R.h.UiKit_TextView).apply {
             text = "$stickerSize px"
-            width = DimenUtils.dpToPx(60)
+            width = DimenUtils.dpToPx(45)
         }
 
-        val seekBar = SeekBar(ctx, null, 0, R.h.UiKit_SeekBar).apply {
+        val slider = SeekBar(ctx, null, 0, R.h.UiKit_SeekBar).apply {
             layoutParams = LinearLayout.LayoutParams(
-                ViewGroup.LayoutParams.MATCH_PARENT,
-                ViewGroup.LayoutParams.WRAP_CONTENT
+                MATCH_PARENT,
+                WRAP_CONTENT
             )
             max = 700
-            progress = stickerSize
+            progress = stickerSize - 100
             setPadding(DimenUtils.dpToPx(12), 0, DimenUtils.dpToPx(12), 0)
             setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
                 override fun onStartTrackingTouch(seekBar: SeekBar) {}
 
                 override fun onProgressChanged(seekBar: SeekBar, progress: Int, fromUser: Boolean) {
-                    currentSplits.text = "${progress + 100} px"
+                    currentSize.text = "${progress + 100} px"
                 }
 
                 override fun onStopTrackingTouch(seekBar: SeekBar) =
@@ -98,15 +98,28 @@ class ConfigurableStickerSizesSettings(private val settings: SettingsAPI) : Bott
             })
         }
 
-        // TODO: add reset button
+        val resetButton = Button(ctx).apply {
+            text = "Reset"
+            layoutParams = LinearLayout.LayoutParams(MATCH_PARENT, WRAP_CONTENT).apply {
+                setMargins(DimenUtils.dpToPx(12), 0, DimenUtils.dpToPx(12), 0)
+            }
+            setOnClickListener {
+                currentSize.text = "240 px"
+                slider.progress = 140
+                settings.setInt("stickerSize", 240)
+            }
+        }
+
         addView(TextView(ctx, null, 0, R.h.UiKit_Settings_Item_Label).apply {
             text = "Sticker size (pixels)"
         })
 
         addView(LinearLayout(ctx, null, 0, R.h.UiKit_Settings_Item).apply {
-            addView(currentSplits)
-            addView(seekBar)
+            addView(currentSize)
+            addView(slider)
         })
+
+        addView(resetButton)
 
         // TODO: reload messages after closing window
         addView(TextView(ctx, null, 0, R.h.UiKit_Settings_Item_Label).apply {
