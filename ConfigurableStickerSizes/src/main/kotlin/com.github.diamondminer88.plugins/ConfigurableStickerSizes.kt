@@ -16,7 +16,6 @@ import com.aliucord.api.SettingsAPI
 import com.aliucord.entities.Plugin
 import com.aliucord.patcher.Hook
 import com.aliucord.utils.DimenUtils
-import com.aliucord.utils.ReflectUtils
 import com.aliucord.widgets.BottomSheet
 import com.discord.databinding.WidgetChatListAdapterItemStickerBinding
 import com.discord.widgets.chat.list.adapter.WidgetChatListAdapterItemSticker
@@ -29,8 +28,11 @@ const val DEFAULT_STICKER_SIZE = 240
 @AliucordPlugin
 class ConfigurableStickerSizes : Plugin() {
     private val logger = Logger(this::class.simpleName)
+    private val bindingField =
+        WidgetChatListAdapterItemSticker::class.java.getDeclaredField("binding")
 
     init {
+        bindingField.isAccessible = true
         settingsTab = SettingsTab(
             ConfigurableStickerSizesSettings::class.java,
             SettingsTab.Type.BOTTOM_SHEET
@@ -46,14 +48,12 @@ class ConfigurableStickerSizes : Plugin() {
             ), Hook {
                 val stickerSize = settings.getInt("stickerSize", DEFAULT_STICKER_SIZE)
 
-                val binding = ReflectUtils.getField(
-                    WidgetChatListAdapterItemSticker::class.java,
-                    it.thisObject,
-                    "binding"
-                ) as WidgetChatListAdapterItemStickerBinding
+                // TODO: hide empty chat_list_adapter_item_text
 
-                val stickerView = binding.b
-                stickerView.layoutParams.apply {
+                val binding = bindingField.get(it.thisObject)
+                        as WidgetChatListAdapterItemStickerBinding
+
+                binding.b.layoutParams.apply {
                     height = stickerSize
                     width = stickerSize
                 }
