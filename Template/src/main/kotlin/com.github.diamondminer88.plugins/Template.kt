@@ -8,7 +8,7 @@ import com.aliucord.entities.Plugin
 @Suppress("unused")
 @AliucordPlugin
 class Template : Plugin() {
-    val logger = Logger("Template")
+    val logger = Logger(this::class.simpleName)
 
     override fun start(ctx: Context) {
 

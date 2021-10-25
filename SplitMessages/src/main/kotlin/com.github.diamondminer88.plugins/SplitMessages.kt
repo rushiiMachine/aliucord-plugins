@@ -33,7 +33,7 @@ import java.util.concurrent.Executors
 @Suppress("unused")
 @AliucordPlugin
 class SplitMessages : Plugin() {
-    private val logger = Logger("SplitMessages")
+    private val logger = Logger(this::class.simpleName)
     private val textContentField = MessageContent::class.java.getDeclaredField("textContent")
 
     init {

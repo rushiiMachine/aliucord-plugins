@@ -19,11 +19,11 @@ import java.util.*
 @Suppress("unused")
 @AliucordPlugin
 class FirstMessage : Plugin() {
-    private val LOGGER = Logger("FirstMessage")
-    private val GSON = Gson()
-    private val CMD_COULD_NOT_FIND_MSG =
+    private val logger = Logger(this::class.simpleName)
+    private val gson = Gson()
+    private val cmdMsgNotFound =
         CommandResult("This user has not sent a message!", null, false)
-    private val CMD_GUILD_ONLY =
+    private val cmdGuildOnly =
         CommandResult("This combination cannot be used in dms!", null, false)
 
     override fun start(startCtx: Context) {
@@ -54,14 +54,14 @@ class FirstMessage : Plugin() {
             val send = ctx.getBoolOrDefault("send", false)
 
             if (ctx.containsArg("channel") && ctx.containsArg("user")) {
-                if (ctx.channel.isDM()) return@registerCommand CMD_GUILD_ONLY
+                if (ctx.channel.isDM()) return@registerCommand cmdGuildOnly
 
                 val user = ctx.getRequiredUser("user")
                 val channel = ctx.getRequired("channel") as String
 
                 val firstMessageId =
                     getFirstMessageInGuildByUser(ctx.channel.guildId, user.id, channel)
-                        ?: return@registerCommand CMD_COULD_NOT_FIND_MSG
+                        ?: return@registerCommand cmdMsgNotFound
                 return@registerCommand CommandResult(
                     "https://discord.com/channels/${ctx.channel.guildId}/$channel/$firstMessageId",
                     null,
@@ -70,14 +70,14 @@ class FirstMessage : Plugin() {
             }
 
             if (ctx.containsArg("channel")) {
-                if (ctx.channel.isDM()) return@registerCommand CMD_GUILD_ONLY
+                if (ctx.channel.isDM()) return@registerCommand cmdGuildOnly
                 // messageid = 0 does not work on mobile and as such we will have to fetch a real id instead
                 val (channel, message) = getFirstMessageInGuildByUser(
                     ctx.channel.guildId,
                     channelId = ctx.getRequired("channel") as String,
                     minId = 0
                 )
-                    ?: return@registerCommand CMD_COULD_NOT_FIND_MSG
+                    ?: return@registerCommand cmdMsgNotFound
                 return@registerCommand CommandResult(
                     "https://discord.com/channels/${ctx.channel.guildId}/$channel/$message",
                     null,
@@ -89,7 +89,7 @@ class FirstMessage : Plugin() {
                 val user = ctx.getRequiredUser("user")
                 if (ctx.channel.isDM()) {
                     val firstMessageId = getFirstDMMessage(ctx.channelId, user.id)
-                        ?: return@registerCommand CMD_COULD_NOT_FIND_MSG
+                        ?: return@registerCommand cmdMsgNotFound
                     return@registerCommand CommandResult(
                         "https://discord.com/channels/@me/${ctx.channelId}/$firstMessageId",
                         null,
@@ -100,7 +100,7 @@ class FirstMessage : Plugin() {
                         ctx.channel.guildId,
                         user.id
                     )
-                        ?: return@registerCommand CMD_COULD_NOT_FIND_MSG
+                        ?: return@registerCommand cmdMsgNotFound
                     return@registerCommand CommandResult(
                         "https://discord.com/channels/@me/$channel/$message",
                         null,
@@ -111,7 +111,7 @@ class FirstMessage : Plugin() {
 
             if (ctx.channel.isDM()) {
                 val firstMessageId = getFirstDMMessage(ctx.channelId, minId = 0)
-                    ?: return@registerCommand CMD_COULD_NOT_FIND_MSG
+                    ?: return@registerCommand cmdMsgNotFound
                 return@registerCommand CommandResult(
                     "https://discord.com/channels/@me/${ctx.channelId}/$firstMessageId",
                     null,
@@ -122,7 +122,7 @@ class FirstMessage : Plugin() {
                     ctx.channel.guildId,
                     minId = 0
                 )
-                    ?: return@registerCommand CMD_COULD_NOT_FIND_MSG
+                    ?: return@registerCommand cmdMsgNotFound
                 return@registerCommand CommandResult(
                     "https://discord.com/channels/${ctx.channel.guildId}/$channel/$message",
                     null,
@@ -181,7 +181,7 @@ class FirstMessage : Plugin() {
             return (data["messages"] as List<List<Map<String, *>>>?)?.get(0)?.get(0)
                 ?.get("id") as String?
         } catch (e: Error) {
-            LOGGER.error(e)
+            logger.error(e)
             return null
         }
     }
@@ -199,7 +199,7 @@ class FirstMessage : Plugin() {
             )
             .setHeader("Accept", "*/*")
 
-        return GSON.f(req.execute().text(), Map::class.java) as T
+        return gson.f(req.execute().text(), Map::class.java) as T
     }
 
 //    fun _getFirstDmMessage(

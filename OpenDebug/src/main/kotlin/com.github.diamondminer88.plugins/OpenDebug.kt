@@ -18,7 +18,7 @@ import com.lytefast.flexinput.fragment.`FlexInputFragment$d`
 @Suppress("unused")
 @AliucordPlugin
 class OpenDebug : Plugin() {
-    private val LOGGER = Logger("OpenDebug")
+    private val logger = Logger(this::class.simpleName)
     private val pkgName = this.javaClass.`package`?.name
 
     init {

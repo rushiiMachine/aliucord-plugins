@@ -33,7 +33,7 @@ subprojects {
     apply(plugin = "kotlin-android")
 
     aliucord {
-        author("Diamond", 295190422244950017)
+        author("Diamond", 295190422244950017L)
         updateUrl.set("https://raw.githubusercontent.com/DiamondMiner88/aliucord-plugins/builds/updater.json")
         buildUrl.set("https://raw.githubusercontent.com/DiamondMiner88/aliucord-plugins/builds/%s.zip")
     }
