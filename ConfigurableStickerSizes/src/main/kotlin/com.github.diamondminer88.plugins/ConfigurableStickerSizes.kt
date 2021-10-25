@@ -9,6 +9,7 @@ import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
 import android.widget.LinearLayout
 import android.widget.SeekBar
 import android.widget.TextView
+import androidx.recyclerview.widget.RecyclerView
 import com.aliucord.Logger
 import com.aliucord.annotations.AliucordPlugin
 import com.aliucord.api.SettingsAPI
@@ -48,16 +49,38 @@ class ConfigurableStickerSizes : Plugin() {
             ), Hook {
                 val stickerSize = settings.getInt("stickerSize", DEFAULT_STICKER_SIZE)
 
-                // TODO: hide empty chat_list_adapter_item_text
-
                 val binding = bindingField.get(it.thisObject)
                         as WidgetChatListAdapterItemStickerBinding
 
+                // set sticker size
                 binding.b.layoutParams.apply {
                     height = stickerSize
                     width = stickerSize
                 }
+
+                // FIXME: stickers + text can still be sent and will overlap (even though the occurrence is rare)
+                // move sticker upward to remove gap between header and sticker
+                (binding.a.layoutParams as RecyclerView.LayoutParams).apply {
+                    setMargins(0, DimenUtils.dpToPx(-16), 0, 0)
+                }
             })
+
+        // hide text
+//        patcher.patch(
+//            WidgetChatListAdapterItemMessage::class.java.getDeclaredMethod(
+//                "onConfigure",
+//                Int::class.javaPrimitiveType,
+//                ChatListEntry::class.java
+//            ), Hook {
+//                val thisObj = it.thisObject as WidgetChatListAdapterItemMessage
+//                val itemText = ReflectUtils.getField(
+//                    WidgetChatListAdapterItemMessage::class.java,
+//                    thisObj,
+//                    "itemText"
+//                ) as SimpleDraweeSpanTextView
+//                if (itemText.text[0] == '\u200b')
+//                    itemText.visibility = View.GONE
+//            })
     }
 
     override fun stop(context: Context) {
