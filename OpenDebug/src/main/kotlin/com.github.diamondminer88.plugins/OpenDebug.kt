@@ -38,8 +38,10 @@ class OpenDebug : Plugin() {
             resources.getIdentifier("debug_icon", "drawable", pkgName),
             null
         ) ?: throw Error("Failed to load debug icon")) as BitmapDrawable
-        debugIcon =
-            BitmapDrawable(resources, Bitmap.createScaledBitmap(debugIcon.bitmap, 20, 20, true))
+        debugIcon = BitmapDrawable(
+            resources,
+            Bitmap.createScaledBitmap(debugIcon.bitmap, 24, 24, true)
+        )
 
         val disableIcon = ResourcesCompat.getDrawable(
             resources,
