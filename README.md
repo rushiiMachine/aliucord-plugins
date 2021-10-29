@@ -16,3 +16,9 @@ Split messages longer than 2000/4000 characters into multiple messages.
 
 ### [ConfigurableStickerSizes](https://github.com/DiamondMiner88/aliucord-plugins/raw/builds/ConfigurableStickerSizes.zip)
 Makes sticker sizes configurable.
+
+### [NoUppercase](https://github.com/DiamondMiner88/aliucord-plugins/raw/builds/NoUppercase.zip)
+Reverts uppercased text in various places.
+NOTE: this is still a work in progress
+
+<!-- find and replace for bindings "(?:@NonNull )?(\w+) \w+" "$1::class.java" -->

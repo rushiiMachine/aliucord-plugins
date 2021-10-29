@@ -1,3 +1,4 @@
+include(":NoUppercase")
 include(":FirstMessage")
 include(":ConfigurableStickerSizes")
 include(":SplitMessages")
