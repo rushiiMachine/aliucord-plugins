@@ -60,9 +60,9 @@ class ConfigurableStickerSizes : Plugin() {
 
                 // FIXME: stickers + text can still be sent and will overlap (even though the occurrence is rare)
                 // move sticker upward to remove gap between header and sticker
-                (binding.a.layoutParams as RecyclerView.LayoutParams).apply {
-                    setMargins(0, DimenUtils.dpToPx(-16), 0, 0)
-                }
+//                (binding.a.layoutParams as RecyclerView.LayoutParams).apply {
+//                    setMargins(0, DimenUtils.dpToPx(-16), 0, 0)
+//                }
             })
 
         // hide text
