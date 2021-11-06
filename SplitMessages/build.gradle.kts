@@ -1,8 +1,11 @@
-version = "1.0.1"
+version = "1.0.2"
 description = "Split messages longer than 2000/4000 characters into multiple messages."
 
 aliucord {
     changelog.set("""
+        # 1.0.2
+        * Don't split stacktraces
+        
         # 1.0.1
         * Fix wrong split size for nitro users
         
