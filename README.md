@@ -20,4 +20,7 @@ Makes sticker sizes configurable.
 ### [NoUppercase](https://github.com/DiamondMiner88/aliucord-plugins/raw/builds/NoUppercase.zip)
 (WIP) Reverts uppercased headers in common places.
 
+### [StreamerMode](https://github.com/DiamondMiner88/aliucord-plugins/raw/builds/StreamerMode.zip)
+Hide identifiable information. (Email, phone number, name, user discriminators)
+
 <!-- find and replace for bindings "(?:@NonNull )?(\w+) \w+" "$1::class.java" -->

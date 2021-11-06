@@ -1,3 +1,4 @@
+include(":StreamerMode")
 include(":NoUppercase")
 include(":FirstMessage")
 include(":ConfigurableStickerSizes")
