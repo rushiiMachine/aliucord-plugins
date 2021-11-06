@@ -148,25 +148,26 @@ class FirstMessage : Plugin() {
         channelId: String? = null,
         minId: Long? = null
     ): Pair<String, String>? {
-        return try {
-            val channelParam = if (channelId != null) "&channel_id=$channelId" else ""
-            val userParam = if (userId != null) "author_id=$userId" else ""
-            val minIdParam = if (minId != null) "min_id=$minId" else ""
+        val channelParam = if (channelId != null) "&channel_id=$channelId" else ""
+        val userParam = if (userId != null) "author_id=$userId" else ""
+        val minIdParam = if (minId != null) "min_id=$minId" else ""
 
-            val data =
-                sendAuthenticatedGETRequest<Map<String, *>>("https://discord.com/api/v9/guilds/$guildId/messages/search?$userParam$minIdParam&include_nsfw=true&sort_by=timestamp&sort_order=asc&offset=0$channelParam")
-
-            val messages =
-                (data["messages"] as List<List<Map<String, *>>>?)?.flatten() ?: emptyList()
-            for (message in messages) {
-                // TODO: setting to disable this
-                if (message["type"] == MessageTypes.USER_JOIN.toDouble()) continue
-                return (message["channel_id"] as String) to (message["id"] as String)
-            }
-            null
+        val data = try {
+            sendAuthenticatedGETRequest<Map<String, *>>("https://discord.com/api/v9/guilds/$guildId/messages/search?$userParam$minIdParam&include_nsfw=true&sort_by=timestamp&sort_order=asc&offset=0$channelParam")
         } catch (e: Error) {
-            null
+            logger.error(e)
+            return null
         }
+
+        val messages =
+            (data["messages"] as List<List<Map<String, *>>>?)?.flatten() ?: emptyList()
+
+        for (message in messages) {
+            // TODO: setting to disable this
+            if (message["type"] == MessageTypes.USER_JOIN.toDouble()) continue
+            return (message["channel_id"] as String) to (message["id"] as String)
+        }
+        return null
     }
 
     /**
@@ -183,15 +184,15 @@ class FirstMessage : Plugin() {
         val userParam = if (userId != null) "author_id=$userId" else ""
         val minIdParam = if (minId != null) "min_id=$minId" else ""
 
-        return try {
-            val data =
-                sendAuthenticatedGETRequest<Map<String, *>>("https://discord.com/api/v9/channels/${dmId}/messages/search?$userParam$minIdParam&include_nsfw=true&sort_by=timestamp&sort_order=asc&offset=0")
-            (data["messages"] as List<List<Map<String, *>>>?)?.get(0)?.get(0)
-                ?.get("id") as String?
+        val data = try {
+            sendAuthenticatedGETRequest<Map<String, *>>("https://discord.com/api/v9/channels/${dmId}/messages/search?$userParam$minIdParam&include_nsfw=true&sort_by=timestamp&sort_order=asc&offset=0")
         } catch (e: Error) {
             logger.error(e)
-            null
+            return null
         }
+
+        return (data["messages"] as List<List<Map<String, *>>>?)?.get(0)?.get(0)
+            ?.get("id") as String?
     }
 
     // this is used for the search functionality
