@@ -31,6 +31,10 @@ import com.discord.widgets.notice.WidgetNoticeDialog
 import com.lytefast.flexinput.R
 import java.util.concurrent.Executors
 
+private const val SETTINGS_KEY = "maxSplits"
+private const val DEFAULT_SPLITS = 3
+private const val MAX_SPLITS = 6
+
 @Suppress("unused")
 @AliucordPlugin
 class SplitMessages : Plugin() {
@@ -59,7 +63,7 @@ class SplitMessages : Plugin() {
                 Boolean::class.javaPrimitiveType,
                 Function1::class.java
             ), PreHook {
-                val maxSplits = settings.getInt("maxSplits", 2)
+                val maxSplits = settings.getInt(SETTINGS_KEY, DEFAULT_SPLITS)
 
                 val isNitro = StoreStream.getUsers().me.premiumTier == PremiumTier.TIER_2
                 val maxMessageSize = if (isNitro) 4000 else 2000
@@ -137,7 +141,7 @@ class SplitMessagesSettings(private val settings: SettingsAPI) : BottomSheet() {
         super.onViewCreated(view, bundle)
         val ctx = view.context
 
-        val maxSplits = settings.getInt("maxSplits", 2)
+        val maxSplits = settings.getInt(SETTINGS_KEY, DEFAULT_SPLITS)
 
         val currentSplits = TextView(ctx, null, 0, R.h.UiKit_TextView).apply {
             text = "$maxSplits"
@@ -147,7 +151,7 @@ class SplitMessagesSettings(private val settings: SettingsAPI) : BottomSheet() {
 
         val seekBar = SeekBar(ctx, null, 0, R.h.UiKit_SeekBar).apply {
             layoutParams = LinearLayout.LayoutParams(MATCH_PARENT, WRAP_CONTENT)
-            max = 5
+            max = MAX_SPLITS
             progress = maxSplits
             setPadding(DimenUtils.dpToPx(24), 0, DimenUtils.dpToPx(12), 0)
             setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
@@ -158,7 +162,7 @@ class SplitMessagesSettings(private val settings: SettingsAPI) : BottomSheet() {
                 }
 
                 override fun onStopTrackingTouch(seekBar: SeekBar) =
-                    settings.setInt("maxSplits", progress)
+                    settings.setInt(SETTINGS_KEY, progress)
             })
         }
 
