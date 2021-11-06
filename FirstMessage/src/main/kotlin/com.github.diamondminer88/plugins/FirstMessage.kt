@@ -102,7 +102,7 @@ class FirstMessage : Plugin() {
                     )
                         ?: return@registerCommand cmdMsgNotFound
                     return@registerCommand CommandResult(
-                        "https://discord.com/channels/@me/$channel/$message",
+                        "https://discord.com/channels/${ctx.currentChannel.guildId}/$channel/$message",
                         null,
                         send
                     )

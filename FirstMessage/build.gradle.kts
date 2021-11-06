@@ -1,8 +1,11 @@
-version = "1.1.1"
+version = "1.1.3"
 description = "Finds the first message from a user/channel. (/firstmessage)"
 
 aliucord {
     changelog.set("""
+        # 1.1.3
+        # Fix wrong guild id used on `user` searches
+        
         # 1.1.2
         # Fix wrong channel on user searches
         
