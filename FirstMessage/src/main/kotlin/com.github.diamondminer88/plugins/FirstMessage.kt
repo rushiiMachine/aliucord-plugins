@@ -10,6 +10,7 @@ import com.aliucord.entities.Plugin
 import com.aliucord.utils.ReflectUtils
 import com.discord.api.channel.Channel
 import com.discord.api.commands.ApplicationCommandType
+import com.discord.api.message.MessageTypes
 import com.discord.stores.StoreStream
 import com.discord.utilities.analytics.AnalyticSuperProperties
 import com.discord.utilities.rest.RestAPI
@@ -154,8 +155,15 @@ class FirstMessage : Plugin() {
 
             val data =
                 sendAuthenticatedGETRequest<Map<String, *>>("https://discord.com/api/v9/guilds/$guildId/messages/search?$userParam$minIdParam&include_nsfw=true&sort_by=timestamp&sort_order=asc&offset=0$channelParam")
-            val message = (data["messages"] as List<List<Map<String, *>>>?)?.get(0)?.get(0)
-            if (message != null) (message["channel_id"] as String) to (message["id"] as String) else null
+
+            val messages =
+                (data["messages"] as List<List<Map<String, *>>>?)?.flatten() ?: emptyList()
+            for (message in messages) {
+                // TODO: setting to disable this
+                if (message["type"] == MessageTypes.USER_JOIN.toDouble()) continue
+                return (message["channel_id"] as String) to (message["id"] as String)
+            }
+            null
         } catch (e: Error) {
             null
         }
