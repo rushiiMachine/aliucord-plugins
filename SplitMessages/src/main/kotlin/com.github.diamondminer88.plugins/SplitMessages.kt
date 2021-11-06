@@ -143,13 +143,13 @@ class SplitMessagesSettings(private val settings: SettingsAPI) : BottomSheet() {
 
         val maxSplits = settings.getInt(SETTINGS_KEY, DEFAULT_SPLITS)
 
-        val currentSplits = TextView(ctx, null, 0, R.h.UiKit_TextView).apply {
+        val currentSplits = TextView(ctx, null, 0, R.i.UiKit_TextView).apply {
             text = "$maxSplits"
             width = DimenUtils.dpToPx(18)
             setPadding(DimenUtils.dpToPx(10), 0, 0, 0)
         }
 
-        val seekBar = SeekBar(ctx, null, 0, R.h.UiKit_SeekBar).apply {
+        val seekBar = SeekBar(ctx, null, 0, R.i.UiKit_SeekBar).apply {
             layoutParams = LinearLayout.LayoutParams(MATCH_PARENT, WRAP_CONTENT)
             max = MAX_SPLITS
             progress = maxSplits
@@ -166,11 +166,11 @@ class SplitMessagesSettings(private val settings: SettingsAPI) : BottomSheet() {
             })
         }
 
-        addView(TextView(ctx, null, 0, R.h.UiKit_Settings_Item_Label).apply {
+        addView(TextView(ctx, null, 0, R.i.UiKit_Settings_Item_Label).apply {
             text = "Max message splits per message"
         })
 
-        addView(LinearLayout(ctx, null, 0, R.h.UiKit_Settings_Item).apply {
+        addView(LinearLayout(ctx, null, 0, R.i.UiKit_Settings_Item).apply {
             addView(currentSplits)
             addView(seekBar)
         })

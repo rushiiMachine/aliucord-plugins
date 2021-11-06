@@ -95,12 +95,12 @@ class ConfigurableStickerSizesSettings(private val settings: SettingsAPI) : Bott
 
         val stickerSize = settings.getInt("stickerSize", DEFAULT_STICKER_SIZE)
 
-        val currentSize = TextView(ctx, null, 0, R.h.UiKit_TextView).apply {
+        val currentSize = TextView(ctx, null, 0, R.i.UiKit_TextView).apply {
             text = "$stickerSize px"
             width = DimenUtils.dpToPx(45)
         }
 
-        val slider = SeekBar(ctx, null, 0, R.h.UiKit_SeekBar).apply {
+        val slider = SeekBar(ctx, null, 0, R.i.UiKit_SeekBar).apply {
             layoutParams = LinearLayout.LayoutParams(
                 MATCH_PARENT,
                 WRAP_CONTENT
@@ -132,11 +132,11 @@ class ConfigurableStickerSizesSettings(private val settings: SettingsAPI) : Bott
             }
         }
 
-        addView(TextView(ctx, null, 0, R.h.UiKit_Settings_Item_Label).apply {
+        addView(TextView(ctx, null, 0, R.i.UiKit_Settings_Item_Label).apply {
             text = "Sticker size (pixels)"
         })
 
-        addView(LinearLayout(ctx, null, 0, R.h.UiKit_Settings_Item).apply {
+        addView(LinearLayout(ctx, null, 0, R.i.UiKit_Settings_Item).apply {
             addView(currentSize)
             addView(slider)
         })
@@ -144,7 +144,7 @@ class ConfigurableStickerSizesSettings(private val settings: SettingsAPI) : Bott
         addView(resetButton)
 
         // TODO: reload messages after closing window
-        addView(TextView(ctx, null, 0, R.h.UiKit_Settings_Item_Label).apply {
+        addView(TextView(ctx, null, 0, R.i.UiKit_Settings_Item_Label).apply {
             text = "Changes will apply after reloading the current channel"
             textSize = DimenUtils.dpToPx(4).toFloat()
         })
