@@ -22,10 +22,12 @@ class StreamerMode : Plugin() {
     private val settingsNameText = Utils.getResId("settings_account_name_text", "id")
     private val settingsEmailText = Utils.getResId("settings_account_email_text", "id")
     private val settingsPhoneText = Utils.getResId("settings_account_phone_text", "id")
+    private val settingsSMSText = Utils.getResId("settings_account_sms_phone", "id")
     private val settingsUsernameContainer = Utils.getResId("settings_account_tag_container", "id")
     private val settingsNameContainer = Utils.getResId("settings_account_name_container", "id")
     private val settingsEmailContainer = Utils.getResId("settings_account_email_container", "id")
     private val settingsPhoneContainer = Utils.getResId("settings_account_phone_container", "id")
+    private val numRegex = Regex("\\d")
 
     private fun configureContainer(layout: LinearLayout, onClick: View.OnClickListener) {
         layout.setOnClickListener { v ->
@@ -65,7 +67,10 @@ class StreamerMode : Plugin() {
                 email.text = "x".repeat(split[0].length) + "@" + split[1]
 
                 val phone = view.findViewById<TextView>(settingsPhoneText)
-                phone.text = phone.text.replace(Regex("\\d"), "x")
+                phone.text = phone.text.replace(numRegex, "x")
+
+                val sms = view.findViewById<TextView>(settingsSMSText)
+                sms.visibility = View.GONE
 
                 val usernameContainer = view.findViewById<LinearLayout>(settingsUsernameContainer)
                 configureContainer(usernameContainer, (`WidgetSettingsAccount$configureUI$2`()))
