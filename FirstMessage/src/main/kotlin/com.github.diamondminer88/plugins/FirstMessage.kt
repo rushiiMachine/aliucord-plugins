@@ -54,32 +54,32 @@ class FirstMessage : Plugin() {
             val send = ctx.getBoolOrDefault("send", false)
 
             if (ctx.containsArg("channel") && ctx.containsArg("user")) {
-                if (ctx.channel.isDM()) return@registerCommand cmdGuildOnly
+                if (ctx.currentChannel.isDM()) return@registerCommand cmdGuildOnly
 
                 val user = ctx.getRequiredUser("user")
                 val channel = ctx.getRequired("channel") as String
 
                 val firstMessageId =
-                    getFirstMessageInGuildByUser(ctx.channel.guildId, user.id, channel)
+                    getFirstMessageInGuildByUser(ctx.currentChannel.guildId, user.id, channel)
                         ?: return@registerCommand cmdMsgNotFound
                 return@registerCommand CommandResult(
-                    "https://discord.com/channels/${ctx.channel.guildId}/$channel/$firstMessageId",
+                    "https://discord.com/channels/${ctx.currentChannel.guildId}/$channel/$firstMessageId",
                     null,
                     send
                 )
             }
 
             if (ctx.containsArg("channel")) {
-                if (ctx.channel.isDM()) return@registerCommand cmdGuildOnly
+                if (ctx.currentChannel.isDM()) return@registerCommand cmdGuildOnly
                 // messageid = 0 does not work on mobile and as such we will have to fetch a real id instead
                 val (channel, message) = getFirstMessageInGuildByUser(
-                    ctx.channel.guildId,
+                    ctx.currentChannel.guildId,
                     channelId = ctx.getRequired("channel") as String,
                     minId = 0
                 )
                     ?: return@registerCommand cmdMsgNotFound
                 return@registerCommand CommandResult(
-                    "https://discord.com/channels/${ctx.channel.guildId}/$channel/$message",
+                    "https://discord.com/channels/${ctx.currentChannel.guildId}/$channel/$message",
                     null,
                     send
                 )
@@ -87,7 +87,7 @@ class FirstMessage : Plugin() {
 
             if (ctx.containsArg("user")) {
                 val user = ctx.getRequiredUser("user")
-                if (ctx.channel.isDM()) {
+                if (ctx.currentChannel.isDM()) {
                     val firstMessageId = getFirstDMMessage(ctx.channelId, user.id)
                         ?: return@registerCommand cmdMsgNotFound
                     return@registerCommand CommandResult(
@@ -97,7 +97,7 @@ class FirstMessage : Plugin() {
                     )
                 } else {
                     val (channel, message) = getFirstMessageInGuildByUser(
-                        ctx.channel.guildId,
+                        ctx.currentChannel.guildId,
                         user.id
                     )
                         ?: return@registerCommand cmdMsgNotFound
@@ -109,7 +109,7 @@ class FirstMessage : Plugin() {
                 }
             }
 
-            if (ctx.channel.isDM()) {
+            if (ctx.currentChannel.isDM()) {
                 val firstMessageId = getFirstDMMessage(ctx.channelId, minId = 0)
                     ?: return@registerCommand cmdMsgNotFound
                 return@registerCommand CommandResult(
@@ -119,12 +119,12 @@ class FirstMessage : Plugin() {
                 )
             } else {
                 val (channel, message) = getFirstMessageInGuildByUser(
-                    ctx.channel.guildId,
+                    ctx.currentChannel.guildId,
                     minId = 0
                 )
                     ?: return@registerCommand cmdMsgNotFound
                 return@registerCommand CommandResult(
-                    "https://discord.com/channels/${ctx.channel.guildId}/$channel/$message",
+                    "https://discord.com/channels/${ctx.currentChannel.guildId}/$channel/$message",
                     null,
                     send
                 )
@@ -147,7 +147,7 @@ class FirstMessage : Plugin() {
         channelId: String? = null,
         minId: Long? = null
     ): Pair<String, String>? {
-        try {
+        return try {
             val channelParam = if (channelId != null) "&channel_id=$channelId" else ""
             val userParam = if (userId != null) "author_id=$userId" else ""
             val minIdParam = if (minId != null) "min_id=$minId" else ""
@@ -155,9 +155,9 @@ class FirstMessage : Plugin() {
             val data =
                 sendAuthenticatedGETRequest<Map<String, *>>("https://discord.com/api/v9/guilds/$guildId/messages/search?$userParam$minIdParam&include_nsfw=true&sort_by=timestamp&sort_order=asc&offset=0$channelParam")
             val message = (data["messages"] as List<List<Map<String, *>>>?)?.get(0)?.get(0)
-            return if (message != null) (message["channel_id"] as String) to (message["id"] as String) else null
+            if (message != null) (message["channel_id"] as String) to (message["id"] as String) else null
         } catch (e: Error) {
-            return null
+            null
         }
     }
 
@@ -175,14 +175,14 @@ class FirstMessage : Plugin() {
         val userParam = if (userId != null) "author_id=$userId" else ""
         val minIdParam = if (minId != null) "min_id=$minId" else ""
 
-        try {
+        return try {
             val data =
                 sendAuthenticatedGETRequest<Map<String, *>>("https://discord.com/api/v9/channels/${dmId}/messages/search?$userParam$minIdParam&include_nsfw=true&sort_by=timestamp&sort_order=asc&offset=0")
-            return (data["messages"] as List<List<Map<String, *>>>?)?.get(0)?.get(0)
+            (data["messages"] as List<List<Map<String, *>>>?)?.get(0)?.get(0)
                 ?.get("id") as String?
         } catch (e: Error) {
             logger.error(e)
-            return null
+            null
         }
     }
 
@@ -201,60 +201,4 @@ class FirstMessage : Plugin() {
 
         return gson.f(req.execute().text(), Map::class.java) as T
     }
-
-//    fun _getFirstDmMessage(
-//        dmId: Long,
-//        userId: Long? = null,
-//        minId: Long? = null
-//    ): Long? {
-//        val options = mutableMapOf(
-//            "sort_by" to listOf("timestamp"),
-//            "sort_order" to listOf("asc"),
-//            "offset" to listOf("0")
-//        )
-//        if (userId != null) options["author_id"] = listOf(userId.toString())
-//        if (minId != null) options["min_id"] = listOf(minId.toString())
-//
-//        val query = SearchFetcher().makeQuery(
-//            StoreSearch.SearchTarget(
-//                StoreSearch.SearchTarget.Type.CHANNEL,
-//                dmId
-//            ), null, SearchQuery(options, true)
-//        )
-//
-//        val (data, err) = query.await()
-//        if (err != null) {
-//            LOGGER.error(err)
-//            return null
-//        }
-//
-//        if (data == null) return null
-//
-//        if (data.errorCode != null) {
-//            LOGGER.error("Error code ${data.errorCode}", null)
-//            return null
-//        }
-//
-//        return data.messages[0][0].o()
-//    }
-//
-//    fun a {
-//        patcher.patch(
-//            SearchFetcher::class.java.getDeclaredMethod(
-//                "makeQuery",
-//                StoreSearch.SearchTarget::class.java,
-//                java.lang.Long::class.java,
-//                SearchQuery::class.java
-//            ),
-//            Hook {
-//                val result = it.args[2]
-//
-//                val f = result.javaClass.getDeclaredField("params")
-//                f.isAccessible = true
-//                val map = f.get(result) as HashMap<String, List<String>>
-//
-//                LOGGER.info(map.toString())
-//            }
-//        )
-//    }
 }

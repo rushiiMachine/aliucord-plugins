@@ -9,7 +9,6 @@ import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
 import android.widget.LinearLayout
 import android.widget.SeekBar
 import android.widget.TextView
-import androidx.recyclerview.widget.RecyclerView
 import com.aliucord.Logger
 import com.aliucord.annotations.AliucordPlugin
 import com.aliucord.api.SettingsAPI
@@ -29,11 +28,11 @@ const val DEFAULT_STICKER_SIZE = 240
 @AliucordPlugin
 class ConfigurableStickerSizes : Plugin() {
     private val logger = Logger(this::class.simpleName)
-    private val bindingField =
-        WidgetChatListAdapterItemSticker::class.java.getDeclaredField("binding")
+    private val bindingField = WidgetChatListAdapterItemSticker::class.java
+        .getDeclaredField("binding")
+        .apply { isAccessible = true }
 
     init {
-        bindingField.isAccessible = true
         settingsTab = SettingsTab(
             ConfigurableStickerSizesSettings::class.java,
             SettingsTab.Type.BOTTOM_SHEET
