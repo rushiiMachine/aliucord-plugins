@@ -6,9 +6,7 @@ import android.os.Bundle
 import android.view.View
 import android.view.ViewGroup.LayoutParams.MATCH_PARENT
 import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
-import android.widget.LinearLayout
-import android.widget.SeekBar
-import android.widget.TextView
+import android.widget.*
 import com.aliucord.Logger
 import com.aliucord.annotations.AliucordPlugin
 import com.aliucord.api.SettingsAPI
@@ -49,7 +47,7 @@ class ConfigurableStickerSizes : Plugin() {
                 val stickerSize = settings.getInt("stickerSize", DEFAULT_STICKER_SIZE)
 
                 val binding = bindingField.get(it.thisObject)
-                        as WidgetChatListAdapterItemStickerBinding
+                    as WidgetChatListAdapterItemStickerBinding
 
                 // set sticker size
                 binding.b.layoutParams.apply {

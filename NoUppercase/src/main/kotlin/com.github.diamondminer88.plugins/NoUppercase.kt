@@ -2,7 +2,6 @@ package com.github.diamondminer88.plugins
 
 import android.annotation.SuppressLint
 import android.content.Context
-import android.util.AttributeSet
 import android.view.View
 import android.widget.*
 import androidx.appcompat.widget.LinearLayoutCompat
@@ -16,15 +15,11 @@ import com.aliucord.entities.Plugin
 import com.aliucord.patcher.Hook
 import com.discord.databinding.*
 import com.discord.utilities.view.text.LinkifiedTextView
-import com.discord.widgets.chat.list.adapter.WidgetChatListAdapterItemMessage
-import com.discord.widgets.chat.list.entries.ChatListEntry
 import com.discord.widgets.roles.RoleIconView
 import com.discord.widgets.roles.RolesListView
 import com.discord.widgets.settings.WidgetSettings
 import com.discord.widgets.stage.usersheet.UserProfileStageActionsView
-import com.discord.widgets.user.profile.UserProfileAdminView
-import com.discord.widgets.user.profile.UserProfileConnectionsView
-import com.discord.widgets.user.profile.UserProfileHeaderView
+import com.discord.widgets.user.profile.*
 import com.discord.widgets.user.usersheet.UserProfileVoiceSettingsView
 import com.google.android.flexbox.FlexboxLayout
 import com.google.android.material.button.MaterialButton
