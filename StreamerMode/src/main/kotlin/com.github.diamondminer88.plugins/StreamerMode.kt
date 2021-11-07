@@ -2,18 +2,27 @@ package com.github.diamondminer88.plugins
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.os.Bundle
 import android.view.View
 import android.widget.LinearLayout
 import android.widget.TextView
 import com.aliucord.Utils
+import com.aliucord.Utils.createCheckedSetting
 import com.aliucord.annotations.AliucordPlugin
+import com.aliucord.api.SettingsAPI
 import com.aliucord.entities.Plugin
 import com.aliucord.fragments.ConfirmDialog
 import com.aliucord.patcher.Hook
 import com.aliucord.patcher.InsteadHook
+import com.aliucord.widgets.BottomSheet
 import com.discord.models.user.User
 import com.discord.utilities.user.UserUtils
+import com.discord.views.CheckedSetting.ViewType.SWITCH
 import com.discord.widgets.settings.account.*
+
+private const val SETTING_DISCRIM_KEY = "hideDiscriminators"
+private const val SETTING_PERSONAL_DETAILS_KEY = "hidePersonalDetails"
+private const val SETTING_SHOW_WARNING = "showWarning"
 
 @Suppress("unused")
 @SuppressLint("SetTextI18n")
@@ -28,6 +37,13 @@ class StreamerMode : Plugin() {
     private val settingsEmailContainer = Utils.getResId("settings_account_email_container", "id")
     private val settingsPhoneContainer = Utils.getResId("settings_account_phone_container", "id")
     private val numRegex = Regex("\\d")
+
+    init {
+        settingsTab = SettingsTab(
+            StreamerModeSettings::class.java,
+            SettingsTab.Type.BOTTOM_SHEET
+        ).withArgs(settings)
+    }
 
     private fun configureContainer(layout: LinearLayout, onClick: View.OnClickListener) {
         layout.setOnClickListener { v ->
@@ -50,7 +66,12 @@ class StreamerMode : Plugin() {
             UserUtils::class.java.getDeclaredMethod(
                 "getDiscriminatorWithPadding",
                 User::class.java
-            ), InsteadHook { "" })
+            ), InsteadHook {
+                if (settings.getBool(SETTING_DISCRIM_KEY, true))
+                    ""
+                else
+                    UserUtils.INSTANCE.padDiscriminator((it.args[0] as User).discriminator)
+            })
 
         patcher.patch(
             WidgetSettingsAccount::class.java.getDeclaredMethod(
@@ -59,35 +80,80 @@ class StreamerMode : Plugin() {
             ), Hook {
                 val view = (it.thisObject as WidgetSettingsAccount).requireView()
 
-                val name = view.findViewById<TextView>(settingsNameText)
-                name.text = "x".repeat(name.length())
+                if (settings.getBool(SETTING_PERSONAL_DETAILS_KEY, true)) {
+                    val name = view.findViewById<TextView>(settingsNameText)
+                    name.text = "x".repeat(name.length())
 
-                val email = view.findViewById<TextView>(settingsEmailText)
-                val split = email.text.split("@")
-                email.text = "x".repeat(split[0].length) + "@" + split[1]
+                    val email = view.findViewById<TextView>(settingsEmailText)
+                    val split = email.text.split("@")
+                    email.text = "x".repeat(split[0].length) + "@" + split[1]
 
-                val phone = view.findViewById<TextView>(settingsPhoneText)
-                phone.text = phone.text.replace(numRegex, "x")
+                    val phone = view.findViewById<TextView>(settingsPhoneText)
+                    phone.text = phone.text.replace(numRegex, "x")
 
-                val sms = view.findViewById<TextView>(settingsSMSText)
-                sms.visibility = View.GONE
+                    val sms = view.findViewById<TextView>(settingsSMSText)
+                    sms.visibility = View.GONE
+                }
 
-                val usernameContainer = view.findViewById<LinearLayout>(settingsUsernameContainer)
-                configureContainer(usernameContainer, (`WidgetSettingsAccount$configureUI$2`()))
+                if (settings.getBool(SETTING_SHOW_WARNING, true)) {
+                    val usernameContainer = view.findViewById<LinearLayout>(settingsUsernameContainer)
+                    configureContainer(usernameContainer, (`WidgetSettingsAccount$configureUI$2`()))
 
-                val nameContainer = view.findViewById<LinearLayout>(settingsNameContainer)
-                configureContainer(nameContainer, (`WidgetSettingsAccount$configureUI$3`()))
+                    val nameContainer = view.findViewById<LinearLayout>(settingsNameContainer)
+                    configureContainer(nameContainer, (`WidgetSettingsAccount$configureUI$3`()))
 
-                val emailContainer = view.findViewById<LinearLayout>(settingsEmailContainer)
-                configureContainer(emailContainer, (`WidgetSettingsAccount$configureUI$4`()))
+                    val emailContainer = view.findViewById<LinearLayout>(settingsEmailContainer)
+                    configureContainer(emailContainer, (`WidgetSettingsAccount$configureUI$4`()))
 
-                val phoneContainer = view.findViewById<LinearLayout>(settingsPhoneContainer)
-                configureContainer(phoneContainer, (`WidgetSettingsAccount$configureUI$5`()))
+                    val phoneContainer = view.findViewById<LinearLayout>(settingsPhoneContainer)
+                    configureContainer(phoneContainer, (`WidgetSettingsAccount$configureUI$5`()))
+                }
             })
     }
 
     override fun stop(context: Context) {
         patcher.unpatchAll()
+    }
+}
+
+class StreamerModeSettings(private val settings: SettingsAPI) : BottomSheet() {
+    override fun onViewCreated(view: View, bundle: Bundle?) {
+        super.onViewCreated(view, bundle)
+        val ctx = view.context
+
+        addView(
+            createCheckedSetting(
+                ctx, SWITCH,
+                "Discriminators",
+                "Hide the #0000 part of user tags for everyone"
+            ).apply {
+                isChecked = settings.getBool(SETTING_DISCRIM_KEY, true)
+                setOnCheckedListener {
+                    settings.setBool(SETTING_DISCRIM_KEY, it)
+                }
+            })
+
+        addView(createCheckedSetting(
+            ctx, SWITCH,
+            "Personal details",
+            "Censor personal details on the 'My Account' settings page"
+        ).apply {
+            isChecked = settings.getBool(SETTING_PERSONAL_DETAILS_KEY, true)
+            setOnCheckedListener {
+                settings.setBool(SETTING_PERSONAL_DETAILS_KEY, it)
+            }
+        })
+
+        addView(createCheckedSetting(
+            ctx, SWITCH,
+            "Warnings",
+            "Show warnings when clicking on pages with identifiable content"
+        ).apply {
+            isChecked = settings.getBool(SETTING_SHOW_WARNING, true)
+            setOnCheckedListener {
+                settings.setBool(SETTING_SHOW_WARNING, it)
+            }
+        })
     }
 }
 
