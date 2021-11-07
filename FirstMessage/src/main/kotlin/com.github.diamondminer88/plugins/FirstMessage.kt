@@ -58,11 +58,11 @@ class FirstMessage : Plugin() {
                 val user = ctx.getRequiredUser("user")
                 val channel = ctx.getRequired("channel") as String
 
-                val firstMessageId =
+                val (_, message) =
                     getFirstMessageInGuildByUser(ctx.currentChannel.guildId, user.id, channel)
                         ?: return@registerCommand cmdMsgNotFound
                 return@registerCommand CommandResult(
-                    "https://discord.com/channels/${ctx.currentChannel.guildId}/$channel/$firstMessageId",
+                    "https://discord.com/channels/${ctx.currentChannel.guildId}/$channel/$message",
                     null,
                     send
                 )
