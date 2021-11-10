@@ -39,3 +39,6 @@ Reverts uppercased headers in common places.
 
 ### [StreamerMode](https://github.com/DiamondMiner88/aliucord-plugins/raw/builds/StreamerMode.zip)
 Hide identifiable information. (Email, phone number, name, user discriminators)
+
+### [NoNitroAvatars](https://github.com/DiamondMiner88/aliucord-plugins/raw/builds/NoNitroAvatars.zip)
+Hides per-server user avatars everywhere.

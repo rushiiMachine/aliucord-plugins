@@ -1,3 +1,4 @@
+include(":NoNitroAvatars")
 include(":StreamerMode")
 include(":NoUppercase")
 include(":FirstMessage")
