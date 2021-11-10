@@ -40,6 +40,14 @@ class NoUppercase : Plugin() {
         ).withArgs(settings)
     }
 
+    private fun configureTextView(textView: TextView, multiplier: Float) {
+        textView.isAllCaps = false
+        textView.setTextSize(
+            TypedValue.COMPLEX_UNIT_PX,
+            textView.textSize * multiplier
+        )
+    }
+
     override fun start(ctx: Context) {
         // !!!!!!!!!! Before you yell at me for the following patches, these already work = no reason to change them !!!!!!!!!!
         // TODO: Patch TextView directly
@@ -53,11 +61,7 @@ class NoUppercase : Plugin() {
                 TextView::class.java
             ), Hook {
                 val thisObj = it.thisObject as WidgetChannelMembersListItemHeaderBinding
-                thisObj.c.isAllCaps = false
-                thisObj.c.setTextSize(
-                    TypedValue.COMPLEX_UNIT_PX,
-                    thisObj.c.textSize * settings.getFloat(TEXT_SIZE_KEY, DEFAULT_MULTIPLIER)
-                )
+                configureTextView(thisObj.c, settings.getFloat(TEXT_SIZE_KEY, DEFAULT_MULTIPLIER))
             })
 
         // channel list categories
@@ -69,38 +73,18 @@ class NoUppercase : Plugin() {
                 TextView::class.java
             ), Hook {
                 val thisObj = it.thisObject as WidgetChannelsListItemCategoryBinding
-                thisObj.d.isAllCaps = false
-                thisObj.d.setTextSize(
-                    TypedValue.COMPLEX_UNIT_PX,
-                    thisObj.d.textSize * settings.getFloat(TEXT_SIZE_KEY, DEFAULT_MULTIPLIER)
-                )
+                configureTextView(thisObj.d, settings.getFloat(TEXT_SIZE_KEY, DEFAULT_MULTIPLIER))
             })
 
         // user profile
         patcher.patch(
             WidgetUserSheetBinding::class.java.declaredConstructors[0], Hook {
                 val thisObj = it.thisObject as WidgetUserSheetBinding
-                thisObj.c.isAllCaps = false // about me
-                thisObj.j.isAllCaps = false // connections
-                thisObj.w.isAllCaps = false // note
-                thisObj.m.isAllCaps = false // developer mode
                 val multiplier = settings.getFloat(TEXT_SIZE_KEY, DEFAULT_MULTIPLIER)
-                thisObj.c.setTextSize(
-                    TypedValue.COMPLEX_UNIT_PX,
-                    thisObj.c.textSize * multiplier
-                )
-                thisObj.j.setTextSize(
-                    TypedValue.COMPLEX_UNIT_PX,
-                    thisObj.j.textSize * multiplier
-                )
-                thisObj.w.setTextSize(
-                    TypedValue.COMPLEX_UNIT_PX,
-                    thisObj.w.textSize * multiplier
-                )
-                thisObj.m.setTextSize(
-                    TypedValue.COMPLEX_UNIT_PX,
-                    thisObj.m.textSize * multiplier
-                )
+                configureTextView(thisObj.c, multiplier) // about me
+                configureTextView(thisObj.j, multiplier) // connections
+                configureTextView(thisObj.w, multiplier) // note
+                configureTextView(thisObj.m, multiplier) // developer mode
             }
         )
 
@@ -111,11 +95,7 @@ class NoUppercase : Plugin() {
                 TextView::class.java
             ), Hook {
                 val thisObj = it.thisObject as WidgetFriendsListAdapterItemHeaderBinding
-                thisObj.b.isAllCaps = false
-                thisObj.b.setTextSize(
-                    TypedValue.COMPLEX_UNIT_PX,
-                    thisObj.b.textSize * settings.getFloat(TEXT_SIZE_KEY, DEFAULT_MULTIPLIER)
-                )
+                configureTextView(thisObj.b, settings.getFloat(TEXT_SIZE_KEY, DEFAULT_MULTIPLIER))
             })
         // friends list pending headers
         patcher.patch(
@@ -125,11 +105,7 @@ class NoUppercase : Plugin() {
                 TextView::class.java
             ), Hook {
                 val thisObj = it.thisObject as WidgetFriendsListExpandableHeaderBinding
-                thisObj.c.isAllCaps = false
-                thisObj.c.setTextSize(
-                    TypedValue.COMPLEX_UNIT_PX,
-                    thisObj.c.textSize * settings.getFloat(TEXT_SIZE_KEY, DEFAULT_MULTIPLIER)
-                )
+                configureTextView(thisObj.c, settings.getFloat(TEXT_SIZE_KEY, DEFAULT_MULTIPLIER))
             })
 
         // user settings
@@ -156,21 +132,14 @@ class NoUppercase : Plugin() {
                             logger.error("Failed to find TextView ${stringIds[index]}", null)
                             return@forEachIndexed
                         }
-                        child.isAllCaps = false
-                        child.setTextSize(
-                            TypedValue.COMPLEX_UNIT_PX,
-                            child.textSize * settings.getFloat(TEXT_SIZE_KEY, DEFAULT_MULTIPLIER)
-                        )
+                        configureTextView(child, multiplier)
                     }
             })
 
+        // invite cards
         patcher.patch(WidgetChatListAdapterItemInviteBinding::class.java.declaredConstructors[0], Hook {
             val thisObj = it.thisObject as WidgetChatListAdapterItemInviteBinding
-            thisObj.c.isAllCaps = false
-            thisObj.c.setTextSize(
-                TypedValue.COMPLEX_UNIT_PX,
-                thisObj.c.textSize * settings.getFloat(TEXT_SIZE_KEY, DEFAULT_MULTIPLIER)
-            )
+            configureTextView(thisObj.c, settings.getFloat(TEXT_SIZE_KEY, DEFAULT_MULTIPLIER))
         })
     }
 
