@@ -2,35 +2,43 @@ package com.github.diamondminer88.plugins
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.os.Bundle
+import android.util.TypedValue
 import android.view.View
+import android.view.ViewGroup
 import android.widget.*
 import androidx.appcompat.widget.LinearLayoutCompat
-import androidx.cardview.widget.CardView
 import androidx.coordinatorlayout.widget.CoordinatorLayout
-import androidx.core.widget.ContentLoadingProgressBar
 import androidx.core.widget.NestedScrollView
 import com.aliucord.Logger
+import com.aliucord.Utils
 import com.aliucord.annotations.AliucordPlugin
+import com.aliucord.api.SettingsAPI
 import com.aliucord.entities.Plugin
 import com.aliucord.patcher.Hook
+import com.aliucord.utils.DimenUtils
+import com.aliucord.views.Button
+import com.aliucord.widgets.BottomSheet
 import com.discord.databinding.*
-import com.discord.utilities.view.text.LinkifiedTextView
 import com.discord.widgets.roles.RoleIconView
-import com.discord.widgets.roles.RolesListView
 import com.discord.widgets.settings.WidgetSettings
-import com.discord.widgets.stage.usersheet.UserProfileStageActionsView
-import com.discord.widgets.user.profile.*
-import com.discord.widgets.user.usersheet.UserProfileVoiceSettingsView
-import com.google.android.flexbox.FlexboxLayout
-import com.google.android.material.button.MaterialButton
-import com.google.android.material.textfield.TextInputEditText
-import com.google.android.material.textfield.TextInputLayout
+import com.lytefast.flexinput.R
+
+private const val TEXT_SIZE_KEY = "textSizeMultiplier"
+private const val DEFAULT_MULTIPLIER = 1f
 
 @Suppress("unused")
 @SuppressLint("PrivateApi")
 @AliucordPlugin
 class NoUppercase : Plugin() {
     private val logger = Logger(this::class.simpleName)
+
+    init {
+        settingsTab = SettingsTab(
+            NoUppercaseSettings::class.java,
+            SettingsTab.Type.BOTTOM_SHEET
+        ).withArgs(settings)
+    }
 
     override fun start(ctx: Context) {
         // !!!!!!!!!! Before you yell at me for the following patches, these already work = no reason to change them !!!!!!!!!!
@@ -46,6 +54,10 @@ class NoUppercase : Plugin() {
             ), Hook {
                 val thisObj = it.thisObject as WidgetChannelMembersListItemHeaderBinding
                 thisObj.c.isAllCaps = false
+                thisObj.c.setTextSize(
+                    TypedValue.COMPLEX_UNIT_PX,
+                    thisObj.c.textSize * settings.getFloat(TEXT_SIZE_KEY, DEFAULT_MULTIPLIER)
+                )
             })
 
         // channel list categories
@@ -58,58 +70,37 @@ class NoUppercase : Plugin() {
             ), Hook {
                 val thisObj = it.thisObject as WidgetChannelsListItemCategoryBinding
                 thisObj.d.isAllCaps = false
+                thisObj.d.setTextSize(
+                    TypedValue.COMPLEX_UNIT_PX,
+                    thisObj.d.textSize * settings.getFloat(TEXT_SIZE_KEY, DEFAULT_MULTIPLIER)
+                )
             })
 
         // user profile
         patcher.patch(
-            WidgetUserSheetBinding::class.java.getDeclaredConstructor(
-                NestedScrollView::class.java,
-                CardView::class.java,
-                TextView::class.java,
-                LinkifiedTextView::class.java,
-                ContentLoadingProgressBar::class.java,
-                FrameLayout::class.java,
-                Button::class.java,
-                CardView::class.java,
-                UserProfileAdminView::class.java,
-                Button::class.java,
-                TextView::class.java,
-                UserProfileConnectionsView::class.java,
-                LinearLayout::class.java,
-                TextView::class.java,
-                TextView::class.java,
-                MaterialButton::class.java,
-                MaterialButton::class.java,
-                LinearLayout::class.java,
-                LinearLayout::class.java,
-                TextView::class.java,
-                TextView::class.java,
-                FrameLayout::class.java,
-                Button::class.java,
-                ImageView::class.java,
-                TextView::class.java,
-                TextInputEditText::class.java,
-                TextInputLayout::class.java,
-                Button::class.java,
-                LinearLayout::class.java,
-                View::class.java,
-                MaterialButton::class.java,
-                FlexboxLayout::class.java,
-                UserProfileHeaderView::class.java,
-                MaterialButton::class.java,
-                CardView::class.java,
-                UserProfileStageActionsView::class.java,
-                TextView::class.java,
-                UserProfileVoiceSettingsView::class.java,
-                RolesListView::class.java,
-                Button::class.java,
-                CardView::class.java
-            ), Hook {
+            WidgetUserSheetBinding::class.java.declaredConstructors[0], Hook {
                 val thisObj = it.thisObject as WidgetUserSheetBinding
                 thisObj.c.isAllCaps = false // about me
                 thisObj.j.isAllCaps = false // connections
                 thisObj.w.isAllCaps = false // note
                 thisObj.m.isAllCaps = false // developer mode
+                val multiplier = settings.getFloat(TEXT_SIZE_KEY, DEFAULT_MULTIPLIER)
+                thisObj.c.setTextSize(
+                    TypedValue.COMPLEX_UNIT_PX,
+                    thisObj.c.textSize * multiplier
+                )
+                thisObj.j.setTextSize(
+                    TypedValue.COMPLEX_UNIT_PX,
+                    thisObj.j.textSize * multiplier
+                )
+                thisObj.w.setTextSize(
+                    TypedValue.COMPLEX_UNIT_PX,
+                    thisObj.w.textSize * multiplier
+                )
+                thisObj.m.setTextSize(
+                    TypedValue.COMPLEX_UNIT_PX,
+                    thisObj.m.textSize * multiplier
+                )
             }
         )
 
@@ -121,6 +112,10 @@ class NoUppercase : Plugin() {
             ), Hook {
                 val thisObj = it.thisObject as WidgetFriendsListAdapterItemHeaderBinding
                 thisObj.b.isAllCaps = false
+                thisObj.b.setTextSize(
+                    TypedValue.COMPLEX_UNIT_PX,
+                    thisObj.b.textSize * settings.getFloat(TEXT_SIZE_KEY, DEFAULT_MULTIPLIER)
+                )
             })
         // friends list pending headers
         patcher.patch(
@@ -131,6 +126,10 @@ class NoUppercase : Plugin() {
             ), Hook {
                 val thisObj = it.thisObject as WidgetFriendsListExpandableHeaderBinding
                 thisObj.c.isAllCaps = false
+                thisObj.c.setTextSize(
+                    TypedValue.COMPLEX_UNIT_PX,
+                    thisObj.c.textSize * settings.getFloat(TEXT_SIZE_KEY, DEFAULT_MULTIPLIER)
+                )
             })
 
         // user settings
@@ -138,30 +137,114 @@ class NoUppercase : Plugin() {
         patcher.patch(
             WidgetSettings::class.java.getDeclaredMethod("onViewBound", View::class.java),
             Hook {
-                val rootView = it.args[0] as CoordinatorLayout
+                val multiplier = settings.getFloat(TEXT_SIZE_KEY, DEFAULT_MULTIPLIER)
                 val view =
-                    (rootView.getChildAt(1) as NestedScrollView).getChildAt(0) as LinearLayoutCompat
-                for (i in 0 until view.childCount) {
-                    val child = view.getChildAt(i)
-                    var textView: TextView? = null
+                    ((it.args[0] as CoordinatorLayout).getChildAt(1) as NestedScrollView)
+                        .getChildAt(0) as LinearLayoutCompat
 
-                    if (child is TextView)
-                        textView = child
-                    else if (child is LinearLayout) {
-                        val el = child.getChildAt(1) // 0th is a divider followed by the title
-                        if (el is TextView) textView = el
-                    } else continue
-                    textView?.isAllCaps = false
-                }
+                val stringIds = listOf(
+                    "user_settings_header",
+                    "nitro_header",
+                    "app_settings_header",
+                    "developer_options_header",
+                    "app_info_header"
+                )
+                stringIds
+                    .map { id -> Utils.getResId(id, "id") }
+                    .forEachIndexed { index, id ->
+                        val child = view.findViewById<TextView>(id)
+                        if (child == null) {
+                            logger.error("Failed to find TextView ${stringIds[index]}", null)
+                            return@forEachIndexed
+                        }
+                        child.isAllCaps = false
+                        child.setTextSize(
+                            TypedValue.COMPLEX_UNIT_PX,
+                            child.textSize * settings.getFloat(TEXT_SIZE_KEY, DEFAULT_MULTIPLIER)
+                        )
+                    }
             })
+    }
 
-        // doesn't work
+    override fun stop(context: Context) {
+        patcher.unpatchAll()
+    }
+}
+
+@SuppressLint("SetTextI18n")
+class NoUppercaseSettings(private val settings: SettingsAPI) : BottomSheet() {
+    override fun onViewCreated(view: View, bundle: Bundle?) {
+        super.onViewCreated(view, bundle)
+        val ctx = view.context
+
+        val multiplier = settings.getFloat(TEXT_SIZE_KEY, DEFAULT_MULTIPLIER)
+
+        val currentSize = TextView(ctx, null, 0, R.i.UiKit_TextView).apply {
+            text = "${multiplier}x"
+            width = DimenUtils.dpToPx(43)
+        }
+
+        val slider = SeekBar(ctx, null, 0, R.i.UiKit_SeekBar).apply {
+            layoutParams = LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT
+            )
+            max = 200
+            progress = (multiplier * 100).toInt()
+            setPadding(DimenUtils.dpToPx(12), 0, DimenUtils.dpToPx(12), 0)
+            setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+                override fun onStartTrackingTouch(seekBar: SeekBar) {}
+
+                override fun onProgressChanged(seekBar: SeekBar, progress: Int, fromUser: Boolean) {
+                    currentSize.text = "${progress.div(100f)}x"
+                }
+
+                override fun onStopTrackingTouch(seekBar: SeekBar) =
+                    settings.setFloat(TEXT_SIZE_KEY, progress.div(100f))
+
+            })
+        }
+
+        val resetButton = Button(ctx).apply {
+            text = "Reset"
+            layoutParams = LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT
+            ).apply {
+                setMargins(DimenUtils.dpToPx(12), 0, DimenUtils.dpToPx(12), 0)
+            }
+            setOnClickListener {
+                currentSize.text = "1.0x"
+                slider.progress = 100
+                settings.setFloat(TEXT_SIZE_KEY, DEFAULT_MULTIPLIER)
+            }
+        }
+
+        addView(TextView(ctx, null, 0, R.i.UiKit_Settings_Item_Label).apply {
+            text = "Header size (multiplier)"
+        })
+
+        addView(LinearLayout(ctx, null, 0, R.i.UiKit_Settings_Item).apply {
+            addView(currentSize)
+            addView(slider)
+        })
+
+        addView(resetButton)
+
+        addView(TextView(ctx, null, 0, R.i.UiKit_Settings_Item_Label).apply {
+            text = "Changes will fully apply after reloading Discord"
+            textSize = DimenUtils.dpToPx(4).toFloat()
+        })
+    }
+}
+
+// doesn't work
 //        patcher.patch(TextView::class.java.getDeclaredMethod("setAllCaps", Boolean::class.javaPrimitiveType), PreHook {
 //            logger.info("here")
 //            it.args[0] = false
 //        })
 
-        // doesn't work
+// doesn't work
 //        patcher.patch(
 //            TextView::class.java.getDeclaredMethod(
 //                "setTransformationMethod",
@@ -174,7 +257,7 @@ class NoUppercase : Plugin() {
 //        val textAppearanceAttributesClass =
 //            Class.forName("android.widget.TextView\$TextAppearanceAttributes")
 
-        // doesn't work
+// doesn't work
 //        patcher.patch(
 //            TextView::class.java.getDeclaredMethod(
 //                "readTextAppearance",
@@ -188,12 +271,12 @@ class NoUppercase : Plugin() {
 //            }
 //        )
 
-        // doesn't work
+// doesn't work
 //        patcher.patch(textAppearanceAttributesClass.constructors[0], Hook {
 //            ReflectUtils.setField(textAppearanceAttributesClass, it.thisObject, "mAllCaps", false)
 //        })
 
-        // can't find the private method
+// can't find the private method
 //        patcher.patch(
 //            TextView::class.java.declaredMethods.first { it.name == "readTextAppearance" },
 //            Hook {
@@ -202,13 +285,13 @@ class NoUppercase : Plugin() {
 //
 //            })
 
-        // readTextAppearance isn't showing
+// readTextAppearance isn't showing
 //        TextView::class.java.declaredMethods.forEach {
 //            if (it.toString().contains("readTextAppearance"))
 //                logger.info(it.toString())
 //        }
 
-        // fails as well don't remember why
+// fails as well don't remember why
 //        patcher.patch(
 //            TextView::class.java.getDeclaredMethod(
 //                "applyTextAppearance",
@@ -227,9 +310,3 @@ class NoUppercase : Plugin() {
 //                val attr = it.args[1] as AttributeSet
 //                logger.info(attr.styleAttribute.toString())
 //            })
-    }
-
-    override fun stop(context: Context) {
-        patcher.unpatchAll()
-    }
-}
