@@ -133,7 +133,6 @@ class NoUppercase : Plugin() {
             })
 
         // user settings
-        // this targets all CoordinatorLayout (root) -> NestedScrollView -> ((LinearLayout -> TextView(1)) / TextView)
         patcher.patch(
             WidgetSettings::class.java.getDeclaredMethod("onViewBound", View::class.java),
             Hook {
@@ -164,6 +163,15 @@ class NoUppercase : Plugin() {
                         )
                     }
             })
+
+        patcher.patch(WidgetChatListAdapterItemInviteBinding::class.java.declaredConstructors[0], Hook {
+            val thisObj = it.thisObject as WidgetChatListAdapterItemInviteBinding
+            thisObj.c.isAllCaps = false
+            thisObj.c.setTextSize(
+                TypedValue.COMPLEX_UNIT_PX,
+                thisObj.c.textSize * settings.getFloat(TEXT_SIZE_KEY, DEFAULT_MULTIPLIER)
+            )
+        })
     }
 
     override fun stop(context: Context) {
@@ -201,7 +209,6 @@ class NoUppercaseSettings(private val settings: SettingsAPI) : BottomSheet() {
 
                 override fun onStopTrackingTouch(seekBar: SeekBar) =
                     settings.setFloat(TEXT_SIZE_KEY, progress.div(100f))
-
             })
         }
 
