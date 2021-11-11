@@ -45,3 +45,5 @@ Hides per-server user avatars everywhere.
 ### [OpenProfileInReactions](https://github.com/DiamondMiner88/aliucord-plugins/raw/builds/OpenProfileInReactions.zip)
 Open users' profiles in reaction lists on click.
 
+### [NoBuiltInCommands](https://github.com/DiamondMiner88/aliucord-plugins/raw/builds/NoBuiltInCommands.zip)
+Removes built-in slash commands.

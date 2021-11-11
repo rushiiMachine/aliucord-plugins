@@ -1,3 +1,4 @@
+include(":NoBuiltInCommands")
 include(":OpenProfileInReactions")
 include(":NoNitroAvatars")
 include(":StreamerMode")
