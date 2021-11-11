@@ -1,7 +1,6 @@
 package com.github.diamondminer88.plugins
 
 import android.content.Context
-import com.aliucord.Logger
 import com.aliucord.Utils
 import com.aliucord.annotations.AliucordPlugin
 import com.aliucord.entities.Plugin
@@ -28,9 +27,13 @@ class OpenProfileInReactions : Plugin() {
                 val reactionItem = it.args[1] as ReactionUserItem
 
                 thisObj.itemView.setOnClickListener {
+                    val user = reactionItem.user.id
+                    if (!StoreStream.getUsers().users.containsKey(user))
+                        StoreStream.getUsers().fetchUsers(listOf(user))
+
                     WidgetUserSheet.Companion.`show$default`(
                         WidgetUserSheet.Companion,
-                        reactionItem.user.id,
+                        user,
                         reactionItem.channelId,
                         Utils.appActivity.supportFragmentManager,
                         StoreStream.getGuildSelected().selectedGuildId,
