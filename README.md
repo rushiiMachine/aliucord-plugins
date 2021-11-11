@@ -1,18 +1,17 @@
 <div align="center">
   <h1><a href="https://github.com/Aliucord/Aliucord">Aliucord</a> plugins</h1>
-  <p>all my shitty plugins</p><br/>
-  <p>
-    <a href="http://hits.dwyl.com/DiamondMiner88/Bedwars">
-      <img src="http://hits.dwyl.com/DiamondMiner88/Bedwars.svg" alt="Hit count"/>
-    </a>
-    <a href="https://github.com/DiamondMiner88/aliucord-plugins/tree/builds">
-      <img src="https://img.shields.io/github/workflow/status/DiamondMiner88/aliucord-plugins/Build?label=Plugins%20Build&logo=githubactions&logoColor=white&style=flat-square" alt="Build status"/>
-    </a>
-    <a href="https://discord.gg/EsNDvBaHVU">
-      <img alt="Support" src="https://img.shields.io/discord/811255666990907402?color=%2300C853&label=Support%20Server&logo=discord&logoColor=%2300C853&style=flat-square"/>
-    </a>
-    (ping @Diamond for these)
-  </p>
+  <p>all my shitty plugins</p>
+  <a href="https://hits.dwyl.com/DiamondMiner88/aliucord-plugins">
+    <img src="https://hits.dwyl.com/DiamondMiner88/aliucord-plugins.svg" alt="Hit count"/>
+  </a>
+  <a href="https://github.com/DiamondMiner88/aliucord-plugins/tree/builds">
+    <img src="https://img.shields.io/github/workflow/status/DiamondMiner88/aliucord-plugins/Build?label=Plugins%20Build&logo=githubactions&logoColor=white&style=flat-square" alt="Build status"/>
+  </a>
+  <a href="https://discord.gg/EsNDvBaHVU">
+    <img alt="Support" src="https://img.shields.io/discord/811255666990907402?color=%2300C853&label=Support%20Server&logo=discord&logoColor=%2300C853&style=flat-square"/>
+  </a>
+  <br/>
+  (ping @Diamond for these)
 </div>
 
 ## Installation
