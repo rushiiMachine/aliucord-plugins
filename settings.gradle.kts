@@ -1,3 +1,4 @@
+include(":OpenProfileInReactions")
 include(":NoNitroAvatars")
 include(":StreamerMode")
 include(":NoUppercase")

@@ -42,3 +42,7 @@ Hide identifiable information. (Email, phone number, name, user discriminators)
 
 ### [NoNitroAvatars](https://github.com/DiamondMiner88/aliucord-plugins/raw/builds/NoNitroAvatars.zip)
 Hides per-server user avatars everywhere.
+
+### [OpenProfileInReactions](https://github.com/DiamondMiner88/aliucord-plugins/raw/builds/OpenProfileInReactions.zip)
+Open users' profiles in reaction lists on click.
+
