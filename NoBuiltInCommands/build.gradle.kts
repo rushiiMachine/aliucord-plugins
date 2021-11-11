@@ -1,5 +1,5 @@
 version = "1.0.0"
-description = "Removes built-in slash commands."
+description = "Remove Discord's built-in slash commands."
 
 aliucord {
     changelog.set(

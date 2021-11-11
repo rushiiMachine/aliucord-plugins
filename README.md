@@ -46,4 +46,4 @@ Hides per-server user avatars everywhere.
 Open users' profiles in reaction lists on click.
 
 ### [NoBuiltInCommands](https://github.com/DiamondMiner88/aliucord-plugins/raw/builds/NoBuiltInCommands.zip)
-Removes built-in slash commands.
+Remove Discord's built-in slash commands.
