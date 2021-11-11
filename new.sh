@@ -10,7 +10,11 @@ d="$name/src/main/kotlin/com.github.diamondminer88.plugins"
 new="$d/$name.kt"
 
 set -x
-cp -r Template "$name"
+# shellcheck disable=SC2039
+shopt -s extglob
+mkdir -p "$name/src"
+# shellcheck disable=SC2039
+cp -r Template/!(build) "$name"
 
 # Rename file
 mv "$d/Template.kt" "$new"
