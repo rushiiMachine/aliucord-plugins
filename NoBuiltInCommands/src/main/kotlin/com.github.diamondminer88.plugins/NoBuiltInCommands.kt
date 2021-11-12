@@ -21,11 +21,6 @@ class NoBuiltInCommands : Plugin() {
                 it.result = result.filter { cmd -> !blockedCommands.contains(cmd.name) }
             }
         )
-
-        patcher.patch(
-            BuiltInCommands::class.java.getDeclaredMethod("getBuiltInApplication"),
-            InsteadHook { null }
-        )
     }
 
     override fun stop(context: Context) {
