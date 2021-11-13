@@ -1,5 +1,6 @@
 import com.aliucord.gradle.AliucordExtension
 import com.android.build.gradle.BaseExtension
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 buildscript {
     repositories {
@@ -51,7 +52,7 @@ subprojects {
             targetCompatibility = JavaVersion.VERSION_11
         }
 
-        tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
+        tasks.withType<KotlinCompile> {
             kotlinOptions {
                 jvmTarget = "11"
                 freeCompilerArgs = freeCompilerArgs +
@@ -66,6 +67,7 @@ subprojects {
         google()
         mavenCentral()
         maven("https://jitpack.io")
+//        mavenLocal() // aliucord developing
     }
 
     dependencies {
@@ -74,6 +76,7 @@ subprojects {
 
         discord("com.discord:discord:aliucord-SNAPSHOT")
         compileOnly("com.github.Aliucord:Aliucord:main-SNAPSHOT")
+//        compileOnly("com.github.Aliucord:Aliucord:unspecified")
     }
 }
 
