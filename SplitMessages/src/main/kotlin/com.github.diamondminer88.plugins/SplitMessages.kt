@@ -89,7 +89,7 @@ class SplitMessages : Plugin() {
 
                 content = content.drop(maxMessageSize)
 
-                Executors.newSingleThreadExecutor().submit {
+                Utils.threadPool.execute {
                     var splits = 1
 
                     while (content.isNotEmpty()) {
