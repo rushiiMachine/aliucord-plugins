@@ -47,3 +47,6 @@ Open users' profiles in reaction lists on click.
 
 ### [NoBuiltInCommands](https://github.com/DiamondMiner88/aliucord-plugins/raw/builds/NoBuiltInCommands.zip)
 Remove Discord's built-in slash commands.
+
+### [HideMessages](https://github.com/DiamondMiner88/aliucord-plugins/raw/builds/HideMessages.zip)
+Delete messages locally until you restart. (Message context menu option)
