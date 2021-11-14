@@ -7,7 +7,7 @@ include(":NoUppercase")
 include(":FirstMessage")
 include(":ConfigurableStickerSizes")
 include(":SplitMessages")
-includeNoCI(":OpenDebug")
+include(":OpenDebug")
 includeNoCI(":Template")
 rootProject.name = "aliucord-plugins"
 

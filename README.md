@@ -27,6 +27,9 @@ Download the plugins from [here](https://github.com/DiamondMiner88/aliucord-plug
 ### [FirstMessage](https://github.com/DiamondMiner88/aliucord-plugins/raw/builds/FirstMessage.zip)
 Finds the first message from a user/channel. (/firstmessage)
 
+### [OpenDebug](https://github.com/DiamondMiner88/aliucord-plugins/raw/builds/OpenDebug.zip)
+Open the debug log from the gift icon in the chat view and (toggleable) open debug log on start.
+
 ### [SplitMessages](https://github.com/DiamondMiner88/aliucord-plugins/raw/builds/SplitMessages.zip)
 Split messages longer than 2000/4000 characters into multiple messages.
 
