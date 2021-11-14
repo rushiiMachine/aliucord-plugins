@@ -43,7 +43,6 @@ class FixBlockedReplies : Plugin() {
     private val replyHolder = WidgetChatListAdapterItemMessage::class.java.getDeclaredField("replyHolder")
         .apply { isAccessible = true }
 
-
     init {
         settingsTab = SettingsTab(
             FixBlockedRepliesSettings::class.java,
@@ -81,7 +80,11 @@ class FixBlockedReplies : Plugin() {
                 )
 
                 val replyHolder = replyHolder.get(it.thisObject) as View
-                replyHolder.setOnClickListener(`WidgetChatListAdapterItemMessage$configureReplyPreview$1`(replyEntry.message))
+                replyHolder.setOnClickListener(
+                    `WidgetChatListAdapterItemMessage$configureReplyPreview$1`(
+                        replyEntry.message
+                    )
+                )
 
                 configReplyContentWithId.invoke(
                     it.thisObject,
