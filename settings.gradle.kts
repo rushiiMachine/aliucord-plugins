@@ -1,4 +1,5 @@
 include(":HideMessages")
+include(":FixBlockedReplies")
 include(":NoBuiltInCommands")
 include(":OpenProfileInReactions")
 include(":NoNitroAvatars")

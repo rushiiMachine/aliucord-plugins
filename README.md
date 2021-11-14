@@ -53,3 +53,6 @@ Remove Discord's built-in slash commands.
 
 ### [HideMessages](https://github.com/DiamondMiner88/aliucord-plugins/raw/builds/HideMessages.zip)
 Delete messages locally until you restart. (Message context menu option)
+
+### [FixBlockedReplies](https://github.com/DiamondMiner88/aliucord-plugins/raw/builds/FixBlockedReplies.zip)
+Show reply author, (optionally) show reply content, and fix clicking on them.
