@@ -3,26 +3,33 @@ package com.github.diamondminer88.plugins
 import android.content.Context
 import com.aliucord.annotations.AliucordPlugin
 import com.aliucord.entities.Plugin
-import com.aliucord.patcher.Hook
+import com.aliucord.patcher.PreHook
+import com.discord.api.utcdatetime.UtcDateTime
 import com.discord.models.member.GuildMember
 
 @Suppress("unused")
 @AliucordPlugin
 class NoNitroAvatars : Plugin() {
-    private val avatarHashField = GuildMember::class.java.getDeclaredField("avatarHash")
-        .apply { isAccessible = true }
-
     override fun start(ctx: Context) {
         patcher.patch(
-            GuildMember::class.java.declaredConstructors[1], Hook {
-                avatarHashField.set(it.thisObject, null)
-            }
-        )
-
-        // not present in source but it exists so ill patch to be sure
-        patcher.patch(
-            GuildMember::class.java.declaredConstructors[2], Hook {
-                avatarHashField.set(it.thisObject, null)
+            GuildMember::class.java.getDeclaredConstructor(
+                Int::class.javaPrimitiveType,
+                Long::class.javaPrimitiveType,
+                List::class.java,
+                String::class.java,
+                String::class.java,
+                Boolean::class.javaPrimitiveType,
+                UtcDateTime::class.java,
+                Long::class.javaPrimitiveType,
+                Long::class.javaPrimitiveType,
+                String::class.java,
+                String::class.java,
+                String::class.java,
+            ),
+            PreHook {
+                it.args[9] = null
+//                if (!it.args.contains("a server av hash")) return@PreHook
+//                it.args.forEach { Logger().info(":" + it?.toString() + ":") }
             }
         )
     }
