@@ -56,3 +56,6 @@ Delete messages locally until you restart. (Message context menu option)
 
 ### [FixBlockedReplies](https://github.com/DiamondMiner88/aliucord-plugins/raw/builds/FixBlockedReplies.zip)
 Show reply author, (optionally) show reply content, and fix clicking on them.
+
+### [NoPingWidthLimit](https://github.com/DiamondMiner88/aliucord-plugins/raw/builds/NoPingWidthLimit.zip)
+Increase the max width of the ping count label.

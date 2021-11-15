@@ -1,3 +1,4 @@
+include(":NoPingWidthLimit")
 include(":HideMessages")
 include(":FixBlockedReplies")
 include(":NoBuiltInCommands")
