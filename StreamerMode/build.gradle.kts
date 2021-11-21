@@ -4,6 +4,9 @@ description = "Hide identifiable information."
 aliucord {
     changelog.set(
         """
+        # 1.1.1
+        * Update patches
+
         # 1.1.0
         * Toggleable parts of plugin
 

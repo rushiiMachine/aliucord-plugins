@@ -8,8 +8,7 @@ import com.aliucord.Utils.createCheckedSetting
 import com.aliucord.annotations.AliucordPlugin
 import com.aliucord.api.SettingsAPI
 import com.aliucord.entities.Plugin
-import com.aliucord.patcher.Hook
-import com.aliucord.patcher.PreHook
+import com.aliucord.patcher.*
 import com.aliucord.widgets.BottomSheet
 import com.discord.models.member.GuildMember
 import com.discord.models.user.CoreUser
@@ -51,47 +50,43 @@ class FixBlockedReplies : Plugin() {
     }
 
     override fun start(ctx: Context) {
-        patcher.patch(
-            MessageEntry.ReplyData::class.java.getDeclaredConstructor(
-                StoreMessageReplies.MessageState::class.java,
-                MessageEntry::class.java,
-                Boolean::class.javaPrimitiveType
-            ), PreHook {
-                if (settings.getBool(SHOW_CONTENT_KEY, false))
-                    it.args[2] = false
-            }
-        )
+        patcher.before<MessageEntry.ReplyData>(
+            StoreMessageReplies.MessageState::class.java,
+            MessageEntry::class.java,
+            Boolean::class.javaPrimitiveType!!
+        ) {
+            if (settings.getBool(SHOW_CONTENT_KEY, false))
+                it.args[2] = false
+        }
 
-        patcher.patch(
-            WidgetChatListAdapterItemMessage::class.java.getDeclaredMethod(
-                "configureReplyPreview",
-                MessageEntry::class.java
-            ), Hook {
-                val entry = it.args[0] as MessageEntry
-                if (entry.replyData == null || !entry.replyData.isRepliedUserBlocked)
-                    return@Hook
+        patcher.after<WidgetChatListAdapterItemMessage>(
+            "configureReplyPreview",
+            MessageEntry::class.java
+        ) {
+            val entry = it.args[0] as MessageEntry
+            if (entry.replyData == null || !entry.replyData.isRepliedUserBlocked)
+                return@after
 
-                val replyEntry = entry.replyData.messageEntry
-                configReplyAuthor.invoke(
-                    it.thisObject,
-                    CoreUser(replyEntry.message.author),
-                    replyEntry.author,
-                    replyEntry
+            val replyEntry = entry.replyData.messageEntry
+            configReplyAuthor.invoke(
+                it.thisObject,
+                CoreUser(replyEntry.message.author),
+                replyEntry.author,
+                replyEntry
+            )
+
+            val replyHolder = replyHolder.get(it.thisObject) as View
+            replyHolder.setOnClickListener(
+                `WidgetChatListAdapterItemMessage$configureReplyPreview$1`(
+                    replyEntry.message
                 )
+            )
 
-                val replyHolder = replyHolder.get(it.thisObject) as View
-                replyHolder.setOnClickListener(
-                    `WidgetChatListAdapterItemMessage$configureReplyPreview$1`(
-                        replyEntry.message
-                    )
-                )
-
-                configReplyContentWithId.invoke(
-                    it.thisObject,
-                    msgBlockedStrId
-                )
-            }
-        )
+            configReplyContentWithId.invoke(
+                it.thisObject,
+                msgBlockedStrId
+            )
+        }
     }
 
     override fun stop(context: Context) {

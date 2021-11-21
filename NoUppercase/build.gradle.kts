@@ -1,9 +1,12 @@
-version = "1.2.0"
+version = "1.2.1"
 description = "Reverts uppercased text in various places."
 
 aliucord {
     changelog.set(
         """
+        # 1.2.1
+        * Update patches
+
         # 1.2.0
         * Add invite cards
 

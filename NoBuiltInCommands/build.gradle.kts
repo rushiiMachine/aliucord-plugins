@@ -4,6 +4,9 @@ description = "Remove Discord's built-in slash commands."
 aliucord {
     changelog.set(
         """
+        # 1.0.2
+        * Update patches
+
         # 1.0.1
         * Fix NPE
 

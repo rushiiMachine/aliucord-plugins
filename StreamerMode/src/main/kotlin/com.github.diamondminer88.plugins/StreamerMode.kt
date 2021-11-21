@@ -12,8 +12,8 @@ import com.aliucord.annotations.AliucordPlugin
 import com.aliucord.api.SettingsAPI
 import com.aliucord.entities.Plugin
 import com.aliucord.fragments.ConfirmDialog
-import com.aliucord.patcher.Hook
-import com.aliucord.patcher.InsteadHook
+import com.aliucord.patcher.after
+import com.aliucord.patcher.instead
 import com.aliucord.widgets.BottomSheet
 import com.discord.models.user.User
 import com.discord.utilities.user.UserUtils
@@ -62,53 +62,52 @@ class StreamerMode : Plugin() {
     }
 
     override fun start(ctx: Context) {
-        patcher.patch(
-            UserUtils::class.java.getDeclaredMethod(
-                "getDiscriminatorWithPadding",
-                User::class.java
-            ), InsteadHook {
-                if (settings.getBool(SETTING_DISCRIM_KEY, true))
-                    ""
-                else
-                    UserUtils.INSTANCE.padDiscriminator((it.args[0] as User).discriminator)
-            })
+        patcher.instead<UserUtils>(
+            "getDiscriminatorWithPadding",
+            User::class.java
+        ) {
+            if (settings.getBool(SETTING_DISCRIM_KEY, true))
+                ""
+            else
+                UserUtils.INSTANCE.padDiscriminator((it.args[0] as User).discriminator)
 
-        patcher.patch(
-            WidgetSettingsAccount::class.java.getDeclaredMethod(
-                "configureUI",
-                WidgetSettingsAccount.Model::class.java
-            ), Hook {
-                val view = (it.thisObject as WidgetSettingsAccount).requireView()
+        }
 
-                if (settings.getBool(SETTING_PERSONAL_DETAILS_KEY, true)) {
-                    val name = view.findViewById<TextView>(settingsNameText)
-                    name.text = "x".repeat(name.length())
+        patcher.after<WidgetSettingsAccount>(
+            "configureUI",
+            WidgetSettingsAccount.Model::class.java
+        ) {
+            val view = requireView()
 
-                    val email = view.findViewById<TextView>(settingsEmailText)
-                    val split = email.text.split("@")
-                    email.text = "x".repeat(split[0].length) + "@" + split[1]
+            if (settings.getBool(SETTING_PERSONAL_DETAILS_KEY, true)) {
+                val name = view.findViewById<TextView>(settingsNameText)
+                name.text = "x".repeat(name.length())
 
-                    val phone = view.findViewById<TextView>(settingsPhoneText)
-                    phone.text = phone.text.replace(numRegex, "x")
+                val email = view.findViewById<TextView>(settingsEmailText)
+                val split = email.text.split("@")
+                email.text = "x".repeat(split[0].length) + "@" + split[1]
 
-                    val sms = view.findViewById<TextView>(settingsSMSText)
-                    sms.visibility = View.GONE
-                }
+                val phone = view.findViewById<TextView>(settingsPhoneText)
+                phone.text = phone.text.replace(numRegex, "x")
 
-                if (settings.getBool(SETTING_SHOW_WARNING, true)) {
-                    val usernameContainer = view.findViewById<LinearLayout>(settingsUsernameContainer)
-                    configureContainer(usernameContainer, (`WidgetSettingsAccount$configureUI$2`()))
+                val sms = view.findViewById<TextView>(settingsSMSText)
+                sms.visibility = View.GONE
+            }
 
-                    val nameContainer = view.findViewById<LinearLayout>(settingsNameContainer)
-                    configureContainer(nameContainer, (`WidgetSettingsAccount$configureUI$3`()))
+            if (settings.getBool(SETTING_SHOW_WARNING, true)) {
+                val usernameContainer = view.findViewById<LinearLayout>(settingsUsernameContainer)
+                configureContainer(usernameContainer, (`WidgetSettingsAccount$configureUI$2`()))
 
-                    val emailContainer = view.findViewById<LinearLayout>(settingsEmailContainer)
-                    configureContainer(emailContainer, (`WidgetSettingsAccount$configureUI$4`()))
+                val nameContainer = view.findViewById<LinearLayout>(settingsNameContainer)
+                configureContainer(nameContainer, (`WidgetSettingsAccount$configureUI$3`()))
 
-                    val phoneContainer = view.findViewById<LinearLayout>(settingsPhoneContainer)
-                    configureContainer(phoneContainer, (`WidgetSettingsAccount$configureUI$5`()))
-                }
-            })
+                val emailContainer = view.findViewById<LinearLayout>(settingsEmailContainer)
+                configureContainer(emailContainer, (`WidgetSettingsAccount$configureUI$4`()))
+
+                val phoneContainer = view.findViewById<LinearLayout>(settingsPhoneContainer)
+                configureContainer(phoneContainer, (`WidgetSettingsAccount$configureUI$5`()))
+            }
+        }
     }
 
     override fun stop(context: Context) {

@@ -9,11 +9,10 @@ import androidx.core.widget.NestedScrollView
 import com.aliucord.*
 import com.aliucord.annotations.AliucordPlugin
 import com.aliucord.entities.Plugin
-import com.aliucord.patcher.Hook
+import com.aliucord.patcher.after
 import com.discord.models.domain.ModelMessageDelete
 import com.discord.stores.StoreStream
 import com.discord.utilities.color.ColorCompat
-import com.discord.widgets.chat.list.WidgetChatList
 import com.discord.widgets.chat.list.actions.WidgetChatListActions
 import com.lytefast.flexinput.R
 
@@ -21,9 +20,7 @@ import com.lytefast.flexinput.R
 @SuppressLint("SetTextI18n")
 @AliucordPlugin
 class HideMessages : Plugin() {
-    private var chatList: WidgetChatList? = null
     private val contextItemId = View.generateViewId()
-    private val logger = Logger(this::class.simpleName)
     private val deleteIconId = Utils.getResId("drawable_chip_delete", "drawable")
     private val deleteContextItemId = Utils.getResId("dialog_chat_actions_delete", "id")
     private val msgIdField = WidgetChatListActions::class.java.getDeclaredField("messageId")
@@ -32,58 +29,51 @@ class HideMessages : Plugin() {
         .apply { isAccessible = true }
 
     override fun start(ctx: Context) {
-        patcher.patch(WidgetChatList::class.java.getDeclaredConstructor(), Hook {
-            chatList = it.thisObject as WidgetChatList
-        })
+        patcher.after<WidgetChatListActions>(
+            "configureUI",
+            WidgetChatListActions.Model::class.java
+        ) {
+            val layout = (requireView() as NestedScrollView).getChildAt(0) as LinearLayout
 
-        patcher.patch(
-            WidgetChatListActions::class.java.getDeclaredMethod(
-                "configureUI",
-                WidgetChatListActions.Model::class.java
-            ), Hook {
-                val menu = it.thisObject as WidgetChatListActions
-                val layout = (menu.requireView() as NestedScrollView).getChildAt(0) as LinearLayout
+            if (layout.findViewById<TextView>(contextItemId) != null)
+                return@after
 
-                if (layout.findViewById<TextView>(contextItemId) != null)
-                    return@Hook
-
-                val textView = TextView(layout.context, null, 0, R.i.UiKit_Settings_Item_Icon)
-                textView.id = contextItemId
-                textView.text = "Hide Message"
-                textView.setCompoundDrawablesWithIntrinsicBounds(deleteIconId, 0, 0, 0)
-                textView.compoundDrawables[0].setTint(
-                    ColorCompat.getThemedColor(
-                        layout.context,
-                        R.b.colorInteractiveNormal
-                    )
+            val textView = TextView(layout.context, null, 0, R.i.UiKit_Settings_Item_Icon)
+            textView.id = contextItemId
+            textView.text = "Hide Message"
+            textView.setCompoundDrawablesWithIntrinsicBounds(deleteIconId, 0, 0, 0)
+            textView.compoundDrawables[0].setTint(
+                ColorCompat.getThemedColor(
+                    layout.context,
+                    R.b.colorInteractiveNormal
                 )
-                textView.setOnClickListener {
-                    val channelId = channelIdField.getLong(menu)
-                    val msgId = msgIdField.getLong(menu)
+            )
+            textView.setOnClickListener {
+                val channelId = channelIdField.getLong(this)
+                val msgId = msgIdField.getLong(this)
 
-                    menu.dismiss()
+                dismiss()
 
-                    if (PluginManager.isPluginEnabled("MessageLogger")) {
-                        logger.info("Due to how this plugin works, MessageLogger needs to be disabled")
-                        // TODO: remove patch instead
-                        PluginManager.disablePlugin("MessageLogger")
-                        StoreStream.getMessages().handleMessageDelete(ModelMessageDelete(channelId, msgId))
-                        PluginManager.enablePlugin("MessageLogger")
-                    } else {
-                        StoreStream.getMessages().handleMessageDelete(ModelMessageDelete(channelId, msgId))
-                    }
+                if (PluginManager.isPluginEnabled("MessageLogger")) {
+                    logger.info("Due to how this plugin works, MessageLogger needs to be disabled")
+                    // TODO: remove patch instead
+                    PluginManager.disablePlugin("MessageLogger")
+                    StoreStream.getMessages().handleMessageDelete(ModelMessageDelete(channelId, msgId))
+                    PluginManager.enablePlugin("MessageLogger")
+                } else {
+                    StoreStream.getMessages().handleMessageDelete(ModelMessageDelete(channelId, msgId))
                 }
-
-                for (index in 0 until layout.childCount) {
-                    if (layout.getChildAt(index).id == deleteContextItemId) {
-                        layout.addView(textView, index + 1)
-                        return@Hook
-                    }
-                }
-
-                layout.addView(textView) // backup
             }
-        )
+
+            for (index in 0 until layout.childCount) {
+                if (layout.getChildAt(index).id == deleteContextItemId) {
+                    layout.addView(textView, index + 1)
+                    return@after
+                }
+            }
+
+            layout.addView(textView) // backup
+        }
     }
 
     override fun stop(context: Context) {

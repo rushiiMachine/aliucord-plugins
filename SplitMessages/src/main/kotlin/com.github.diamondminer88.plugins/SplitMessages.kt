@@ -7,12 +7,11 @@ import android.view.View
 import android.view.ViewGroup.LayoutParams.MATCH_PARENT
 import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
 import android.widget.*
-import com.aliucord.Logger
 import com.aliucord.Utils
 import com.aliucord.annotations.AliucordPlugin
 import com.aliucord.api.SettingsAPI
 import com.aliucord.entities.Plugin
-import com.aliucord.patcher.PreHook
+import com.aliucord.patcher.before
 import com.aliucord.utils.DimenUtils
 import com.aliucord.utils.RxUtils.await
 import com.aliucord.widgets.BottomSheet
@@ -27,7 +26,6 @@ import com.discord.widgets.chat.MessageManager
 import com.discord.widgets.chat.input.ChatInputViewModel
 import com.discord.widgets.notice.WidgetNoticeDialog
 import com.lytefast.flexinput.R
-import java.util.concurrent.Executors
 
 private const val SETTINGS_KEY = "maxSplits"
 private const val DEFAULT_SPLITS = 3
@@ -36,7 +34,6 @@ private const val MAX_SPLITS = 6
 @Suppress("unused")
 @AliucordPlugin
 class SplitMessages : Plugin() {
-    private val logger = Logger(this::class.simpleName)
     private val exceptionRegex = Regex("(?m)^.*?Exception.*(?:\\R+^\\s*at .*)+")
     private val textContentField =
         MessageContent::class.java.getDeclaredField("textContent").apply {
@@ -51,81 +48,81 @@ class SplitMessages : Plugin() {
     }
 
     override fun start(ctx: Context) {
-        patcher.patch(
-            ChatInputViewModel::class.java.getDeclaredMethod(
-                "sendMessage",
-                Context::class.java,
-                MessageManager::class.java,
-                MessageContent::class.java,
-                List::class.java,
-                Boolean::class.javaPrimitiveType,
-                Function1::class.java
-            ), PreHook {
-                val maxSplits = settings.getInt(SETTINGS_KEY, DEFAULT_SPLITS)
+        patcher.before<ChatInputViewModel>(
+            "sendMessage",
+            Context::class.java,
+            MessageManager::class.java,
+            MessageContent::class.java,
+            List::class.java,
+            Boolean::class.javaPrimitiveType!!,
+            Function1::class.java
+        ) {
+            val maxSplits = settings.getInt(SETTINGS_KEY, DEFAULT_SPLITS)
 
-                val isNitro = StoreStream.getUsers().me.premiumTier == PremiumTier.TIER_2
-                val maxMessageSize = if (isNitro) 4000 else 2000
-                val messageContent = it.args[2] as MessageContent
+            val isNitro = StoreStream.getUsers().me.premiumTier == PremiumTier.TIER_2
+            val maxMessageSize = if (isNitro) 4000 else 2000
+            val messageContent = it.args[2] as MessageContent
 
-                var content = textContentField.get(messageContent) as String
+            var content = textContentField.get(messageContent) as String
 
-                if (content.length > maxMessageSize) {
-                    if (!content.matches(exceptionRegex))
-                        textContentField.set(
-                            messageContent,
-                            content.take(maxMessageSize)
-                        )
-                    else {
-                        WidgetNoticeDialog.Builder(it.args[0] as Context)
-                            .setTitle("SplitMessages")
-                            .setMessage("Please be courteous and don't send stacktraces in chat. Use a paste service like pastebin or the hastebin plugin instead.")
-                            .setPositiveButton("Okay", fun(_) {})
-                            .show(Utils.appActivity.supportFragmentManager)
+            if (content.length > maxMessageSize) {
+                if (!content.matches(exceptionRegex))
+                    textContentField.set(
+                        messageContent,
+                        content.take(maxMessageSize)
+                    )
+                else {
+                    WidgetNoticeDialog.Builder(it.args[0] as Context)
+                        .setTitle("SplitMessages")
+                        .setMessage("Please be courteous and don't send stacktraces in chat. Use a paste service like pastebin or the hastebin plugin instead.")
+                        .setPositiveButton("Okay", fun(_) {})
+                        .show(Utils.appActivity.supportFragmentManager)
 
-                        it.result = null  // block from "msg too long" dialog
-                        return@PreHook
-                    }
-                } else return@PreHook
-
-                content = content.drop(maxMessageSize)
-
-                Utils.threadPool.execute {
-                    var splits = 1
-
-                    while (content.isNotEmpty()) {
-                        if (splits > maxSplits) {
-                            Utils.showToast("Limiting splits at $maxSplits for safety")
-                            break
-                        }
-                        splits++
-
-                        Thread.sleep(1000)
-
-                        val message = RestAPIParams.Message(
-                            content.take(maxMessageSize),
-                            NonceGenerator.computeNonce(ClockFactory.get()).toString(),
-                            null,
-                            null,
-                            emptyList(),
-                            null,
-                            RestAPIParams.Message.AllowedMentions(
-                                // FIXME
-                                emptyList(),
-                                emptyList(),
-                                emptyList(),
-                                false
-                            )
-                        )
-                        val (_, err) = RestAPI.api.sendMessage(
-                            StoreStream.getChannelsSelected().id,
-                            message
-                        ).await()
-                        if (err != null) logger.error(err)
-
-                        content = content.drop(maxMessageSize)
-                    }
+                    it.result = null  // block from "msg too long" dialog
+                    return@before
                 }
-            })
+            } else return@before
+
+            content = content.drop(maxMessageSize)
+
+            Utils.threadPool.execute {
+                var splits = 1
+
+                while (content.isNotEmpty()) {
+                    if (splits > maxSplits) {
+                        Utils.showToast("Limiting splits at $maxSplits for safety")
+                        break
+                    }
+                    splits++
+
+                    Thread.sleep(1000)
+
+                    val message = RestAPIParams.Message(
+                        content.take(maxMessageSize),
+                        NonceGenerator.computeNonce(ClockFactory.get()).toString(),
+                        null,
+                        null,
+                        emptyList(),
+                        null,
+                        RestAPIParams.Message.AllowedMentions(
+                            // FIXME
+                            emptyList(),
+                            emptyList(),
+                            emptyList(),
+                            false
+                        )
+                    )
+                    val (_, err) = RestAPI.api.sendMessage(
+                        StoreStream.getChannelsSelected().id,
+                        message
+                    ).await()
+                    if (err != null) logger.error(err)
+
+                    content = content.drop(maxMessageSize)
+                }
+            }
+
+        }
     }
 
     override fun stop(context: Context) {

@@ -1,9 +1,12 @@
-version = "1.1.2"
+version = "1.1.3"
 description = "Makes sticker sizes configurable."
 
 aliucord {
     changelog.set(
         """
+        # 1.1.3
+        * Update patches
+
         # 1.1.2
         * Update to 101.3
 

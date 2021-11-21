@@ -10,12 +10,12 @@ import android.widget.*
 import androidx.appcompat.widget.LinearLayoutCompat
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.widget.NestedScrollView
-import com.aliucord.Logger
 import com.aliucord.Utils
 import com.aliucord.annotations.AliucordPlugin
 import com.aliucord.api.SettingsAPI
 import com.aliucord.entities.Plugin
 import com.aliucord.patcher.Hook
+import com.aliucord.patcher.after
 import com.aliucord.utils.DimenUtils
 import com.aliucord.views.Button
 import com.aliucord.widgets.BottomSheet
@@ -28,11 +28,8 @@ private const val TEXT_SIZE_KEY = "textSizeMultiplier"
 private const val DEFAULT_MULTIPLIER = 1f
 
 @Suppress("unused")
-@SuppressLint("PrivateApi")
-@AliucordPlugin
+@AliucordPlugin(requiresRestart = true)
 class NoUppercase : Plugin() {
-    private val logger = Logger(this::class.simpleName)
-
     init {
         settingsTab = SettingsTab(
             NoUppercaseSettings::class.java,
@@ -54,27 +51,23 @@ class NoUppercase : Plugin() {
         // *although my futile attempts did not work*
 
         // guild member list role headers
-        patcher.patch(
-            WidgetChannelMembersListItemHeaderBinding::class.java.getDeclaredConstructor(
-                LinearLayout::class.java,
-                RoleIconView::class.java,
-                TextView::class.java
-            ), Hook {
-                val thisObj = it.thisObject as WidgetChannelMembersListItemHeaderBinding
-                configureTextView(thisObj.c, settings.getFloat(TEXT_SIZE_KEY, DEFAULT_MULTIPLIER))
-            })
+        patcher.after<WidgetChannelMembersListItemHeaderBinding>(
+            LinearLayout::class.java,
+            RoleIconView::class.java,
+            TextView::class.java
+        ) {
+            configureTextView(this.c, settings.getFloat(TEXT_SIZE_KEY, DEFAULT_MULTIPLIER))
+        }
 
         // channel list categories
-        patcher.patch(
-            WidgetChannelsListItemCategoryBinding::class.java.getDeclaredConstructor(
-                LinearLayout::class.java,
-                ImageView::class.java,
-                ImageView::class.java,
-                TextView::class.java
-            ), Hook {
-                val thisObj = it.thisObject as WidgetChannelsListItemCategoryBinding
-                configureTextView(thisObj.d, settings.getFloat(TEXT_SIZE_KEY, DEFAULT_MULTIPLIER))
-            })
+        patcher.after<WidgetChannelsListItemCategoryBinding>(
+            LinearLayout::class.java,
+            ImageView::class.java,
+            ImageView::class.java,
+            TextView::class.java
+        ) {
+            configureTextView(this.d, settings.getFloat(TEXT_SIZE_KEY, DEFAULT_MULTIPLIER))
+        }
 
         // user profile
         patcher.patch(
@@ -89,52 +82,47 @@ class NoUppercase : Plugin() {
         )
 
         // friends list online/offline headers
-        patcher.patch(
-            WidgetFriendsListAdapterItemHeaderBinding::class.java.getConstructor(
-                FrameLayout::class.java,
-                TextView::class.java
-            ), Hook {
-                val thisObj = it.thisObject as WidgetFriendsListAdapterItemHeaderBinding
-                configureTextView(thisObj.b, settings.getFloat(TEXT_SIZE_KEY, DEFAULT_MULTIPLIER))
-            })
+        patcher.after<WidgetFriendsListAdapterItemHeaderBinding>(
+            FrameLayout::class.java,
+            TextView::class.java
+        ) {
+            configureTextView(this.b, settings.getFloat(TEXT_SIZE_KEY, DEFAULT_MULTIPLIER))
+
+        }
         // friends list pending headers
-        patcher.patch(
-            WidgetFriendsListExpandableHeaderBinding::class.java.getConstructor(
-                FrameLayout::class.java,
-                TextView::class.java,
-                TextView::class.java
-            ), Hook {
-                val thisObj = it.thisObject as WidgetFriendsListExpandableHeaderBinding
-                configureTextView(thisObj.c, settings.getFloat(TEXT_SIZE_KEY, DEFAULT_MULTIPLIER))
-            })
+        patcher.after<WidgetFriendsListExpandableHeaderBinding>(
+            FrameLayout::class.java,
+            TextView::class.java,
+            TextView::class.java
+        ) {
+            configureTextView(this.c, settings.getFloat(TEXT_SIZE_KEY, DEFAULT_MULTIPLIER))
+        }
 
         // user settings
-        patcher.patch(
-            WidgetSettings::class.java.getDeclaredMethod("onViewBound", View::class.java),
-            Hook {
-                val multiplier = settings.getFloat(TEXT_SIZE_KEY, DEFAULT_MULTIPLIER)
-                val view =
-                    ((it.args[0] as CoordinatorLayout).getChildAt(1) as NestedScrollView)
-                        .getChildAt(0) as LinearLayoutCompat
+        patcher.after<WidgetSettings>("onViewBound", View::class.java) {
+            val multiplier = settings.getFloat(TEXT_SIZE_KEY, DEFAULT_MULTIPLIER)
+            val view =
+                ((it.args[0] as CoordinatorLayout).getChildAt(1) as NestedScrollView)
+                    .getChildAt(0) as LinearLayoutCompat
 
-                val stringIds = listOf(
-                    "user_settings_header",
-                    "nitro_header",
-                    "app_settings_header",
-                    "developer_options_header",
-                    "app_info_header"
-                )
-                stringIds
-                    .map { id -> Utils.getResId(id, "id") }
-                    .forEachIndexed { index, id ->
-                        val child = view.findViewById<TextView>(id)
-                        if (child == null) {
-                            logger.error("Failed to find TextView ${stringIds[index]}", null)
-                            return@forEachIndexed
-                        }
-                        configureTextView(child, multiplier)
+            val stringIds = listOf(
+                "user_settings_header",
+                "nitro_header",
+                "app_settings_header",
+                "developer_options_header",
+                "app_info_header"
+            )
+            stringIds
+                .map { id -> Utils.getResId(id, "id") }
+                .forEachIndexed { index, id ->
+                    val child = view.findViewById<TextView>(id)
+                    if (child == null) {
+                        logger.error("Failed to find TextView ${stringIds[index]}", null)
+                        return@forEachIndexed
                     }
-            })
+                    configureTextView(child, multiplier)
+                }
+        }
 
         // invite cards
         patcher.patch(WidgetChatListAdapterItemInviteBinding::class.java.declaredConstructors[0], Hook {
