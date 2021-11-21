@@ -1,9 +1,12 @@
-version = "1.1.1"
+version = "1.1.2"
 description = "Increase the max width of the ping count label."
 
 aliucord {
     changelog.set(
         """
+        # 1.1.2
+        * Force update pls
+        
         # 1.1.1
         * Accidentally left in debug code
 
