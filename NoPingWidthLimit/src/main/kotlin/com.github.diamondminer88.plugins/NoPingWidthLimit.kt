@@ -29,16 +29,12 @@ class NoPingWidthLimit : Plugin() {
             if (homeModel.unreadCount < 100) return@after // comment out when testing
 
             val widgetHome = (it.args[0] as WidgetHome)
-            val unreadCount = widgetHome.unreadCountView
-            val unreadLength = homeModel.unreadCount.toString().length // comment out when testing
+            val mentionsView = widgetHome.unreadCountView
 
             // testing
-//            unreadCount.text = "69420"
-//            val unreadLength = unreadCount.text.length
+//            mentionsView.text = "69420"
 
-            unreadCount.layoutParams.apply {
-                width = DimenUtils.dpToPx(unreadLength * 7)
-            }
+            mentionsView.layoutParams.width = DimenUtils.dpToPx(mentionsView.text.length * 7)
         }
 
         patcher.after<WidgetChannelsListAdapter.ItemChannelText>(
@@ -47,7 +43,7 @@ class NoPingWidthLimit : Plugin() {
             ChannelListItem::class.java
         ) {
             val item = it.args[1] as ChannelListItemTextChannel
-            if (item.mentionCount < 99) return@after // comment out when testing
+            if (item.mentionCount < 100) return@after // comment out when testing
             val mentionsView = this.itemView.findViewById<TextView>(channelMentionsId)
 
 //            mentionsView.text = "69420" // testing
