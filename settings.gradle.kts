@@ -1,3 +1,4 @@
+includeNoCI(":TypingIndicators")
 include(":NoPingWidthLimit")
 include(":HideMessages")
 include(":FixBlockedReplies")
