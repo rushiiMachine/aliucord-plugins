@@ -1,5 +1,5 @@
 version = "1.0.0"
-description = "TODO: Description"
+description = "Replaces the TM emoji with one that's visible."
 
 aliucord {
     changelog.set(

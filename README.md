@@ -59,3 +59,6 @@ Show reply author, (optionally) show reply content, and fix clicking on them.
 
 ### [NoPingWidthLimit](https://github.com/DiamondMiner88/aliucord-plugins/raw/builds/NoPingWidthLimit.zip)
 Increase the max width of the ping count label.
+
+### [BetterTm](https://github.com/DiamondMiner88/aliucord-plugins/raw/builds/BetterTm.zip)
+Replaces the TM emoji with one that's visible.
