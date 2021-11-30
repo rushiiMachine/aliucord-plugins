@@ -21,7 +21,7 @@ class BetterTm : Plugin() {
         ), PreHook {
             if (it.args[0] != TM_EMOJI_URI) return@PreHook
 
-            it.args[0] = "https://github.com/DiamondMiner88/aliucord-plugins/blob/master/BetterTm/tm.png"
+            it.args[0] = "https://raw.githubusercontent.com/DiamondMiner88/aliucord-plugins/master/BetterTm/tm.png"
             it.args[1] = 100
             it.args[2] = 100
         })
