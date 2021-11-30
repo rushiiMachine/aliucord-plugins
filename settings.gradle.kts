@@ -1,3 +1,4 @@
+include(":BetterTm")
 includeNoCI(":TypingIndicators")
 include(":NoPingWidthLimit")
 include(":HideMessages")
