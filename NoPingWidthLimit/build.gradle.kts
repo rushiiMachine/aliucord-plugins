@@ -6,7 +6,7 @@ aliucord {
         """
         # 1.1.2
         * Force update pls
-        
+
         # 1.1.1
         * Accidentally left in debug code
 

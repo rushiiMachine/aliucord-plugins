@@ -70,7 +70,6 @@ class StreamerMode : Plugin() {
                 ""
             else
                 UserUtils.INSTANCE.padDiscriminator((it.args[0] as User).discriminator)
-
         }
 
         patcher.after<WidgetSettingsAccount>(
@@ -156,7 +155,7 @@ class StreamerModeSettings(private val settings: SettingsAPI) : BottomSheet() {
     }
 }
 
-// ---------- future reference patches ----------
+// ---------- patches for future reference ----------
 
 //private val profileHeaderPrimaryUsername = Utils.getResId("username_text", "id")
 //private val profileHeaderSecondaryUsername =
