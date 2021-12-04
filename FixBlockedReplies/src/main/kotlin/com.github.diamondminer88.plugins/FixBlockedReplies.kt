@@ -9,6 +9,7 @@ import com.aliucord.annotations.AliucordPlugin
 import com.aliucord.api.SettingsAPI
 import com.aliucord.entities.Plugin
 import com.aliucord.patcher.*
+import com.aliucord.settings.delegate
 import com.aliucord.widgets.BottomSheet
 import com.discord.models.member.GuildMember
 import com.discord.models.user.CoreUser
@@ -18,8 +19,6 @@ import com.discord.views.CheckedSetting.ViewType.SWITCH
 import com.discord.widgets.chat.list.adapter.WidgetChatListAdapterItemMessage
 import com.discord.widgets.chat.list.adapter.`WidgetChatListAdapterItemMessage$configureReplyPreview$1`
 import com.discord.widgets.chat.list.entries.MessageEntry
-
-private const val SHOW_CONTENT_KEY = "showContent"
 
 @Suppress("unused")
 @AliucordPlugin
@@ -55,7 +54,7 @@ class FixBlockedReplies : Plugin() {
             MessageEntry::class.java,
             Boolean::class.javaPrimitiveType!!
         ) {
-            if (settings.getBool(SHOW_CONTENT_KEY, false))
+            if (settings.getBool("showContent", false))
                 it.args[2] = false
         }
 
@@ -95,6 +94,8 @@ class FixBlockedReplies : Plugin() {
 }
 
 class FixBlockedRepliesSettings(private val settings: SettingsAPI) : BottomSheet() {
+    var showContent: Boolean by settings.delegate(false)
+
     override fun onViewCreated(view: View, bundle: Bundle?) {
         super.onViewCreated(view, bundle)
         val ctx = view.context
@@ -105,10 +106,8 @@ class FixBlockedRepliesSettings(private val settings: SettingsAPI) : BottomSheet
                 "Reply content",
                 "Show reply content"
             ).apply {
-                isChecked = settings.getBool(SHOW_CONTENT_KEY, false)
-                setOnCheckedListener {
-                    settings.setBool(SHOW_CONTENT_KEY, it)
-                }
+                isChecked = showContent
+                setOnCheckedListener { showContent = it }
             })
     }
 }

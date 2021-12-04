@@ -1,9 +1,12 @@
-version = "1.1.5"
+version = "1.1.6"
 description = "Finds the first message from a user/channel. (/firstmessage)"
 
 aliucord {
     changelog.set(
         """
+        # 1.1.6
+        * Update to new Aliucord
+
         # 1.1.5
         * Fix stringify-ing a pair
 

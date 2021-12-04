@@ -12,6 +12,7 @@ import com.aliucord.annotations.AliucordPlugin
 import com.aliucord.api.SettingsAPI
 import com.aliucord.entities.Plugin
 import com.aliucord.patcher.before
+import com.aliucord.settings.delegate
 import com.aliucord.utils.DimenUtils
 import com.aliucord.utils.RxUtils.await
 import com.aliucord.widgets.BottomSheet
@@ -29,7 +30,7 @@ import com.lytefast.flexinput.R
 
 private const val SETTINGS_KEY = "maxSplits"
 private const val DEFAULT_SPLITS = 3
-private const val MAX_SPLITS = 6
+private const val MAX_SPLITS = 7
 
 @Suppress("unused")
 @AliucordPlugin
@@ -47,6 +48,8 @@ class SplitMessages : Plugin() {
         ).withArgs(settings)
     }
 
+    var maxSplits: Int by settings.delegate(DEFAULT_SPLITS)
+
     override fun start(ctx: Context) {
         patcher.before<ChatInputViewModel>(
             "sendMessage",
@@ -57,8 +60,6 @@ class SplitMessages : Plugin() {
             Boolean::class.javaPrimitiveType!!,
             Function1::class.java
         ) {
-            val maxSplits = settings.getInt(SETTINGS_KEY, DEFAULT_SPLITS)
-
             val isNitro = StoreStream.getUsers().me.premiumTier == PremiumTier.TIER_2
             val maxMessageSize = if (isNitro) 4000 else 2000
             val messageContent = it.args[2] as MessageContent
@@ -132,11 +133,11 @@ class SplitMessages : Plugin() {
 
 @SuppressLint("SetTextI18n")
 class SplitMessagesSettings(private val settings: SettingsAPI) : BottomSheet() {
+    var maxSplits: Int by settings.delegate(DEFAULT_SPLITS)
+
     override fun onViewCreated(view: View, bundle: Bundle?) {
         super.onViewCreated(view, bundle)
         val ctx = view.context
-
-        val maxSplits = settings.getInt(SETTINGS_KEY, DEFAULT_SPLITS)
 
         val currentSplits = TextView(ctx, null, 0, R.i.UiKit_TextView).apply {
             text = "$maxSplits"
@@ -156,8 +157,9 @@ class SplitMessagesSettings(private val settings: SettingsAPI) : BottomSheet() {
                     currentSplits.text = progress.toString()
                 }
 
-                override fun onStopTrackingTouch(seekBar: SeekBar) =
-                    settings.setInt(SETTINGS_KEY, progress)
+                override fun onStopTrackingTouch(seekBar: SeekBar) {
+                    maxSplits = progress
+                }
             })
         }
 

@@ -72,7 +72,7 @@ class HideMessages : Plugin() {
                 }
             }
 
-            layout.addView(textView) // backup
+            layout.addView(textView) // backup in case delete btn is gone completely
         }
     }
 

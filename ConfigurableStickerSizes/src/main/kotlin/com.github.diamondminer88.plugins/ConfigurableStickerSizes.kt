@@ -7,11 +7,11 @@ import android.view.View
 import android.view.ViewGroup.LayoutParams.MATCH_PARENT
 import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
 import android.widget.*
-import com.aliucord.Logger
 import com.aliucord.annotations.AliucordPlugin
 import com.aliucord.api.SettingsAPI
 import com.aliucord.entities.Plugin
 import com.aliucord.patcher.after
+import com.aliucord.settings.delegate
 import com.aliucord.utils.DimenUtils
 import com.aliucord.views.Button
 import com.aliucord.widgets.BottomSheet
@@ -25,7 +25,6 @@ const val DEFAULT_STICKER_SIZE = 240
 @Suppress("unused")
 @AliucordPlugin
 class ConfigurableStickerSizes : Plugin() {
-    private val logger = Logger(this::class.simpleName)
     private val bindingField = WidgetChatListAdapterItemSticker::class.java
         .getDeclaredField("binding")
         .apply { isAccessible = true }
@@ -37,14 +36,14 @@ class ConfigurableStickerSizes : Plugin() {
         ).withArgs(settings)
     }
 
+    var stickerSize: Int by settings.delegate(DEFAULT_STICKER_SIZE)
+
     override fun start(ctx: Context) {
         patcher.after<WidgetChatListAdapterItemSticker>(
             "onConfigure",
             Integer.TYPE,
             ChatListEntry::class.java
         ) {
-            val stickerSize = settings.getInt("stickerSize", DEFAULT_STICKER_SIZE)
-
             val binding = bindingField.get(this)
                 as WidgetChatListAdapterItemStickerBinding
 
@@ -85,12 +84,12 @@ class ConfigurableStickerSizes : Plugin() {
 }
 
 @SuppressLint("SetTextI18n")
-class ConfigurableStickerSizesSettings(private val settings: SettingsAPI) : BottomSheet() {
+class ConfigurableStickerSizesSettings(settings: SettingsAPI) : BottomSheet() {
+    var stickerSize: Int by settings.delegate(DEFAULT_STICKER_SIZE)
+
     override fun onViewCreated(view: View, bundle: Bundle?) {
         super.onViewCreated(view, bundle)
         val ctx = view.context
-
-        val stickerSize = settings.getInt("stickerSize", DEFAULT_STICKER_SIZE)
 
         val currentSize = TextView(ctx, null, 0, R.i.UiKit_TextView).apply {
             text = "$stickerSize px"
@@ -112,8 +111,9 @@ class ConfigurableStickerSizesSettings(private val settings: SettingsAPI) : Bott
                     currentSize.text = "${progress + 100} px"
                 }
 
-                override fun onStopTrackingTouch(seekBar: SeekBar) =
-                    settings.setInt("stickerSize", progress + 100)
+                override fun onStopTrackingTouch(seekBar: SeekBar) {
+                    stickerSize = progress + 100
+                }
             })
         }
 
@@ -125,7 +125,7 @@ class ConfigurableStickerSizesSettings(private val settings: SettingsAPI) : Bott
             setOnClickListener {
                 currentSize.text = "240 px"
                 slider.progress = 140
-                settings.setInt("stickerSize", 240)
+                stickerSize = 240
             }
         }
 

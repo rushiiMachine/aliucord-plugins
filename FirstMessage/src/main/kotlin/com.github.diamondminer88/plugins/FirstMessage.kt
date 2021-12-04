@@ -18,7 +18,6 @@ import java.util.*
 @Suppress("unused")
 @AliucordPlugin
 class FirstMessage : Plugin() {
-    private val logger = Logger(this::class.simpleName)
     private val gson = Gson()
     private val cmdMsgNotFound =
         CommandResult("This user has not sent a message!", null, false)
