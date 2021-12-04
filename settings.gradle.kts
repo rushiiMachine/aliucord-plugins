@@ -1,3 +1,4 @@
+include(":SlashNick")
 include(":NoTimestamps")
 include(":BetterTm")
 includeNoCI(":TypingIndicators")

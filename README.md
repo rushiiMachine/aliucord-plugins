@@ -65,3 +65,6 @@ Replaces the TM emoji with one that's visible.
 
 ### [NoTimestamps](https://github.com/DiamondMiner88/aliucord-plugins/raw/builds/NoTimestamps.zip)
 Hide timestamps on messages.
+
+### [SlashNick](https://github.com/DiamondMiner88/aliucord-plugins/raw/builds/SlashNick.zip)
+Bring the /nick command to mobile.
