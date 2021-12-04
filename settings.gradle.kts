@@ -1,3 +1,4 @@
+include(":NoTimestamps")
 include(":BetterTm")
 includeNoCI(":TypingIndicators")
 include(":NoPingWidthLimit")

@@ -62,3 +62,6 @@ Increase the max width of the ping count label.
 
 ### [BetterTm](https://github.com/DiamondMiner88/aliucord-plugins/raw/builds/BetterTm.zip)
 Replaces the TM emoji with one that's visible.
+
+### [NoTimestamps](https://github.com/DiamondMiner88/aliucord-plugins/raw/builds/NoTimestamps.zip)
+Hide timestamps on messages.
