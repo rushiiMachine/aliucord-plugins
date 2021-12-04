@@ -14,15 +14,17 @@ import com.aliucord.entities.Plugin
 import com.aliucord.fragments.ConfirmDialog
 import com.aliucord.patcher.after
 import com.aliucord.patcher.instead
+import com.aliucord.settings.delegate
 import com.aliucord.widgets.BottomSheet
 import com.discord.models.user.User
 import com.discord.utilities.user.UserUtils
 import com.discord.views.CheckedSetting.ViewType.SWITCH
+import com.discord.widgets.channels.*
 import com.discord.widgets.settings.account.*
+import com.discord.widgets.user.profile.UserProfileConnectionsView
+import com.discord.widgets.user.profile.UserProfileConnectionsView.ConnectedAccountItem
+import com.discord.widgets.user.profile.UserProfileHeaderViewModel
 
-private const val SETTING_DISCRIM_KEY = "hideDiscriminators"
-private const val SETTING_PERSONAL_DETAILS_KEY = "hidePersonalDetails"
-private const val SETTING_SHOW_WARNING = "showWarning"
 
 @Suppress("unused")
 @SuppressLint("SetTextI18n")
@@ -36,7 +38,11 @@ class StreamerMode : Plugin() {
     private val settingsNameContainer = Utils.getResId("settings_account_name_container", "id")
     private val settingsEmailContainer = Utils.getResId("settings_account_email_container", "id")
     private val settingsPhoneContainer = Utils.getResId("settings_account_phone_container", "id")
+    private val connectionDialogHeader = Utils.getResId("connected_account_actions_dialog_header", "id")
+    private val dmChannelAKAs = Utils.getResId("channel_aka", "id")
     private val numRegex = Regex("\\d")
+    private val fShowAkas =
+        UserProfileHeaderViewModel.ViewState.Loaded::class.java.getDeclaredField("showAkas")
 
     init {
         settingsTab = SettingsTab(
@@ -61,24 +67,60 @@ class StreamerMode : Plugin() {
         }
     }
 
+    private val hideAKAs: Boolean by settings.delegate(true)
+    private val hideConnections: Boolean by settings.delegate(true)
+    private val hideDiscriminators: Boolean by settings.delegate(true)
+    private val hidePersonalDetails: Boolean by settings.delegate(true)
+    private val showWarning: Boolean by settings.delegate(true)
+
     override fun start(ctx: Context) {
+        // dm sidebar AKAs
+        patcher.after<WidgetChannelTopic>("configureUI", WidgetChannelTopicViewModel.ViewState::class.java) {
+            if (!hideAKAs) return@after
+            requireView().findViewById<UserAkaView>(dmChannelAKAs).visibility = View.GONE
+        }
+
+        // user profile AKAs
+        patcher.instead<UserProfileHeaderViewModel.ViewState.Loaded>("getShowAkas") {
+            if (hideAKAs) false
+            else fShowAkas.get(this)
+        }
+
+        // profile connections
+        patcher.after<UserProfileConnectionsView.ViewHolder>(
+            "onConfigure",
+            Integer.TYPE,
+            ConnectedAccountItem::class.java
+        ) {
+            if (!hideConnections) return@after
+            val textView = this.itemView as TextView
+            textView.text = "x".repeat(textView.length())
+        }
+
+        // connection popup
+        patcher.after<c.a.a.i>("onViewBound", View::class.java) {
+            if (!hideConnections) return@after
+            val header = requireView().findViewById<TextView>(connectionDialogHeader)
+            header.text = "x".repeat(header.length())
+        }
+
+        // user discriminators
         patcher.instead<UserUtils>(
             "getDiscriminatorWithPadding",
             User::class.java
         ) {
-            if (settings.getBool(SETTING_DISCRIM_KEY, true))
-                ""
-            else
-                UserUtils.INSTANCE.padDiscriminator((it.args[0] as User).discriminator)
+            if (hideDiscriminators) ""
+            else UserUtils.INSTANCE.padDiscriminator((it.args[0] as User).discriminator)
         }
 
+        // user account settings
         patcher.after<WidgetSettingsAccount>(
             "configureUI",
             WidgetSettingsAccount.Model::class.java
         ) {
             val view = requireView()
 
-            if (settings.getBool(SETTING_PERSONAL_DETAILS_KEY, true)) {
+            if (hidePersonalDetails) {
                 val name = view.findViewById<TextView>(settingsNameText)
                 name.text = "x".repeat(name.length())
 
@@ -93,7 +135,7 @@ class StreamerMode : Plugin() {
                 sms.visibility = View.GONE
             }
 
-            if (settings.getBool(SETTING_SHOW_WARNING, true)) {
+            if (showWarning) {
                 val usernameContainer = view.findViewById<LinearLayout>(settingsUsernameContainer)
                 configureContainer(usernameContainer, (`WidgetSettingsAccount$configureUI$2`()))
 
@@ -115,6 +157,12 @@ class StreamerMode : Plugin() {
 }
 
 class StreamerModeSettings(private val settings: SettingsAPI) : BottomSheet() {
+    private var hideAKAs: Boolean by settings.delegate(true)
+    private var hideConnections: Boolean by settings.delegate(true)
+    private var hideDiscriminators: Boolean by settings.delegate(true)
+    private var hidePersonalDetails: Boolean by settings.delegate(true)
+    private var showWarning: Boolean by settings.delegate(true)
+
     override fun onViewCreated(view: View, bundle: Bundle?) {
         super.onViewCreated(view, bundle)
         val ctx = view.context
@@ -125,10 +173,8 @@ class StreamerModeSettings(private val settings: SettingsAPI) : BottomSheet() {
                 "Discriminators",
                 "Hide the #0000 part of user tags for everyone"
             ).apply {
-                isChecked = settings.getBool(SETTING_DISCRIM_KEY, true)
-                setOnCheckedListener {
-                    settings.setBool(SETTING_DISCRIM_KEY, it)
-                }
+                isChecked = hideDiscriminators
+                setOnCheckedListener { hideDiscriminators = it }
             })
 
         addView(createCheckedSetting(
@@ -136,10 +182,8 @@ class StreamerModeSettings(private val settings: SettingsAPI) : BottomSheet() {
             "Personal details",
             "Censor personal details on the 'My Account' settings page"
         ).apply {
-            isChecked = settings.getBool(SETTING_PERSONAL_DETAILS_KEY, true)
-            setOnCheckedListener {
-                settings.setBool(SETTING_PERSONAL_DETAILS_KEY, it)
-            }
+            isChecked = hidePersonalDetails
+            setOnCheckedListener { hidePersonalDetails = it }
         })
 
         addView(createCheckedSetting(
@@ -147,10 +191,26 @@ class StreamerModeSettings(private val settings: SettingsAPI) : BottomSheet() {
             "Warnings",
             "Show warnings when clicking on pages with identifiable content"
         ).apply {
-            isChecked = settings.getBool(SETTING_SHOW_WARNING, true)
-            setOnCheckedListener {
-                settings.setBool(SETTING_SHOW_WARNING, it)
-            }
+            isChecked = showWarning
+            setOnCheckedListener { showWarning = it }
+        })
+
+        addView(createCheckedSetting(
+            ctx, SWITCH,
+            "AKAs",
+            "Hide user AKAs from profile/dms"
+        ).apply {
+            isChecked = hideAKAs
+            setOnCheckedListener { hideAKAs = it }
+        })
+
+        addView(createCheckedSetting(
+            ctx, SWITCH,
+            "Connections",
+            "Hide user account connections"
+        ).apply {
+            isChecked = hideConnections
+            setOnCheckedListener { hideConnections = it }
         })
     }
 }

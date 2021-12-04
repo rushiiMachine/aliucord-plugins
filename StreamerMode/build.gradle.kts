@@ -1,11 +1,13 @@
-version = "1.1.0"
+version = "1.2.0"
 description = "Hide identifiable information."
 
 aliucord {
     changelog.set(
         """
-        # 1.1.1
-        * Update patches
+        # 1.2.0
+        * Hide AKAs
+        * Hide user connections
+        * Update to new Aliucord
 
         # 1.1.0
         * Toggleable parts of plugin
