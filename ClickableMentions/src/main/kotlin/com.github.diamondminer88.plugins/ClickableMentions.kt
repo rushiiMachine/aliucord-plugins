@@ -26,11 +26,15 @@ class ClickableMentions : Plugin() {
     private val userClickHandler: (Long) -> Unit = {
         logger.info("here")
         val adapter = WidgetChatList.`access$getAdapter$p`(Utils.widgetChatList)
-        adapter.eventHandler.onUserMentionClicked(
-            it,
-            adapter.data.channelId,
-            adapter.data.guildId
-        )
+        if (adapter.fragmentManager == null) {
+            logger.errorToast("Failed to get fragmentManager")
+        } else {
+            adapter.eventHandler.onUserMentionClicked(
+                it,
+                adapter.data.channelId,
+                adapter.data.guildId
+            )
+        }
     }
 
     override fun start(ignored: Context) {
