@@ -1,9 +1,9 @@
 <div align="center">
   <h1><a href="https://github.com/Aliucord/Aliucord">Aliucord</a> plugins</h1>
   <p>all my shitty plugins</p>
-  <a href="https://hits.dwyl.com/DiamondMiner88/aliucord-plugins">
+  <!-- <a href="https://hits.dwyl.com/DiamondMiner88/aliucord-plugins">
     <img src="https://hits.dwyl.com/DiamondMiner88/aliucord-plugins.svg" alt="Hit count"/>
-  </a>
+  </a> -->
   <a href="https://github.com/DiamondMiner88/aliucord-plugins/tree/builds">
     <img src="https://img.shields.io/github/workflow/status/DiamondMiner88/aliucord-plugins/Build?label=Plugins%20Build&logo=githubactions&logoColor=white&style=flat-square" alt="Build status"/>
   </a>
