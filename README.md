@@ -68,3 +68,6 @@ Hide timestamps on messages.
 
 ### [SlashNick](https://github.com/DiamondMiner88/aliucord-plugins/raw/builds/SlashNick.zip)
 Bring the /nick command to mobile.
+
+### [ClickableMentions](https://github.com/DiamondMiner88/aliucord-plugins/raw/builds/ClickableMentions.zip)
+Enable clicking user/channel mentions everywhere. (ex. embeds/channel topics)

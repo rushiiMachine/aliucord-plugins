@@ -1,3 +1,4 @@
+include(":ClickableMentions")
 include(":SlashNick")
 include(":NoTimestamps")
 include(":BetterTm")
