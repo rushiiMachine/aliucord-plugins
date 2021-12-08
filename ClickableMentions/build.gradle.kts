@@ -1,9 +1,12 @@
-version = "1.0.1"
+version = "1.0.2"
 description = "Enable clicking user/channel mentions everywhere. (ex. embeds/channel topics)"
 
 aliucord {
     changelog.set(
         """
+        # 1.0.2
+        * Remove a dev log
+
         # 1.0.1
         * Fix random crash(?)
 

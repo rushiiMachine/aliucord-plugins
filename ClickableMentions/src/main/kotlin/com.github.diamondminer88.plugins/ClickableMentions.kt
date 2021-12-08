@@ -38,10 +38,6 @@ class ClickableMentions : Plugin() {
     }
 
     override fun start(ignored: Context) {
-        UserMentionNode::class.java.declaredMethods.forEach {
-            logger.info(it.toString())
-        }
-
         patcher.after<UserMentionNode<UserMentionNode.RenderContext>>(
             "renderUserMention",
             SpannableStringBuilder::class.java,
