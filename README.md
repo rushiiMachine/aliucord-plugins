@@ -71,3 +71,6 @@ Bring the /nick command to mobile.
 
 ### [ClickableMentions](https://github.com/DiamondMiner88/aliucord-plugins/raw/builds/ClickableMentions.zip)
 Enable clicking user/channel mentions everywhere. (ex. embeds/channel topics)
+
+### [Counters](https://github.com/DiamondMiner88/aliucord-plugins/raw/builds/Counters.zip)
+Show an servers/online friend count in your server list.
