@@ -90,7 +90,6 @@ class Counters : Plugin() {
                             }
                         }
                     StoreStream.getPresences().observeAllPresences().subscribe {
-                        logger.info("presences update")
                         val presences = StoreStream.getPresences().presences
                         val online = StoreStream.getUserRelationships().relationships
                             .filter { r -> r.value == ModelUserRelationship.TYPE_FRIEND }.keys
