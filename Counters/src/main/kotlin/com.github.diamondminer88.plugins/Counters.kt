@@ -68,7 +68,10 @@ class Counters : Plugin() {
                             isAllCaps = false
                             layoutParams = LinearLayout.LayoutParams(WRAP_CONTENT, WRAP_CONTENT).apply {
                                 gravity = Gravity.CENTER_HORIZONTAL
+
                             }
+                            if (!onlineFriendCount)
+                                setPadding(paddingLeft, paddingTop, paddingRight, DimenUtils.dpToPx(8))
                         }
                     StoreStream.getGuilds().observeGuilds().subscribe {
                         Utils.mainThread.post {
@@ -84,6 +87,7 @@ class Counters : Plugin() {
                         .apply {
                             setTextColor(ColorCompat.getThemedColor(ctx, R.b.colorChannelDefault))
                             textSize = DimenUtils.dpToPx(3.7f).toFloat() * sizeMultiplier
+                            setPadding(paddingLeft, paddingTop, paddingRight, DimenUtils.dpToPx(8))
                             isAllCaps = false
                             layoutParams = LinearLayout.LayoutParams(WRAP_CONTENT, WRAP_CONTENT).apply {
                                 gravity = Gravity.CENTER_HORIZONTAL
