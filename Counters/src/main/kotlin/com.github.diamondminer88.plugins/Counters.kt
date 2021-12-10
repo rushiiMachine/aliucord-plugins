@@ -4,9 +4,8 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Bundle
 import android.view.*
-import android.widget.LinearLayout
+import android.widget.*
 import android.widget.LinearLayout.LayoutParams.WRAP_CONTENT
-import android.widget.TextView
 import com.aliucord.Utils
 import com.aliucord.annotations.AliucordPlugin
 import com.aliucord.api.SettingsAPI
@@ -33,6 +32,7 @@ class Counters : Plugin() {
 
     private val serverCount: Boolean by settings.delegate(true)
     private val onlineFriendCount: Boolean by settings.delegate(true)
+    private var sizeMultiplier: Float by settings.delegate(1f)
 
     init {
         settingsTab = SettingsTab(
@@ -64,7 +64,7 @@ class Counters : Plugin() {
                     val serverCounter = TextView(ctx, null, 0, R.i.UiKit_TextView_H6)
                         .apply {
                             setTextColor(ColorCompat.getThemedColor(ctx, R.b.colorChannelDefault))
-                            textSize = DimenUtils.dpToPx(3.7f).toFloat()
+                            textSize = DimenUtils.dpToPx(3.7f).toFloat() * sizeMultiplier
                             isAllCaps = false
                             layoutParams = LinearLayout.LayoutParams(WRAP_CONTENT, WRAP_CONTENT).apply {
                                 gravity = Gravity.CENTER_HORIZONTAL
@@ -83,7 +83,7 @@ class Counters : Plugin() {
                     val onlineCounter = TextView(ctx, null, 0, R.i.UiKit_TextView_H6)
                         .apply {
                             setTextColor(ColorCompat.getThemedColor(ctx, R.b.colorChannelDefault))
-                            textSize = DimenUtils.dpToPx(3.7f).toFloat()
+                            textSize = DimenUtils.dpToPx(3.7f).toFloat() * sizeMultiplier
                             isAllCaps = false
                             layoutParams = LinearLayout.LayoutParams(WRAP_CONTENT, WRAP_CONTENT).apply {
                                 gravity = Gravity.CENTER_HORIZONTAL
@@ -114,9 +114,11 @@ class Counters : Plugin() {
     }
 }
 
+@SuppressLint("SetTextI18n")
 class CountersSettings(settings: SettingsAPI) : BottomSheet() {
     private var serverCount: Boolean by settings.delegate(true)
     private var onlineFriendCount: Boolean by settings.delegate(true)
+    private var sizeMultiplier: Float by settings.delegate(1f)
 
     override fun onViewCreated(view: View, bundle: Bundle?) {
         super.onViewCreated(view, bundle)
@@ -147,5 +149,41 @@ class CountersSettings(settings: SettingsAPI) : BottomSheet() {
                     Utils.promptRestart()
                 }
             })
+
+        val currentSize = TextView(ctx, null, 0, R.i.UiKit_TextView).apply {
+            text = "${sizeMultiplier}x"
+            width = DimenUtils.dpToPx(43)
+        }
+
+        val slider = SeekBar(ctx, null, 0, R.i.UiKit_SeekBar).apply {
+            layoutParams = LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT
+            )
+            max = 200
+            progress = (sizeMultiplier * 100).toInt()
+            setPadding(DimenUtils.dpToPx(12), 0, DimenUtils.dpToPx(12), 0)
+            setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+                override fun onStartTrackingTouch(seekBar: SeekBar) {}
+
+                override fun onProgressChanged(seekBar: SeekBar, progress: Int, fromUser: Boolean) {
+                    currentSize.text = "${progress.div(100f)}x"
+                }
+
+                override fun onStopTrackingTouch(seekBar: SeekBar) {
+                    sizeMultiplier = progress.div(100f)
+                    Utils.promptRestart()
+                }
+            })
+        }
+
+        addView(TextView(ctx, null, 0, R.i.UiKit_Settings_Item_Label).apply {
+            text = "Text size (multiplier)"
+        })
+
+        addView(LinearLayout(ctx, null, 0, R.i.UiKit_Settings_Item).apply {
+            addView(currentSize)
+            addView(slider)
+        })
     }
 }
