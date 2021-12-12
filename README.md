@@ -74,3 +74,6 @@ Enable clicking user/channel mentions everywhere. (ex. embeds/channel topics)
 
 ### [Counters](https://github.com/DiamondMiner88/aliucord-plugins/raw/builds/Counters.zip)
 Show an servers/online friend count in your server list.
+
+### [NormalizeNames](https://github.com/DiamondMiner88/aliucord-plugins/raw/builds/NormalizeNames.zip)
+Display nick/user names with fancy english chars reverted to normal.

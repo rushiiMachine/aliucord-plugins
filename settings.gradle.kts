@@ -1,3 +1,4 @@
+include(":NormalizeNames")
 include(":ClickableMentions")
 include(":SlashNick")
 include(":NoTimestamps")
