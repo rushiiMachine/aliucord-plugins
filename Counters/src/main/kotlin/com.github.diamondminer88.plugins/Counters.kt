@@ -42,75 +42,73 @@ class Counters : Plugin() {
     }
 
     override fun start(ignored: Context) {
-        patcher.patch(
-            WidgetGuildListAdapter::class.java.getDeclaredMethod(
-                "onCreateViewHolder",
-                ViewGroup::class.java,
-                Int::class.javaPrimitiveType
-            ), PreHook {
-                if (it.args[1] as Int != GuildListItem.TYPE_DIVIDER) return@PreHook
+        patcher.before<WidgetGuildListAdapter>(
+            "onCreateViewHolder",
+            ViewGroup::class.java,
+            Integer.TYPE
+        ) {
+            if (it.args[1] as Int != GuildListItem.TYPE_DIVIDER) return@before
 
-                val inflater = `WidgetGuildListAdapter$onCreateViewHolder$1`(it.args[0] as ViewGroup)
-                val divider = inflater.invoke(dividerId) as View
-                val ctx = divider.context
+            val inflater = `WidgetGuildListAdapter$onCreateViewHolder$1`(it.args[0] as ViewGroup)
+            val divider = inflater.invoke(dividerId) as View
+            val ctx = divider.context
 
-                val container = LinearLayout(ctx).apply {
-                    layoutParams = LinearLayout.LayoutParams(WRAP_CONTENT, WRAP_CONTENT).apply {
-                        orientation = LinearLayout.VERTICAL
-                    }
+            val container = LinearLayout(ctx).apply {
+                layoutParams = LinearLayout.LayoutParams(WRAP_CONTENT, WRAP_CONTENT).apply {
+                    orientation = LinearLayout.VERTICAL
                 }
-
-                if (serverCount) {
-                    val serverCounter = TextView(ctx, null, 0, R.i.UiKit_TextView_H6)
-                        .apply {
-                            setTextColor(ColorCompat.getThemedColor(ctx, R.b.colorChannelDefault))
-                            textSize = DimenUtils.dpToPx(3.7f).toFloat() * sizeMultiplier
-                            isAllCaps = false
-                            layoutParams = LinearLayout.LayoutParams(WRAP_CONTENT, WRAP_CONTENT).apply {
-                                gravity = Gravity.CENTER_HORIZONTAL
-
-                            }
-                            if (!onlineFriendCount)
-                                setPadding(paddingLeft, paddingTop, paddingRight, DimenUtils.dpToPx(8))
-                        }
-                    StoreStream.getGuilds().observeGuilds().subscribe {
-                        Utils.mainThread.post {
-                            serverCounter.text = "Servers - $size"
-                        }
-                    }
-
-                    container.addView(serverCounter)
-                }
-
-                if (onlineFriendCount) {
-                    val onlineCounter = TextView(ctx, null, 0, R.i.UiKit_TextView_H6)
-                        .apply {
-                            setTextColor(ColorCompat.getThemedColor(ctx, R.b.colorChannelDefault))
-                            textSize = DimenUtils.dpToPx(3.7f).toFloat() * sizeMultiplier
-                            setPadding(paddingLeft, paddingTop, paddingRight, DimenUtils.dpToPx(8))
-                            isAllCaps = false
-                            layoutParams = LinearLayout.LayoutParams(WRAP_CONTENT, WRAP_CONTENT).apply {
-                                gravity = Gravity.CENTER_HORIZONTAL
-                            }
-                        }
-                    StoreStream.getPresences().observeAllPresences().subscribe {
-                        val presences = StoreStream.getPresences().presences
-                        val online = StoreStream.getUserRelationships().relationships
-                            .filter { r -> r.value == ModelUserRelationship.TYPE_FRIEND }.keys
-                            .mapNotNull { id -> presences[id] as Presence? }
-                            .filter { p -> p.status != ClientStatus.OFFLINE && p.status != ClientStatus.OFFLINE }
-                        Utils.mainThread.post {
-                            onlineCounter.text = "Online - ${online.size}"
-                        }
-                    }
-
-                    container.addView(onlineCounter)
-                }
-
-                container.addView(divider)
-                it.result = GuildListViewHolder.SimpleViewHolder(container)
             }
-        )
+
+            if (serverCount) {
+                val serverCounter = TextView(ctx, null, 0, R.i.UiKit_TextView_H6)
+                    .apply {
+                        setTextColor(ColorCompat.getThemedColor(ctx, R.b.colorChannelDefault))
+                        textSize = DimenUtils.dpToPx(3.7f).toFloat() * sizeMultiplier
+                        isAllCaps = false
+                        layoutParams = LinearLayout.LayoutParams(WRAP_CONTENT, WRAP_CONTENT).apply {
+                            gravity = Gravity.CENTER_HORIZONTAL
+
+                        }
+                        if (!onlineFriendCount)
+                            setPadding(paddingLeft, paddingTop, paddingRight, DimenUtils.dpToPx(8))
+                    }
+                StoreStream.getGuilds().observeGuilds().subscribe {
+                    Utils.mainThread.post {
+                        serverCounter.text = "Servers - $size"
+                    }
+                }
+
+                container.addView(serverCounter)
+            }
+
+            if (onlineFriendCount) {
+                val onlineCounter = TextView(ctx, null, 0, R.i.UiKit_TextView_H6)
+                    .apply {
+                        setTextColor(ColorCompat.getThemedColor(ctx, R.b.colorChannelDefault))
+                        textSize = DimenUtils.dpToPx(3.7f).toFloat() * sizeMultiplier
+                        setPadding(paddingLeft, paddingTop, paddingRight, DimenUtils.dpToPx(8))
+                        isAllCaps = false
+                        layoutParams = LinearLayout.LayoutParams(WRAP_CONTENT, WRAP_CONTENT).apply {
+                            gravity = Gravity.CENTER_HORIZONTAL
+                        }
+                    }
+                StoreStream.getPresences().observeAllPresences().subscribe {
+                    val presences = StoreStream.getPresences().presences
+                    val online = StoreStream.getUserRelationships().relationships
+                        .filter { r -> r.value == ModelUserRelationship.TYPE_FRIEND }.keys
+                        .mapNotNull { id -> presences[id] as Presence? }
+                        .filter { p -> p.status != ClientStatus.OFFLINE && p.status != ClientStatus.OFFLINE }
+                    Utils.mainThread.post {
+                        onlineCounter.text = "Online - ${online.size}"
+                    }
+                }
+
+                container.addView(onlineCounter)
+            }
+
+            container.addView(divider)
+            it.result = GuildListViewHolder.SimpleViewHolder(container)
+        }
     }
 
     override fun stop(context: Context) {
