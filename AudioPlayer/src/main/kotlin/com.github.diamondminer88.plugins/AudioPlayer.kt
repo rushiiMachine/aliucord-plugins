@@ -18,6 +18,7 @@ import com.aliucord.entities.Plugin
 import com.aliucord.patcher.after
 import com.aliucord.utils.DimenUtils
 import com.aliucord.utils.DimenUtils.dp
+import com.aliucord.wrappers.messages.AttachmentWrapper.Companion.filename
 import com.aliucord.wrappers.messages.AttachmentWrapper.Companion.url
 import com.discord.api.message.attachment.MessageAttachment
 import com.discord.app.AppActivity
@@ -33,6 +34,7 @@ import java.util.*
 class AudioPlayer : Plugin() {
     private val playerBarId = View.generateViewId()
     private val attachmentCardId = Utils.getResId("chat_list_item_attachment_card", "id")
+    private val validFileExtensions = listOf("webm", "mp3", "aac", "m4a", "wav", "flac", "wma")
 
     private fun msToTime(ms: Long): String {
         val hrs = ms / 3_600_000
@@ -76,14 +78,15 @@ class AudioPlayer : Plugin() {
             MessageAttachment::class.java,
             MessageRenderContext::class.java
         ) {
+            val messageAttachment = it.args[0] as MessageAttachment
+            if (!validFileExtensions.contains(messageAttachment.filename.split(".").last())) return@after
+
             val root = WidgetChatListAdapterItemAttachment.`access$getBinding$p`(this)
                 .root as ConstraintLayout
             val card = root.findViewById<MaterialCardView>(attachmentCardId)
+            val ctx = root.context
 
             if (card.findViewById<LinearLayout>(playerBarId) != null) return@after
-
-            val messageAttachment = it.args[0] as MessageAttachment
-            val ctx = root.context
 
             val duration = MediaMetadataRetriever().use { retriever ->
                 retriever.setDataSource(messageAttachment.url, hashMapOf())
