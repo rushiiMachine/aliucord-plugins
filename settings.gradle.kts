@@ -1,3 +1,4 @@
+include(":AudioPlayer")
 include(":NormalizeNames")
 include(":ClickableMentions")
 include(":SlashNick")

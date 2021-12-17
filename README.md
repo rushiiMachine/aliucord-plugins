@@ -77,3 +77,6 @@ Show an servers/online friend count in your server list.
 
 ### [NormalizeNames](https://github.com/DiamondMiner88/aliucord-plugins/raw/builds/NormalizeNames.zip)
 Display nick/user names with some fancy chars reverted to normal.
+
+### [AudioPlayer](https://github.com/DiamondMiner88/aliucord-plugins/raw/builds/AudioPlayer.zip)
+Play audio attachments directly in chat.
