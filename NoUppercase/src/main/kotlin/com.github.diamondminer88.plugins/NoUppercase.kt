@@ -22,6 +22,7 @@ import com.aliucord.widgets.BottomSheet
 import com.discord.databinding.*
 import com.discord.widgets.roles.RoleIconView
 import com.discord.widgets.settings.WidgetSettings
+import com.discord.widgets.user.presence.ViewHolderUserRichPresence
 import com.lytefast.flexinput.R
 
 private const val TEXT_SIZE_KEY = "textSizeMultiplier"
@@ -74,12 +75,20 @@ class NoUppercase : Plugin() {
             WidgetUserSheetBinding::class.java.declaredConstructors[0], Hook {
                 val thisObj = it.thisObject as WidgetUserSheetBinding
                 val multiplier = settings.getFloat(TEXT_SIZE_KEY, DEFAULT_MULTIPLIER)
-                configureTextView(thisObj.c, multiplier) // about me
-                configureTextView(thisObj.j, multiplier) // connections
-                configureTextView(thisObj.w, multiplier) // note
-                configureTextView(thisObj.m, multiplier) // developer mode
+                configureTextView(thisObj.e, multiplier) // about me
+                configureTextView(thisObj.m, multiplier) // connections
+                configureTextView(thisObj.z, multiplier) // note
+                configureTextView(thisObj.p, multiplier) // developer mode
             }
         )
+
+        // user profile rich presence
+        val richPresenceClass = ViewHolderUserRichPresence::class.java
+        val fRichPresenceHeader = richPresenceClass.getDeclaredField("richPresenceHeader").apply { isAccessible = true }
+        patcher.patch(richPresenceClass.declaredConstructors[0], Hook {
+            val multiplier = settings.getFloat(TEXT_SIZE_KEY, DEFAULT_MULTIPLIER)
+            configureTextView(fRichPresenceHeader.get(it.thisObject) as TextView, multiplier)
+        })
 
         // friends list online/offline headers
         patcher.after<WidgetFriendsListAdapterItemHeaderBinding>(
@@ -87,7 +96,6 @@ class NoUppercase : Plugin() {
             TextView::class.java
         ) {
             configureTextView(this.b, settings.getFloat(TEXT_SIZE_KEY, DEFAULT_MULTIPLIER))
-
         }
         // friends list pending headers
         patcher.after<WidgetFriendsListExpandableHeaderBinding>(
