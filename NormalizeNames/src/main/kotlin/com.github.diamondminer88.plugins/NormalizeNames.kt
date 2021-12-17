@@ -16,7 +16,7 @@ import com.discord.api.user.User
 import com.discord.views.CheckedSetting
 
 @Suppress("unused")
-@AliucordPlugin
+@AliucordPlugin(requiresRestart = true)
 class NormalizeNames : Plugin() {
     private val accentRegex = Regex("\\p{InCombiningDiacriticalMarks}+")
 
