@@ -1,10 +1,10 @@
-version = "1.0.0"
+version = "1.0.1"
 description = "Play audio attachments directly in chat."
 
 aliucord {
     changelog.set(
         """
-            # 1.0.0
+            # 1.0.1
             * Released
         """.trimIndent()
     )

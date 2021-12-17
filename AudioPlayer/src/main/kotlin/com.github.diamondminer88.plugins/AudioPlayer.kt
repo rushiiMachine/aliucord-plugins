@@ -34,6 +34,8 @@ import java.util.*
 class AudioPlayer : Plugin() {
     private val playerBarId = View.generateViewId()
     private val attachmentCardId = Utils.getResId("chat_list_item_attachment_card", "id")
+    private val attachmentCardIconId = Utils.getResId("chat_list_item_attachment_icon", "id")
+    private val audioFileIconId = Utils.getResId("ic_file_audio", "drawable")
     private val validFileExtensions = listOf("webm", "mp3", "aac", "m4a", "wav", "flac", "wma")
 
     private fun msToTime(ms: Long): String {
@@ -88,25 +90,43 @@ class AudioPlayer : Plugin() {
 
             if (card.findViewById<LinearLayout>(playerBarId) != null) return@after
 
-            val duration = MediaMetadataRetriever().use { retriever ->
-                retriever.setDataSource(messageAttachment.url, hashMapOf())
-                val duration = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION)
-                retriever.release()
-                duration?.toLong()
+            var loadError: Throwable? = null
+            val duration = try {
+                MediaMetadataRetriever().use { retriever ->
+                    retriever.setDataSource(messageAttachment.url, hashMapOf())
+                    val duration = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION)
+                    retriever.release()
+                    duration?.toLong()
+                }
+            } catch (e: Throwable) {
+                loadError = e
+                null
             }
 
-            val player = MediaPlayer().apply {
-                setDataSource(messageAttachment.url)
+            val player = try {
+                MediaPlayer().apply {
+                    setDataSource(messageAttachment.url)
+                }
+            } catch (e: Throwable) {
+                loadError = e
+                null
+            }
+
+            if (loadError != null) {
+                logger.errorToast("AudioPlayer: Failed to load metadata", loadError)
             }
 
             card.addView(LinearLayout(ctx, null, 0, R.i.UiKit_ViewGroup).apply {
                 id = playerBarId
 
                 // Invalid file, ignore
-                if (duration == null) {
+                if (duration == null || loadError != null) {
                     visibility = View.GONE
                     return@after
                 }
+
+                val icon = card.findViewById<ImageView>(attachmentCardIconId)
+                icon.setImageResource(audioFileIconId)
 
                 setPadding(p2, p2, p2, p2)
                 setOnClickListener {} // don't download attachment
@@ -148,7 +168,7 @@ class AudioPlayer : Plugin() {
                             if (!playing) return
                             Utils.mainThread.post {
                                 progressView.text =
-                                    "${msToText(player.currentPosition.toLong())} / ${msToText(duration)}"
+                                    "${msToTime(player!!.currentPosition.toLong())} / ${msToTime(duration)}"
                                 sliderView.progress = (500 * player.currentPosition / duration).toInt()
                             }
                         }
@@ -158,11 +178,11 @@ class AudioPlayer : Plugin() {
                 @MainThread
                 fun updatePlaying() {
                     if (playing) {
-                        player.start()
+                        player!!.start()
                         scheduleUpdater()
                         buttonView.background = playIcon
                     } else {
-                        player.pause()
+                        player!!.pause()
                         timer?.cancel()
                         timer?.purge()
                         timer = null
@@ -181,7 +201,9 @@ class AudioPlayer : Plugin() {
                             return
                         }
                         prevProgress = progress
-                        player.seekTo((progress.div(500f) * duration).toInt())
+                        player!!.seekTo((progress.div(500f) * duration).toInt())
+                        progressView.text =
+                            "${msToTime(player.currentPosition.toLong())} / ${msToTime(duration)}"
                     }
                 })
 
@@ -192,14 +214,14 @@ class AudioPlayer : Plugin() {
                         isPrepared = true
                         // TODO: set btn to loading icon
                         Utils.mainThread.post { buttonView.background = null }
-                        player.setOnPreparedListener {
+                        player!!.setOnPreparedListener {
                             Utils.mainThread.post { updatePlaying() }
                         }
                         player.prepareAsync()
                     } else updatePlaying()
                 }
 
-                player.setOnCompletionListener {
+                player!!.setOnCompletionListener {
                     playing = false
                     player.seekTo(0)
                     Utils.mainThread.post { buttonView.background = rewindIcon }
