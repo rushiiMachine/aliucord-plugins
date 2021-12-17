@@ -1,9 +1,13 @@
-version = "1.2.1"
+version = "1.3.0"
 description = "Reverts uppercased text in various places."
 
 aliucord {
     changelog.set(
         """
+        # 1.3.0
+        * Update to new Discord
+        * Add Rich Presence cards
+
         # 1.2.1
         * Update patches
 
