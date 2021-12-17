@@ -140,7 +140,6 @@ class ConfigurableStickerSizesSettings(settings: SettingsAPI) : BottomSheet() {
 
         addView(resetButton)
 
-        // TODO: reload messages after closing window
         addView(TextView(ctx, null, 0, R.i.UiKit_Settings_Item_Label).apply {
             text = "Changes will apply after reloading the current channel"
             textSize = DimenUtils.dpToPx(4).toFloat()

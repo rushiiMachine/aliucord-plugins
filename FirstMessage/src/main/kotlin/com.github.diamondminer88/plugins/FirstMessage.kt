@@ -160,7 +160,6 @@ class FirstMessage : Plugin() {
             (data["messages"] as List<List<Map<String, *>>>?)?.flatten() ?: emptyList()
 
         for (message in messages) {
-            // TODO: setting to disable this
             if (message["type"] == MessageTypes.USER_JOIN.toDouble()) continue
             return (message["channel_id"] as String) to (message["id"] as String)
         }

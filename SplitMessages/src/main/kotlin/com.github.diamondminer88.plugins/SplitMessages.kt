@@ -106,7 +106,6 @@ class SplitMessages : Plugin() {
                         emptyList(),
                         null,
                         RestAPIParams.Message.AllowedMentions(
-                            // FIXME
                             emptyList(),
                             emptyList(),
                             emptyList(),

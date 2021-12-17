@@ -56,7 +56,6 @@ class HideMessages : Plugin() {
 
                 if (PluginManager.isPluginEnabled("MessageLogger")) {
                     logger.info("Due to how this plugin works, MessageLogger needs to be disabled")
-                    // TODO: remove patch instead
                     PluginManager.disablePlugin("MessageLogger")
                     StoreStream.getMessages().handleMessageDelete(ModelMessageDelete(channelId, msgId))
                     PluginManager.enablePlugin("MessageLogger")

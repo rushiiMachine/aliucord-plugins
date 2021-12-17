@@ -47,10 +47,6 @@ class NoUppercase : Plugin() {
     }
 
     override fun start(ctx: Context) {
-        // !!!!!!!!!! Before you yell at me for the following patches, these already work = no reason to change them !!!!!!!!!!
-        // TODO: Patch TextView directly
-        // *although my futile attempts did not work*
-
         // guild member list role headers
         patcher.after<WidgetChannelMembersListItemHeaderBinding>(
             LinearLayout::class.java,
