@@ -8,4 +8,5 @@ aliucord {
             * Released
         """.trimIndent()
     )
+    author("Zt", 289556910426816513L)
 }

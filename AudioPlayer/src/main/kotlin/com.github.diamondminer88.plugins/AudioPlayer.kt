@@ -34,7 +34,7 @@ class AudioPlayer : Plugin() {
     private val playerBarId = View.generateViewId()
     private val attachmentCardId = Utils.getResId("chat_list_item_attachment_card", "id")
 
-    private fun msToText(ms: Long): String {
+    private fun msToTime(ms: Long): String {
         val hrs = ms / 3_600_000
         val mins = ms / 60000
         val secs = ms / 1000 % 60
@@ -119,7 +119,7 @@ class AudioPlayer : Plugin() {
                 }
 
                 val progressView = TextView(ctx, null, 0, R.i.UiKit_TextView).apply {
-                    text = "0:00 / " + msToText(duration)
+                    text = "0:00 / " + msToTime(duration)
                     setPadding(p2, p2, p2, p2)
                 }
 
