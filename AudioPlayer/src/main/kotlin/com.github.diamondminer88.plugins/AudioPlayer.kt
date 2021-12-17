@@ -173,12 +173,14 @@ class AudioPlayer : Plugin() {
                 sliderView.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
                     override fun onStartTrackingTouch(seekBar: SeekBar) {}
                     override fun onStopTrackingTouch(seekBar: SeekBar) {}
+                    var prevProgress = 0
                     override fun onProgressChanged(seekBar: SeekBar, progress: Int, fromUser: Boolean) {
                         if (!fromUser) return
-                        if (!playing || !isPrepared) {
-                            seekBar.progress = progress
+                        if (!isPrepared) {
+                            seekBar.progress = prevProgress
                             return
                         }
+                        prevProgress = progress
                         player.seekTo((progress.div(500f) * duration).toInt())
                     }
                 })
