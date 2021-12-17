@@ -111,7 +111,8 @@ class SplitMessages : Plugin() {
                             emptyList(),
                             emptyList(),
                             false
-                        )
+                        ),
+                        null
                     )
                     val (_, err) = RestAPI.api.sendMessage(
                         StoreStream.getChannelsSelected().id,

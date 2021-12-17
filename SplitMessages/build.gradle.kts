@@ -1,9 +1,12 @@
-version = "1.0.6"
+version = "1.0.7"
 description = "Split messages longer than 2000/4000 characters into multiple messages."
 
 aliucord {
     changelog.set(
         """
+        # 1.0.7
+        * Update to new Discord
+
         # 1.0.6
         * Update to new Aliucord
 
