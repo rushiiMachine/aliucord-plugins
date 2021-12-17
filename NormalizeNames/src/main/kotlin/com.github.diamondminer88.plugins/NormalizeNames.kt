@@ -51,7 +51,7 @@ class NormalizeNames : Plugin() {
                 it.result = normalizeString(it.result as String)
         }
 
-        patcher.after<GuildMember>("g") {
+        patcher.after<GuildMember>("h") {
             if (it.result != null)
                 it.result = normalizeString(it.result as String)
         }
