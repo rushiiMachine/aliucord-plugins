@@ -1,3 +1,4 @@
+include(":Gestures")
 include(":AudioPlayer")
 include(":NormalizeNames")
 include(":ClickableMentions")

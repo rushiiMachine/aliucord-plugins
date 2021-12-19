@@ -80,3 +80,11 @@ Display nick/user names with some fancy chars reverted to normal.
 
 ### [AudioPlayer](https://github.com/DiamondMiner88/aliucord-plugins/raw/builds/AudioPlayer.zip)
 Play audio attachments directly in chat.
+
+### [Gestures](https://github.com/DiamondMiner88/aliucord-plugins/raw/builds/Gestures.zip)
+Add the following gestures to Discord:
+- Swipe left on chat input to paste
+- Swipe right on chat input to clear it
+
+Note that this breaks selecting text but ¯\\\_(ツ)_/¯
+
