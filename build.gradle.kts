@@ -10,10 +10,10 @@ buildscript {
         maven("https://jitpack.io")
     }
     dependencies {
-        classpath("com.android.tools.build:gradle:7.0.3")
-        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.5.31")
+        classpath("com.android.tools.build:gradle:7.0.4")
         classpath("com.github.Aliucord:gradle:main-SNAPSHOT")
 //        classpath("com.aliucord:gradle:0.1-SNAPSHOT") // aliucord gradle development
+        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.5.31")
     }
 }
 
@@ -69,7 +69,7 @@ subprojects {
 //        mavenLocal() // aliucord development
         google()
         mavenCentral()
-        maven("https://jitpack.io")
+        maven("https://maven.aliucord.com/snapshots")
     }
 
     dependencies {
@@ -77,7 +77,7 @@ subprojects {
         val compileOnly by configurations
 
         discord("com.discord:discord:aliucord-SNAPSHOT")
-        compileOnly("com.github.Aliucord:Aliucord:main-SNAPSHOT")
+        compileOnly("com.aliucord:Aliucord:main-SNAPSHOT")
 //        compileOnly("com.github.Aliucord:Aliucord:unspecified") // aliucord development
     }
 }
