@@ -78,10 +78,10 @@ Show an servers/online friend count in your server list.
 ### [NormalizeNames](https://github.com/DiamondMiner88/aliucord-plugins/raw/builds/NormalizeNames.zip)
 Display nick/user names with some fancy chars reverted to normal.
 
-### [AudioPlayer](https://github.com/DiamondMiner88/aliucord-plugins/raw/builds/AudioPlayer.zip)
+### [AudioPlayer](https://github.com/DiamondMiner88/aliucord-plugins/raw/builds/AudioPlayer.zip) (WIP may cause crash)
 Play audio attachments directly in chat.
 
-### [Gestures](https://github.com/DiamondMiner88/aliucord-plugins/raw/builds/Gestures.zip)
+### [Gestures](https://github.com/DiamondMiner88/aliucord-plugins/raw/builds/Gestures.zip) (WIP)
 Add the following gestures to Discord:
 - Swipe left on chat input to paste
 - Swipe right on chat input to clear it

@@ -17,13 +17,6 @@ buildscript {
     }
 }
 
-allprojects {
-    repositories {
-        google()
-        mavenCentral()
-    }
-}
-
 fun Project.android(configuration: BaseExtension.() -> Unit) =
     extensions.getByName<BaseExtension>("android").configuration()
 

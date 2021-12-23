@@ -2,6 +2,7 @@ version = "1.0.2"
 description = "Opens the debug log as soon as opening the app & replaces the gift button"
 
 aliucord {
+    excludeFromUpdaterJson.set(true)
     changelog.set(
         """
             # 1.0.2
