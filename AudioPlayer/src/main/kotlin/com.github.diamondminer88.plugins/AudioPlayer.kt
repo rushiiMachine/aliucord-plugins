@@ -10,8 +10,8 @@ import android.widget.*
 import android.widget.FrameLayout.LayoutParams.MATCH_PARENT
 import android.widget.FrameLayout.LayoutParams.WRAP_CONTENT
 import androidx.annotation.MainThread
-import androidx.appcompat.content.res.AppCompatResources
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.content.ContextCompat
 import com.aliucord.Utils
 import com.aliucord.annotations.AliucordPlugin
 import com.aliucord.entities.Plugin
@@ -54,16 +54,16 @@ class AudioPlayer : Plugin() {
         var onPauseListeners = mutableListOf<() -> Unit>()
 
         // rotated triangle icon
-        val playIcon = AppCompatResources.getDrawable(
+        val playIcon = ContextCompat.getDrawable(
             context,
             com.google.android.exoplayer2.ui.R.b.exo_controls_pause
         )
         // two vertical bars icon
-        val pauseIcon = AppCompatResources.getDrawable(
+        val pauseIcon = ContextCompat.getDrawable(
             context,
             com.google.android.exoplayer2.ui.R.b.exo_controls_play
         )
-        val rewindIcon = AppCompatResources.getDrawable(
+        val rewindIcon = ContextCompat.getDrawable(
             context,
             com.yalantis.ucrop.R.c.ucrop_rotate
         )
@@ -113,7 +113,7 @@ class AudioPlayer : Plugin() {
             }
 
             if (loadError != null) {
-                logger.errorToast("AudioPlayer: Failed to load metadata", loadError)
+                logger.errorToast("AudioPlayer: Failed to load", loadError)
             }
 
             card.addView(LinearLayout(ctx, null, 0, R.i.UiKit_ViewGroup).apply {
