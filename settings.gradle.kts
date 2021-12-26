@@ -1,3 +1,4 @@
+include(":CloseDMs")
 include(":Gestures")
 include(":AudioPlayer")
 include(":NormalizeNames")

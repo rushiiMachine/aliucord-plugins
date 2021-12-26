@@ -88,3 +88,6 @@ Add the following gestures to Discord:
 
 Note that this breaks selecting text but ¯\\\_(ツ)_/¯
 
+### [CloseDMs](https://github.com/DiamondMiner88/aliucord-plugins/raw/builds/CloseDMs.zip)
+Shortcut to close DMs in the DM context menu.
+
