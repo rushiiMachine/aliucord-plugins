@@ -1,9 +1,12 @@
-version = "1.2.1"
+version = "1.2.2"
 description = "Hide identifiable information."
 
 aliucord {
     changelog.set(
         """
+            # 1.2.2
+            * Fix reflection
+
             # 1.2.1
             * Fix changelog
 

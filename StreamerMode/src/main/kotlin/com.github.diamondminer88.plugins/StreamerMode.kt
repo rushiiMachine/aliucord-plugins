@@ -43,6 +43,7 @@ class StreamerMode : Plugin() {
     private val numRegex = Regex("\\d")
     private val fShowAkas =
         UserProfileHeaderViewModel.ViewState.Loaded::class.java.getDeclaredField("showAkas")
+            .apply { isAccessible = true }
 
     init {
         settingsTab = SettingsTab(
