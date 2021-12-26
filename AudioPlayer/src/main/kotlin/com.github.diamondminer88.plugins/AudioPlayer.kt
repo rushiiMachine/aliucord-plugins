@@ -36,7 +36,7 @@ class AudioPlayer : Plugin() {
     private val attachmentCardId = Utils.getResId("chat_list_item_attachment_card", "id")
     private val attachmentCardIconId = Utils.getResId("chat_list_item_attachment_icon", "id")
     private val audioFileIconId = Utils.getResId("ic_file_audio", "drawable")
-    private val validFileExtensions = listOf("webm", "mp3", "aac", "m4a", "wav", "flac", "wma")
+    private val validFileExtensions = listOf("webm", "mp3", "aac", "m4a", "wav", "flac", "wma", "opus", "ogg")
 
     private fun msToTime(ms: Long): String {
         val hrs = ms / 3_600_000
