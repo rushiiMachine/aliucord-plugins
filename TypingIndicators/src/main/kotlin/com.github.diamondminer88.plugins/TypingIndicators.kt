@@ -9,6 +9,7 @@ import com.aliucord.entities.Plugin
 import com.aliucord.patcher.after
 import com.aliucord.utils.DimenUtils
 import com.aliucord.utils.RxUtils.subscribe
+import com.discord.api.channel.Channel
 import com.discord.stores.*
 import com.discord.views.typing.TypingDots
 import com.discord.widgets.channels.list.WidgetChannelsListAdapter
@@ -38,16 +39,17 @@ class TypingIndicators : Plugin() {
             Integer.TYPE,
             ChannelListItem::class.java
         ) {
+            logger.info(allTypingDots.size.toString())
             val textChannel = it.args[1] as ChannelListItemTextChannel
             val itemChannelText = it.thisObject as WidgetChannelsListAdapter.ItemChannelText
             val view = this.itemView as RelativeLayout
 
             val existingTypingDots = itemChannelText.itemView.findViewById<TypingDots>(typingDotsId)
             if (existingTypingDots != null) {
-                view.removeView(existingTypingDots)
                 val subscription = allTypingDots[existingTypingDots]
                 subscription?.unsubscribe()
-                allTypingDots.remove(existingTypingDots)
+                subscribeTypingDots(existingTypingDots, textChannel.channel)
+                return@after
             }
 
             val typingDots = TypingDots(Utils.appActivity, null).apply {
@@ -59,26 +61,7 @@ class TypingIndicators : Plugin() {
             }
             view.addView(typingDots, lp)
 
-            val subscription =
-                `ChatTypingModel$Companion$get$1`<StoreChannelsSelected.ResolvedSelectedChannel, Observable<ChatTypingModel.Typing>>()
-                    .call(
-                        StoreChannelsSelected.ResolvedSelectedChannel.Channel(
-                            textChannel.channel,
-                            null, null
-                        )
-                    ).subscribe {
-                        this as ChatTypingModel.Typing
-                        Utils.mainThread.post {
-                            if (typingUsers.isEmpty()) {
-                                typingDots.b()
-                                typingDots.visibility = View.GONE
-                            } else {
-                                typingDots.a(false)
-                                typingDots.visibility = View.VISIBLE
-                            }
-                        }
-                    }
-            allTypingDots[typingDots] = subscription
+            subscribeTypingDots(typingDots, textChannel.channel)
         }
 
         patcher.after<StoreGuildSelected>(
@@ -92,6 +75,29 @@ class TypingIndicators : Plugin() {
             allTypingDots.values.forEach(Subscription::unsubscribe)
             allTypingDots.clear()
         }
+    }
+
+    private fun subscribeTypingDots(typingDots: TypingDots, channel: Channel) {
+        val subscription =
+            `ChatTypingModel$Companion$get$1`<StoreChannelsSelected.ResolvedSelectedChannel, Observable<ChatTypingModel.Typing>>()
+                .call(
+                    StoreChannelsSelected.ResolvedSelectedChannel.Channel(
+                        channel,
+                        null, null
+                    )
+                ).subscribe {
+                    this as ChatTypingModel.Typing
+                    Utils.mainThread.post {
+                        if (typingUsers.isEmpty()) {
+                            typingDots.b()
+                            typingDots.visibility = View.GONE
+                        } else {
+                            typingDots.a(false)
+                            typingDots.visibility = View.VISIBLE
+                        }
+                    }
+                }
+        allTypingDots[typingDots] = subscription
     }
 
     override fun stop(context: Context) {

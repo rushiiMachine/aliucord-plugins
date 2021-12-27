@@ -1,9 +1,12 @@
-version = "1.0.1"
+version = "1.0.2"
 description = "Show typing indicators in the channel list."
 
 aliucord {
     changelog.set(
         """
+            # 1.0.2
+            * Improve performance
+
             # 1.0.1
             * Fix plugin
 
