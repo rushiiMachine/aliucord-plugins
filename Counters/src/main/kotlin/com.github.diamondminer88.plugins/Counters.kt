@@ -97,7 +97,7 @@ class Counters : Plugin() {
                     val online = StoreStream.getUserRelationships().relationships
                         .filter { r -> r.value == ModelUserRelationship.TYPE_FRIEND }.keys
                         .mapNotNull { id -> presences[id] as Presence? }
-                        .filter { p -> p.status != ClientStatus.OFFLINE && p.status != ClientStatus.OFFLINE }
+                        .filter { p -> p.status != ClientStatus.OFFLINE && p.status != ClientStatus.INVISIBLE }
                     Utils.mainThread.post {
                         onlineCounter.text = "Online - ${online.size}"
                     }

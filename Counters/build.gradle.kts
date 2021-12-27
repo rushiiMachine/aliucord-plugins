@@ -1,9 +1,12 @@
-version = "1.1.1"
+version = "1.1.2"
 description = "Show an servers/online friend count in your server list."
 
 aliucord {
     changelog.set(
         """
+            # 1.1.2
+            * Fix invisible status check
+
             # 1.1.1
             * Fix changelog
 
