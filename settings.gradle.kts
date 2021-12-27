@@ -1,3 +1,4 @@
+include(":CloneChannels")
 include(":CloseDMs")
 include(":Gestures")
 include(":AudioPlayer")
