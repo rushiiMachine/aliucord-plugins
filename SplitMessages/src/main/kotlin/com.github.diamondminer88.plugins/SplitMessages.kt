@@ -27,15 +27,15 @@ import com.discord.widgets.chat.MessageManager
 import com.discord.widgets.chat.input.ChatInputViewModel
 import com.discord.widgets.notice.WidgetNoticeDialog
 import com.lytefast.flexinput.R
+import d0.g0.i
 
-private const val SETTINGS_KEY = "maxSplits"
 private const val DEFAULT_SPLITS = 3
 private const val MAX_SPLITS = 7
 
 @Suppress("unused")
 @AliucordPlugin
 class SplitMessages : Plugin() {
-    private val exceptionRegex = Regex("(?m)^.*?Exception.*(?:\\R+^\\s*at .*)+")
+    private val exceptionRegex = Regex("Exception.*(?:\\R+^\\s*at .*)+", i.k) // multiline
     private val textContentField =
         MessageContent::class.java.getDeclaredField("textContent").apply {
             isAccessible = true
@@ -67,7 +67,7 @@ class SplitMessages : Plugin() {
             var content = textContentField.get(messageContent) as String
 
             if (content.length > maxMessageSize) {
-                if (!content.matches(exceptionRegex))
+                if (exceptionRegex.find(content, 0) == null)
                     textContentField.set(
                         messageContent,
                         content.take(maxMessageSize)
@@ -75,7 +75,7 @@ class SplitMessages : Plugin() {
                 else {
                     WidgetNoticeDialog.Builder(it.args[0] as Context)
                         .setTitle("SplitMessages")
-                        .setMessage("Please be courteous and don't send stacktraces in chat. Use a paste service like pastebin or the hastebin plugin instead.")
+                        .setMessage("Please be courteous and don't send stacktraces in chat. Use a paste service like hastebin instead.")
                         .setPositiveButton("Okay", fun(_) {})
                         .show(Utils.appActivity.supportFragmentManager)
 
@@ -132,7 +132,7 @@ class SplitMessages : Plugin() {
 }
 
 @SuppressLint("SetTextI18n")
-class SplitMessagesSettings(private val settings: SettingsAPI) : BottomSheet() {
+class SplitMessagesSettings(settings: SettingsAPI) : BottomSheet() {
     var maxSplits: Int by settings.delegate(DEFAULT_SPLITS)
 
     override fun onViewCreated(view: View, bundle: Bundle?) {

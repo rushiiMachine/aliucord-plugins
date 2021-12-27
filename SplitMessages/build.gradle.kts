@@ -1,9 +1,12 @@
-version = "1.0.8"
+version = "1.0.9"
 description = "Split messages longer than 2000/4000 characters into multiple messages."
 
 aliucord {
     changelog.set(
         """
+            # 1.0.9
+            * Fix stacktrace regex
+
             # 1.0.8
             * Fix changelog
 
