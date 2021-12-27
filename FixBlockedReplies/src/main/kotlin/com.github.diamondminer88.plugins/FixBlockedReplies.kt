@@ -93,8 +93,8 @@ class FixBlockedReplies : Plugin() {
     }
 }
 
-class FixBlockedRepliesSettings(private val settings: SettingsAPI) : BottomSheet() {
-    var showContent: Boolean by settings.delegate(false)
+class FixBlockedRepliesSettings(settings: SettingsAPI) : BottomSheet() {
+    private var showContent: Boolean by settings.delegate(false)
 
     override fun onViewCreated(view: View, bundle: Bundle?) {
         super.onViewCreated(view, bundle)

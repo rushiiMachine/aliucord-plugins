@@ -39,15 +39,13 @@ class TypingIndicators : Plugin() {
             Integer.TYPE,
             ChannelListItem::class.java
         ) {
-            logger.info(allTypingDots.size.toString())
             val textChannel = it.args[1] as ChannelListItemTextChannel
             val itemChannelText = it.thisObject as WidgetChannelsListAdapter.ItemChannelText
             val view = this.itemView as RelativeLayout
 
             val existingTypingDots = itemChannelText.itemView.findViewById<TypingDots>(typingDotsId)
             if (existingTypingDots != null) {
-                val subscription = allTypingDots[existingTypingDots]
-                subscription?.unsubscribe()
+                allTypingDots[existingTypingDots]?.unsubscribe()
                 subscribeTypingDots(existingTypingDots, textChannel.channel)
                 return@after
             }

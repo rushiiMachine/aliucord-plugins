@@ -36,7 +36,7 @@ class ConfigurableStickerSizes : Plugin() {
         ).withArgs(settings)
     }
 
-    var stickerSize: Int by settings.delegate(DEFAULT_STICKER_SIZE)
+    private var stickerSize: Int by settings.delegate(DEFAULT_STICKER_SIZE)
 
     override fun start(ctx: Context) {
         patcher.after<WidgetChatListAdapterItemSticker>(
@@ -53,29 +53,7 @@ class ConfigurableStickerSizes : Plugin() {
                 width = stickerSize
             }
 
-            // FIXME: stickers + text can still be sent and will overlap (even though the occurrence is rare)
-            // move sticker upward to remove gap between header and sticker
-//            (binding.a.layoutParams as RecyclerView.LayoutParams).apply {
-//                setMargins(0, DimenUtils.dpToPx(-16), 0, 0)
-//            }
         }
-
-        // hide text
-//        patcher.patch(
-//            WidgetChatListAdapterItemMessage::class.java.getDeclaredMethod(
-//                "onConfigure",
-//                Int::class.javaPrimitiveType,
-//                ChatListEntry::class.java
-//            ), Hook {
-//                val thisObj = it.thisObject as WidgetChatListAdapterItemMessage
-//                val itemText = ReflectUtils.getField(
-//                    WidgetChatListAdapterItemMessage::class.java,
-//                    thisObj,
-//                    "itemText"
-//                ) as SimpleDraweeSpanTextView
-//                if (itemText.text[0] == '\u200b')
-//                    itemText.visibility = View.GONE
-//            })
     }
 
     override fun stop(context: Context) {

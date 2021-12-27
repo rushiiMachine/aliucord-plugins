@@ -25,7 +25,6 @@ import com.discord.widgets.user.profile.UserProfileConnectionsView
 import com.discord.widgets.user.profile.UserProfileConnectionsView.ConnectedAccountItem
 import com.discord.widgets.user.profile.UserProfileHeaderViewModel
 
-
 @Suppress("unused")
 @SuppressLint("SetTextI18n")
 @AliucordPlugin
@@ -157,7 +156,7 @@ class StreamerMode : Plugin() {
     }
 }
 
-class StreamerModeSettings(private val settings: SettingsAPI) : BottomSheet() {
+class StreamerModeSettings(settings: SettingsAPI) : BottomSheet() {
     private var hideAKAs: Boolean by settings.delegate(true)
     private var hideConnections: Boolean by settings.delegate(true)
     private var hideDiscriminators: Boolean by settings.delegate(true)
