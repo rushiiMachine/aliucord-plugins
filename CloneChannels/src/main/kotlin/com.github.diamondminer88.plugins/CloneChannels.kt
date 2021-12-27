@@ -56,7 +56,7 @@ class CloneChannels : Plugin() {
             val view = (requireView() as NestedScrollView).getChildAt(0) as LinearLayout
 
             val closeDm = TextView(view.context, null, 0, R.i.UiKit_Settings_Item_Icon).apply {
-                text = "Clone channel"
+                text = "Clone Channel"
                 setCompoundDrawablesWithIntrinsicBounds(cloneIconId, 0, 0, 0)
                 setOnClickListener {
                     dismiss()
