@@ -93,3 +93,6 @@ Shortcut to close DMs in the DM context menu.
 
 ### [CloneChannels](https://github.com/DiamondMiner88/aliucord-plugins/raw/builds/CloneChannels.zip)
 Quickly clone text channels in the context menu. (perms, name, topic, etc.)
+
+### [TypingIndicators](https://github.com/DiamondMiner88/aliucord-plugins/raw/builds/TypingIndicators.zip)
+Show typing indicators in the channel list.

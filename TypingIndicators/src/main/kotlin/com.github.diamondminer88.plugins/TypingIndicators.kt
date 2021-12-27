@@ -1,15 +1,15 @@
+package com.github.diamondminer88.plugins
+
 import android.content.Context
 import android.view.View
 import android.widget.RelativeLayout
 import com.aliucord.Utils
 import com.aliucord.annotations.AliucordPlugin
 import com.aliucord.entities.Plugin
-import com.aliucord.patcher.*
+import com.aliucord.patcher.after
 import com.aliucord.utils.DimenUtils
 import com.aliucord.utils.RxUtils.subscribe
-import com.aliucord.wrappers.ChannelWrapper.Companion.id
 import com.discord.stores.*
-import com.discord.utilities.channel.ChannelSelector
 import com.discord.views.typing.TypingDots
 import com.discord.widgets.channels.list.WidgetChannelsListAdapter
 import com.discord.widgets.channels.list.items.ChannelListItem
@@ -18,13 +18,12 @@ import com.discord.widgets.chat.overlay.ChatTypingModel
 import com.discord.widgets.chat.overlay.`ChatTypingModel$Companion$get$1`
 import rx.Observable
 import rx.Subscription
-import java.util.*
 
 @Suppress("unused")
 @AliucordPlugin
 class TypingIndicators : Plugin() {
-    private val channels = mutableMapOf<Long, Subscription>()
     private val typingDotsId = View.generateViewId()
+    private val allTypingDots = mutableMapOf<TypingDots, Subscription>()
 
     override fun start(context: Context) {
         val lp = RelativeLayout.LayoutParams(DimenUtils.dpToPx(24), RelativeLayout.LayoutParams.MATCH_PARENT)
@@ -40,15 +39,16 @@ class TypingIndicators : Plugin() {
             ChannelListItem::class.java
         ) {
             val textChannel = it.args[1] as ChannelListItemTextChannel
-            val channelId = textChannel.component1().id
             val itemChannelText = it.thisObject as WidgetChannelsListAdapter.ItemChannelText
+            val view = this.itemView as RelativeLayout
 
-//            logger.info("-".repeat(20))
-            if (channels.containsKey(channelId)) return@after
-//            logger.info("hasnt been initialized")
-            if (itemChannelText.itemView.findViewById<TypingDots>(typingDotsId) != null) return@after
-//            logger.info("typing dots dont exist")
-//            logger.info("channel: ${textChannel.channel.name}")
+            val existingTypingDots = itemChannelText.itemView.findViewById<TypingDots>(typingDotsId)
+            if (existingTypingDots != null) {
+                view.removeView(existingTypingDots)
+                val subscription = allTypingDots[existingTypingDots]
+                subscription?.unsubscribe()
+                allTypingDots.remove(existingTypingDots)
+            }
 
             val typingDots = TypingDots(Utils.appActivity, null).apply {
                 id = typingDotsId
@@ -57,7 +57,7 @@ class TypingIndicators : Plugin() {
                 scaleY = 0.8f
                 scaleX = 0.8f
             }
-            (itemChannelText.itemView as RelativeLayout).addView(typingDots, lp)
+            view.addView(typingDots, lp)
 
             val subscription =
                 `ChatTypingModel$Companion$get$1`<StoreChannelsSelected.ResolvedSelectedChannel, Observable<ChatTypingModel.Typing>>()
@@ -78,26 +78,30 @@ class TypingIndicators : Plugin() {
                             }
                         }
                     }
-
-            channels[channelId] = subscription
+            allTypingDots[typingDots] = subscription
         }
 
-        patcher.before<ChannelSelector>(
-            "gotoChannel",
-            Long::class.java,
-            Long::class.java,
-            java.lang.Long::class.java,
-            SelectedChannelAnalyticsLocation::class.java
+        patcher.after<StoreGuildSelected>(
+            "handleGuildSelected",
+            java.lang.Long.TYPE
         ) {
-            // only switch on guild change
-//            logger.info("selected: " + StoreStream.getGuildSelected().selectedGuildId)
-//            logger.info("selecting: " + it.args[0])
-            if (StoreStream.getGuildSelected().selectedGuildId == it.args[0]) return@before
-//            logger.info("subscriptions removed: " + channels.size.toString())
-//            channels.values.forEach(Subscription::unsubscribe)
-//            channels.clear()
+            val currentGuild = StoreStream.getGuildSelected().selectedGuildId
+            val targetGuild = it.args[0]
+
+            if (currentGuild == targetGuild) return@after
+            allTypingDots.values.forEach(Subscription::unsubscribe)
+            allTypingDots.clear()
         }
     }
 
-    override fun stop(context: Context) = patcher.unpatchAll()
+    override fun stop(context: Context) {
+        allTypingDots.keys.forEach {
+            it.b()
+            it.visibility = View.GONE
+        }
+        allTypingDots.values.forEach(Subscription::unsubscribe)
+        allTypingDots.clear()
+
+        patcher.unpatchAll()
+    }
 }
