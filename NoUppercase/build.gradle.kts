@@ -1,9 +1,13 @@
-version = "1.3.1"
+version = "1.3.2"
 description = "Reverts uppercased text in various places."
 
 aliucord {
     changelog.set(
         """
+            # 1.3.2
+            * Apply to everything
+            * Remove adjustable text size, at least temporarily
+
             # 1.3.1
             * Fix changelog
 
