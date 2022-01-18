@@ -23,7 +23,8 @@ class NoNitroAvatars : Plugin() {
             Long::class.javaPrimitiveType!!,
             String::class.java,
             String::class.java,
-            String::class.java
+            String::class.java,
+            UtcDateTime::class.java
         ) {
             it.args[9] = null
 

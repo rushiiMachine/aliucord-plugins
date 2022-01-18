@@ -1,9 +1,12 @@
-version = "1.0.3"
+version = "1.0.4"
 description = "Hides per-server user avatars everywhere."
 
 aliucord {
     changelog.set(
         """
+            # 1.0.4
+            * Update to Discord 105112
+
             # 1.0.3
             * Fix changelog
 
