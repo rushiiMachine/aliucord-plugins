@@ -6,7 +6,7 @@ aliucord {
         """
             # 1.3.2
             * Apply to everything
-            * Remove adjustable text size, at least temporarily
+            * Remove adjustable text size
 
             # 1.3.1
             * Fix changelog
