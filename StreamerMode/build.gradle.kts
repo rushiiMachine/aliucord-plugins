@@ -1,9 +1,12 @@
-version = "1.2.2"
+version = "1.2.3"
 description = "Hide identifiable information."
 
 aliucord {
     changelog.set(
         """
+            # 1.2.3
+            * Update to Discord 112104
+
             # 1.2.2
             * Fix reflection
 

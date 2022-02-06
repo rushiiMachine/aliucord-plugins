@@ -26,7 +26,7 @@ import com.discord.widgets.user.profile.UserProfileConnectionsView.ConnectedAcco
 import com.discord.widgets.user.profile.UserProfileHeaderViewModel
 
 @Suppress("unused")
-@SuppressLint("SetTextI18n")
+@SuppressLint("SetTextI18n", "DiscouragedPrivateApi", "PrivateApi")
 @AliucordPlugin
 class StreamerMode : Plugin() {
     private val settingsNameText = Utils.getResId("settings_account_name_text", "id")
@@ -67,6 +67,14 @@ class StreamerMode : Plugin() {
         }
     }
 
+    private val mGetListenerInfo = View::class.java.getDeclaredMethod("getListenerInfo")
+        .apply { isAccessible = true }
+    private val fOnClickListener = Class.forName("android.view.View\$ListenerInfo")
+        .getDeclaredField("mOnClickListener")
+
+    private fun getOnClickListener(view: View): View.OnClickListener =
+        fOnClickListener.get(mGetListenerInfo.invoke(view)) as View.OnClickListener
+
     private val hideAKAs: Boolean by settings.delegate(true)
     private val hideConnections: Boolean by settings.delegate(true)
     private val hideDiscriminators: Boolean by settings.delegate(true)
@@ -98,7 +106,7 @@ class StreamerMode : Plugin() {
         }
 
         // connection popup
-        patcher.after<c.a.a.i>("onViewBound", View::class.java) {
+        patcher.after<b.a.a.i>("onViewBound", View::class.java) {
             if (!hideConnections) return@after
             val header = requireView().findViewById<TextView>(connectionDialogHeader)
             header.text = "x".repeat(header.length())
@@ -137,16 +145,16 @@ class StreamerMode : Plugin() {
 
             if (showWarning) {
                 val usernameContainer = view.findViewById<LinearLayout>(settingsUsernameContainer)
-                configureContainer(usernameContainer, (`WidgetSettingsAccount$configureUI$2`()))
+                configureContainer(usernameContainer, `WidgetSettingsAccount$configureUI$2`())
 
                 val nameContainer = view.findViewById<LinearLayout>(settingsNameContainer)
-                configureContainer(nameContainer, (`WidgetSettingsAccount$configureUI$3`()))
+                configureContainer(nameContainer, `WidgetSettingsAccount$configureUI$3`())
 
                 val emailContainer = view.findViewById<LinearLayout>(settingsEmailContainer)
-                configureContainer(emailContainer, (`WidgetSettingsAccount$configureUI$4`()))
+                configureContainer(emailContainer, getOnClickListener(emailContainer))
 
                 val phoneContainer = view.findViewById<LinearLayout>(settingsPhoneContainer)
-                configureContainer(phoneContainer, (`WidgetSettingsAccount$configureUI$5`()))
+                configureContainer(phoneContainer, `WidgetSettingsAccount$configureUI$5`())
             }
         }
     }
