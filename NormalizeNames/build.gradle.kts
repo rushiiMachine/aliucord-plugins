@@ -1,9 +1,12 @@
-version = "1.1.3"
+version = "1.1.4"
 description = "Display nick/user names with some fancy chars reverted to normal."
 
 aliucord {
     changelog.set(
         """
+            # 1.1.4
+            * Discord 115104
+
             # 1.1.3
             * Require restart
 

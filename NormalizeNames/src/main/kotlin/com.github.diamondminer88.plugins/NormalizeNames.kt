@@ -46,7 +46,7 @@ class NormalizeNames : Plugin() {
     override fun start(ctx: Context) {
         updateNormalizer()
 
-        patcher.after<User>("r") {
+        patcher.after<User>("getUsername") {
             if (it.result != null)
                 it.result = normalizeString(it.result as String)
         }
