@@ -1,3 +1,4 @@
+include(":TypingUsers")
 include(":CloneChannels")
 include(":CloseDMs")
 include(":Gestures")
