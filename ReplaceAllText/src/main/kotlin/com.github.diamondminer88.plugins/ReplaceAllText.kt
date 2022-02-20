@@ -39,7 +39,6 @@ class ReplaceAllText : Plugin() {
             Int::class.javaPrimitiveType!!
         ) {
             val holder = it.args[0] as Plugins.Adapter.ViewHolder
-            logger.info("'${holder.card.titleView.text}'")
 
             if (holder.card.titleView.text.startsWith("ReplaceAllText"))
                 holder.card.settingsButton.isEnabled = true
@@ -58,7 +57,6 @@ class ReplaceAllText : Plugin() {
             val data = fPluginsData.get(this) as List<Plugin>
             val plugin = data[it.args[2] as Int]
 
-            logger.info(plugin.manifest.name)
             if (plugin.manifest.name != "ReplaceAllText")
                 return@after
 
