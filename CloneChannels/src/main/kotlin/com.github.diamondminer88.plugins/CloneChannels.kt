@@ -12,6 +12,7 @@ import com.aliucord.patcher.after
 import com.aliucord.utils.RxUtils.await
 import com.aliucord.wrappers.ChannelWrapper.Companion.name
 import com.aliucord.wrappers.ChannelWrapper.Companion.parentId
+import com.aliucord.wrappers.ChannelWrapper.Companion.permissionOverwrites
 import com.aliucord.wrappers.ChannelWrapper.Companion.topic
 import com.aliucord.wrappers.ChannelWrapper.Companion.type
 import com.discord.api.channel.Channel
@@ -68,7 +69,7 @@ class CloneChannels : Plugin() {
                                 null,
                                 channel.name,
                                 channel.parentId,
-                                channel.s().map { overwrite ->
+                                channel.permissionOverwrites.map { overwrite ->
                                     (ChannelPermissionOverwrites.Companion).fromPermissionOverwrite(overwrite)
                                 },
                                 channel.topic,
