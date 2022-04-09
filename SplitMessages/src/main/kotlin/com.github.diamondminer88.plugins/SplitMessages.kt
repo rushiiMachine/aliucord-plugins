@@ -111,6 +111,7 @@ class SplitMessages : Plugin() {
                             emptyList(),
                             false
                         ),
+                        null,
                         null
                     )
                     val (_, err) = RestAPI.api.sendMessage(
