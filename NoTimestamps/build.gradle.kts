@@ -1,9 +1,12 @@
-version = "1.1.0"
+version = "1.1.1"
 description = "Hide timestamps on messages."
 
 aliucord {
     changelog.set(
         """
+            # 1.1.1
+            * Undo message divider removal
+
             # 1.1.0
             * Hide message divider timestamps
 
