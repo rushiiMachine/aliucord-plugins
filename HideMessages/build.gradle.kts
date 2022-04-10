@@ -2,8 +2,8 @@ version = "1.0.2"
 description = "Delete messages locally until you restart."
 
 aliucord {
-    changelog.set(
-        """
+	changelog.set(
+		"""
             # 1.0.2
             * Fix changelog
 
@@ -13,5 +13,5 @@ aliucord {
             # 1.0.0
             * Released
         """.trimIndent()
-    )
+	)
 }

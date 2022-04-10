@@ -17,30 +17,30 @@ import com.lytefast.flexinput.fragment.`FlexInputFragment$a`
 @SuppressLint("ClickableViewAccessibility")
 @AliucordPlugin
 class Gestures : Plugin() {
-    override fun start(ignored: Context) {
-        val clipboard = Utils.appActivity.getSystemService(CLIPBOARD_SERVICE) as ClipboardManager
-        patcher.after<FlexInputFragment>("onViewCreated", View::class.java, Bundle::class.java) {
-            val editText = this.l()
-            val prevListener = `FlexInputFragment$a`(0, this)
-            editText.setOnTouchListener(object : OnSwipeListener(editText.context) {
-                override fun onSwipeRight() {
-                    editText.setText("")
-                    prevListener.onClick(editText.rootView)
-                }
+	override fun start(ignored: Context) {
+		val clipboard = Utils.appActivity.getSystemService(CLIPBOARD_SERVICE) as ClipboardManager
+		patcher.after<FlexInputFragment>("onViewCreated", View::class.java, Bundle::class.java) {
+			val editText = this.l()
+			val prevListener = `FlexInputFragment$a`(0, this)
+			editText.setOnTouchListener(object : OnSwipeListener(editText.context) {
+				override fun onSwipeRight() {
+					editText.setText("")
+					prevListener.onClick(editText.rootView)
+				}
 
-                override fun onSwipeLeft() {
-                    if (!clipboard.hasText()) return
-                    editText.append(clipboard.text)
-                }
+				override fun onSwipeLeft() {
+					if (!clipboard.hasText()) return
+					editText.append(clipboard.text)
+				}
 
-                override fun onClick() {
-                    prevListener.onClick(editText.rootView)
-                }
-            })
-        }
-    }
+				override fun onClick() {
+					prevListener.onClick(editText.rootView)
+				}
+			})
+		}
+	}
 
-    override fun stop(context: Context) {
-        patcher.unpatchAll()
-    }
+	override fun stop(context: Context) {
+		patcher.unpatchAll()
+	}
 }

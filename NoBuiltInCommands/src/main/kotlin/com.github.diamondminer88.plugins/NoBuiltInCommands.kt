@@ -10,16 +10,16 @@ import com.discord.stores.BuiltInCommands
 @Suppress("unused", "UNCHECKED_CAST")
 @AliucordPlugin(requiresRestart = true)
 class NoBuiltInCommands : Plugin() {
-    private val blockedCommands = listOf("shrug", "tableflip", "unflip", "me", "spoiler")
+	private val blockedCommands = listOf("shrug", "tableflip", "unflip", "me", "spoiler")
 
-    override fun start(ctx: Context) {
-        patcher.after<BuiltInCommands>("getBuiltInCommands") {
-            val result = (it.result as List<ApplicationCommand>)
-            it.result = result.filter { cmd -> !blockedCommands.contains(cmd.name) }
-        }
-    }
+	override fun start(ctx: Context) {
+		patcher.after<BuiltInCommands>("getBuiltInCommands") {
+			val result = (it.result as List<ApplicationCommand>)
+			it.result = result.filter { cmd -> !blockedCommands.contains(cmd.name) }
+		}
+	}
 
-    override fun stop(context: Context) {
-        patcher.unpatchAll()
-    }
+	override fun stop(context: Context) {
+		patcher.unpatchAll()
+	}
 }

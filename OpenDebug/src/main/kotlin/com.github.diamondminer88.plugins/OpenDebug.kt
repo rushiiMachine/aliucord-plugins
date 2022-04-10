@@ -17,65 +17,65 @@ import com.lytefast.flexinput.fragment.`FlexInputFragment$d`
 @Suppress("unused")
 @AliucordPlugin(requiresRestart = true)
 class OpenDebug : Plugin() {
-    private val pkgName = this.javaClass.`package`?.name
+	private val pkgName = this.javaClass.`package`?.name
 
-    init {
-        needsResources = true
-    }
+	init {
+		needsResources = true
+	}
 
-    private fun openDebug(ctx: Context) =
-        Utils.openPage(
-            ctx,
-            WidgetDebugging::class.java,
-            Intent().addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-        )
+	private fun openDebug(ctx: Context) =
+		Utils.openPage(
+			ctx,
+			WidgetDebugging::class.java,
+			Intent().addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+		)
 
-    override fun start(ctx: Context) {
-        var debugIcon = (ResourcesCompat.getDrawable(
-            resources,
-            resources.getIdentifier("debug_icon", "drawable", pkgName),
-            null
-        ) ?: throw Error("Failed to load debug icon")) as BitmapDrawable
-        debugIcon = BitmapDrawable(
-            resources,
-            Bitmap.createScaledBitmap(debugIcon.bitmap, 24, 24, true)
-        )
+	override fun start(ctx: Context) {
+		var debugIcon = (ResourcesCompat.getDrawable(
+			resources,
+			resources.getIdentifier("debug_icon", "drawable", pkgName),
+			null
+		) ?: throw Error("Failed to load debug icon")) as BitmapDrawable
+		debugIcon = BitmapDrawable(
+			resources,
+			Bitmap.createScaledBitmap(debugIcon.bitmap, 24, 24, true)
+		)
 
-        val disableIcon = ResourcesCompat.getDrawable(
-            resources,
-            resources.getIdentifier("disable_icon", "drawable", pkgName),
-            null
-        ) ?: throw Error("Failed to load disable icon")
+		val disableIcon = ResourcesCompat.getDrawable(
+			resources,
+			resources.getIdentifier("disable_icon", "drawable", pkgName),
+			null
+		) ?: throw Error("Failed to load disable icon")
 
-        patcher.after<`FlexInputFragment$d`>("invoke", Any::class.java) {
-            val frag = this.receiver as FlexInputFragment
-            val binding = frag.j() ?: return@after
-            binding.h.visibility = View.GONE // blank arrow
-            binding.m.visibility = View.VISIBLE // gift button
-            binding.l.visibility = View.VISIBLE // gallery
+		patcher.after<`FlexInputFragment$d`>("invoke", Any::class.java) {
+			val frag = this.receiver as FlexInputFragment
+			val binding = frag.j() ?: return@after
+			binding.h.visibility = View.GONE // blank arrow
+			binding.m.visibility = View.VISIBLE // gift button
+			binding.l.visibility = View.VISIBLE // gallery
 
-            // we replace the gift button icon with our own & click handler
-            binding.m.setImageDrawable(debugIcon)
-            binding.m.foreground = disableIcon
-            binding.m.foreground.alpha = if (settings.getBool("disabled", false)) 120 else 0
+			// we replace the gift button icon with our own & click handler
+			binding.m.setImageDrawable(debugIcon)
+			binding.m.foreground = disableIcon
+			binding.m.foreground.alpha = if (settings.getBool("disabled", false)) 120 else 0
 
-            binding.m.setOnClickListener { v ->
-                openDebug(v.context)
-            }
-            binding.m.setOnLongClickListener {
-                val disabled = !settings.getBool("disabled", false)
-                settings.setBool("disabled", disabled)
-                binding.m.foreground.alpha = if (disabled) 120 else 0
-                Utils.showToast("${if (disabled) "Disabled" else "Enabled"} auto debug log")
-                return@setOnLongClickListener true
-            }
-        }
+			binding.m.setOnClickListener { v ->
+				openDebug(v.context)
+			}
+			binding.m.setOnLongClickListener {
+				val disabled = !settings.getBool("disabled", false)
+				settings.setBool("disabled", disabled)
+				binding.m.foreground.alpha = if (disabled) 120 else 0
+				Utils.showToast("${if (disabled) "Disabled" else "Enabled"} auto debug log")
+				return@setOnLongClickListener true
+			}
+		}
 
-        if (!settings.getBool("disabled", false))
-            openDebug(ctx)
-    }
+		if (!settings.getBool("disabled", false))
+			openDebug(ctx)
+	}
 
-    override fun stop(context: Context) {
-        patcher.unpatchAll()
-    }
+	override fun stop(context: Context) {
+		patcher.unpatchAll()
+	}
 }

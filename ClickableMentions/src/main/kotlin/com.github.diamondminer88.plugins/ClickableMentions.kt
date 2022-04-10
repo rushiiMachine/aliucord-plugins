@@ -17,91 +17,91 @@ import com.lytefast.flexinput.R
 @Suppress("unused")
 @AliucordPlugin
 class ClickableMentions : Plugin() {
-    private fun makeChannelClickHandler(ctx: Context): (Long) -> Unit {
-        return {
-            ChannelSelector.getInstance().findAndSet(ctx, it)
-        }
-    }
+	private fun makeChannelClickHandler(ctx: Context): (Long) -> Unit {
+		return {
+			ChannelSelector.getInstance().findAndSet(ctx, it)
+		}
+	}
 
-    private val userClickHandler: (Long) -> Unit = {
-        logger.info("here")
-        val adapter = WidgetChatList.`access$getAdapter$p`(Utils.widgetChatList)
-        if (adapter.fragmentManager == null) {
-            logger.errorToast("Failed to get fragmentManager")
-        } else {
-            adapter.eventHandler.onUserMentionClicked(
-                it,
-                adapter.data.channelId,
-                adapter.data.guildId
-            )
-        }
-    }
+	private val userClickHandler: (Long) -> Unit = {
+		logger.info("here")
+		val adapter = WidgetChatList.`access$getAdapter$p`(Utils.widgetChatList)
+		if (adapter.fragmentManager == null) {
+			logger.errorToast("Failed to get fragmentManager")
+		} else {
+			adapter.eventHandler.onUserMentionClicked(
+				it,
+				adapter.data.channelId,
+				adapter.data.guildId
+			)
+		}
+	}
 
-    override fun start(ignored: Context) {
-        patcher.after<UserMentionNode<UserMentionNode.RenderContext>>(
-            "renderUserMention",
-            SpannableStringBuilder::class.java,
-            UserMentionNode.RenderContext::class.java
-        ) {
-            val renderContext = it.args[1] as UserMentionNode.RenderContext
-            if (renderContext.userMentionOnClick != null) return@after
+	override fun start(ignored: Context) {
+		patcher.after<UserMentionNode<UserMentionNode.RenderContext>>(
+			"renderUserMention",
+			SpannableStringBuilder::class.java,
+			UserMentionNode.RenderContext::class.java
+		) {
+			val renderContext = it.args[1] as UserMentionNode.RenderContext
+			if (renderContext.userMentionOnClick != null) return@after
 
-            val mentionLength = run {
-                val userNames = renderContext.userNames
-                if (userNames == null || !userNames.containsKey(userId)) 13
-                else userNames[this.userId]!!.length + 1
-            }
+			val mentionLength = run {
+				val userNames = renderContext.userNames
+				if (userNames == null || !userNames.containsKey(userId)) 13
+				else userNames[this.userId]!!.length + 1
+			}
 
-            val builder = it.args[0] as SpannableStringBuilder
-            builder.setSpan(
-                ClickableSpan(
-                    ColorCompat.getThemedColor(renderContext.context, R.b.theme_chat_mention_foreground),
-                    false,
-                    null,
-                    `UserMentionNode$renderUserMention$1`(this, userClickHandler),
-                    4,
-                    null
-                ),
-                builder.length - mentionLength,
-                builder.length,
-                33
-            )
-        }
+			val builder = it.args[0] as SpannableStringBuilder
+			builder.setSpan(
+				ClickableSpan(
+					ColorCompat.getThemedColor(renderContext.context, R.b.theme_chat_mention_foreground),
+					false,
+					null,
+					`UserMentionNode$renderUserMention$1`(this, userClickHandler),
+					4,
+					null
+				),
+				builder.length - mentionLength,
+				builder.length,
+				33
+			)
+		}
 
-        patcher.after<ChannelMentionNode<ChannelMentionNode.RenderContext>>(
-            "render",
-            SpannableStringBuilder::class.java, ChannelMentionNode.RenderContext::class.java
-        ) {
-            val renderContext = it.args[1] as ChannelMentionNode.RenderContext
-            if (renderContext.channelMentionOnClick != null) return@after
+		patcher.after<ChannelMentionNode<ChannelMentionNode.RenderContext>>(
+			"render",
+			SpannableStringBuilder::class.java, ChannelMentionNode.RenderContext::class.java
+		) {
+			val renderContext = it.args[1] as ChannelMentionNode.RenderContext
+			if (renderContext.channelMentionOnClick != null) return@after
 
-            val mentionLength = run {
-                val userNames = renderContext.channelNames
-                if (userNames == null || !userNames.containsKey(channelId)) 16
-                else userNames[this.channelId]!!.length + 1
-            }
+			val mentionLength = run {
+				val userNames = renderContext.channelNames
+				if (userNames == null || !userNames.containsKey(channelId)) 16
+				else userNames[this.channelId]!!.length + 1
+			}
 
-            val builder = it.args[0] as SpannableStringBuilder
-            builder.setSpan(
-                ClickableSpan(
-                    ColorCompat.getThemedColor(renderContext.context, R.b.theme_chat_mention_foreground),
-                    false,
-                    null,
-                    `ChannelMentionNode$render$1`(this, makeChannelClickHandler(renderContext.context)),
-                    4,
-                    null
-                ),
-                builder.length - mentionLength,
-                builder.length,
-                33
-            )
+			val builder = it.args[0] as SpannableStringBuilder
+			builder.setSpan(
+				ClickableSpan(
+					ColorCompat.getThemedColor(renderContext.context, R.b.theme_chat_mention_foreground),
+					false,
+					null,
+					`ChannelMentionNode$render$1`(this, makeChannelClickHandler(renderContext.context)),
+					4,
+					null
+				),
+				builder.length - mentionLength,
+				builder.length,
+				33
+			)
 
-        }
-    }
+		}
+	}
 
-    override fun stop(context: Context) {
-        patcher.unpatchAll()
-    }
+	override fun stop(context: Context) {
+		patcher.unpatchAll()
+	}
 }
 
 // -------------------------------------- future reference patches --------------------------------------

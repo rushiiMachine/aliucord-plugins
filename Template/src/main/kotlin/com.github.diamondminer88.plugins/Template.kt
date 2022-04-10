@@ -7,12 +7,12 @@ import com.aliucord.entities.Plugin
 @Suppress("unused")
 @AliucordPlugin
 class Template : Plugin() {
-    override fun start(ctx: Context) {
+	override fun start(ctx: Context) {
 
-    }
+	}
 
-    override fun stop(context: Context) {
-        patcher.unpatchAll()
-        commands.unregisterAll()
-    }
+	override fun stop(context: Context) {
+		patcher.unpatchAll()
+		commands.unregisterAll()
+	}
 }

@@ -2,8 +2,8 @@ version = "1.0.3"
 description = "Show typing indicators in the channel list."
 
 aliucord {
-    changelog.set(
-        """
+	changelog.set(
+		"""
             # 1.0.3
             * Remove log
 
@@ -16,6 +16,6 @@ aliucord {
             # 1.0.0
             * Released
         """.trimIndent()
-    )
-    author("Zt", 289556910426816513L)
+	)
+	author("Zt", 289556910426816513L)
 }

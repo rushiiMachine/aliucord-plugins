@@ -2,8 +2,8 @@ version = "1.0.10"
 description = "Split messages longer than 2000/4000 characters into multiple messages."
 
 aliucord {
-    changelog.set(
-        """
+	changelog.set(
+		"""
             * 1.0.10
             * New Discord
 
@@ -37,5 +37,5 @@ aliucord {
             # 1.0.0
             * Released
         """.trimIndent()
-    )
+	)
 }

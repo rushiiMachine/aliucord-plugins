@@ -2,8 +2,8 @@ version = "1.1.4"
 description = "Display nick/user names with some fancy chars reverted to normal."
 
 aliucord {
-    changelog.set(
-        """
+	changelog.set(
+		"""
             # 1.1.4
             * Discord 115104
 
@@ -22,5 +22,5 @@ aliucord {
             # 1.0.0
             * Released
         """.trimIndent()
-    )
+	)
 }

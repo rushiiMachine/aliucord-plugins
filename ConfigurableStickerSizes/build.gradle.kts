@@ -2,8 +2,8 @@ version = "1.1.5"
 description = "Makes sticker sizes configurable."
 
 aliucord {
-    changelog.set(
-        """
+	changelog.set(
+		"""
             # 1.1.5
             * Fix changelog
 
@@ -29,5 +29,5 @@ aliucord {
             # 1.0.0
             * Released
         """.trimIndent()
-    )
+	)
 }

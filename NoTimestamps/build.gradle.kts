@@ -2,8 +2,8 @@ version = "1.1.1"
 description = "Hide timestamps on messages."
 
 aliucord {
-    changelog.set(
-        """
+	changelog.set(
+		"""
             # 1.1.1
             * Undo message divider removal
 
@@ -16,5 +16,5 @@ aliucord {
             # 1.0.0
             * Released
         """.trimIndent()
-    )
+	)
 }

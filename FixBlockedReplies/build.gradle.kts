@@ -2,8 +2,8 @@ version = "1.0.3"
 description = "Show reply author, (optionally) show reply content, and fix clicking on them."
 
 aliucord {
-    changelog.set(
-        """
+	changelog.set(
+		"""
             # 1.0.3
             * Fix changelog
 
@@ -16,5 +16,5 @@ aliucord {
             # 1.0.0
             * Released
         """.trimIndent()
-    )
+	)
 }

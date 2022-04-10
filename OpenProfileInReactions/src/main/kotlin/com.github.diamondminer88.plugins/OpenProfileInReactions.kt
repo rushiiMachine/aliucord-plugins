@@ -14,40 +14,40 @@ import com.discord.widgets.user.usersheet.WidgetUserSheet
 @Suppress("unused")
 @AliucordPlugin
 class OpenProfileInReactions : Plugin() {
-    override fun start(ctx: Context) {
-        patcher.patch(
-            ReactionUserViewHolder::class.java.getDeclaredMethod(
-                "onConfigure",
-                Int::class.javaPrimitiveType,
-                MGRecyclerDataPayload::class.java
-            ), Hook {
-                val thisObj = it.thisObject as ReactionUserViewHolder
+	override fun start(ctx: Context) {
+		patcher.patch(
+			ReactionUserViewHolder::class.java.getDeclaredMethod(
+				"onConfigure",
+				Int::class.javaPrimitiveType,
+				MGRecyclerDataPayload::class.java
+			), Hook {
+				val thisObj = it.thisObject as ReactionUserViewHolder
 
-                if (it.args[1] !is ReactionUserItem) return@Hook
-                val reactionItem = it.args[1] as ReactionUserItem
+				if (it.args[1] !is ReactionUserItem) return@Hook
+				val reactionItem = it.args[1] as ReactionUserItem
 
-                thisObj.itemView.setOnClickListener {
-                    val user = reactionItem.user.id
-                    if (!StoreStream.getUsers().users.containsKey(user))
-                        StoreStream.getUsers().fetchUsers(listOf(user))
+				thisObj.itemView.setOnClickListener {
+					val user = reactionItem.user.id
+					if (!StoreStream.getUsers().users.containsKey(user))
+						StoreStream.getUsers().fetchUsers(listOf(user))
 
-                    WidgetUserSheet.Companion.`show$default`(
-                        WidgetUserSheet.Companion,
-                        user,
-                        reactionItem.channelId,
-                        Utils.appActivity.supportFragmentManager,
-                        StoreStream.getGuildSelected().selectedGuildId,
-                        null,
-                        null,
-                        null,
-                        112,
-                        null
-                    )
-                }
-            })
-    }
+					WidgetUserSheet.Companion.`show$default`(
+						WidgetUserSheet.Companion,
+						user,
+						reactionItem.channelId,
+						Utils.appActivity.supportFragmentManager,
+						StoreStream.getGuildSelected().selectedGuildId,
+						null,
+						null,
+						null,
+						112,
+						null
+					)
+				}
+			})
+	}
 
-    override fun stop(context: Context) {
-        patcher.unpatchAll()
-    }
+	override fun stop(context: Context) {
+		patcher.unpatchAll()
+	}
 }

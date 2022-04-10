@@ -2,8 +2,8 @@ version = "1.2.1"
 description = "Replaces the TM, R, and C emoji with one that's more visible."
 
 aliucord {
-    changelog.set(
-        """
+	changelog.set(
+		"""
             # 1.2.1
             * Fix changelog
 
@@ -16,5 +16,5 @@ aliucord {
             # 1.0.0
             * Released
         """.trimIndent()
-    )
+	)
 }

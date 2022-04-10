@@ -14,27 +14,27 @@ import com.discord.widgets.chat.list.entries.ChatListEntry
 @Suppress("unused")
 @AliucordPlugin
 class NoTimestamps : Plugin() {
-    private val timestampId = Utils.getResId("chat_list_adapter_item_text_timestamp", "id")
+	private val timestampId = Utils.getResId("chat_list_adapter_item_text_timestamp", "id")
 
-    override fun start(ctx: Context) {
-        if (PluginManager.isPluginEnabled("CustomTimestamps")) {
-            Utils.showToast("NoTimestamps: Disabled CustomTimestamps")
-            PluginManager.disablePlugin("CustomTimestamps")
-        }
+	override fun start(ctx: Context) {
+		if (PluginManager.isPluginEnabled("CustomTimestamps")) {
+			Utils.showToast("NoTimestamps: Disabled CustomTimestamps")
+			PluginManager.disablePlugin("CustomTimestamps")
+		}
 
-        patcher.after<WidgetChatListAdapterItemMessage>(
-            "onConfigure",
-            Integer.TYPE,
-            ChatListEntry::class.java
-        ) {
-            itemView.findViewById<TextView>(timestampId)
-                .visibility = View.GONE
-        }
-    }
+		patcher.after<WidgetChatListAdapterItemMessage>(
+			"onConfigure",
+			Integer.TYPE,
+			ChatListEntry::class.java
+		) {
+			itemView.findViewById<TextView>(timestampId)
+				.visibility = View.GONE
+		}
+	}
 
-    // TODO: enable CustomTimestamps on onUninstall()
+	// TODO: enable CustomTimestamps on onUninstall()
 
-    override fun stop(context: Context) {
-        patcher.unpatchAll()
-    }
+	override fun stop(context: Context) {
+		patcher.unpatchAll()
+	}
 }

@@ -20,62 +20,62 @@ import com.lytefast.flexinput.R
 @SuppressLint("SetTextI18n")
 @AliucordPlugin
 class HideMessages : Plugin() {
-    private val contextItemId = View.generateViewId()
-    private val deleteIconId = Utils.getResId("drawable_chip_delete", "drawable")
-    private val deleteContextItemId = Utils.getResId("dialog_chat_actions_delete", "id")
-    private val msgIdField = WidgetChatListActions::class.java.getDeclaredField("messageId")
-        .apply { isAccessible = true }
-    private val channelIdField = WidgetChatListActions::class.java.getDeclaredField("channelId")
-        .apply { isAccessible = true }
+	private val contextItemId = View.generateViewId()
+	private val deleteIconId = Utils.getResId("drawable_chip_delete", "drawable")
+	private val deleteContextItemId = Utils.getResId("dialog_chat_actions_delete", "id")
+	private val msgIdField = WidgetChatListActions::class.java.getDeclaredField("messageId")
+		.apply { isAccessible = true }
+	private val channelIdField = WidgetChatListActions::class.java.getDeclaredField("channelId")
+		.apply { isAccessible = true }
 
-    override fun start(ctx: Context) {
-        patcher.after<WidgetChatListActions>(
-            "configureUI",
-            WidgetChatListActions.Model::class.java
-        ) {
-            val layout = (requireView() as NestedScrollView).getChildAt(0) as LinearLayout
+	override fun start(ctx: Context) {
+		patcher.after<WidgetChatListActions>(
+			"configureUI",
+			WidgetChatListActions.Model::class.java
+		) {
+			val layout = (requireView() as NestedScrollView).getChildAt(0) as LinearLayout
 
-            if (layout.findViewById<TextView>(contextItemId) != null)
-                return@after
+			if (layout.findViewById<TextView>(contextItemId) != null)
+				return@after
 
-            val textView = TextView(layout.context, null, 0, R.i.UiKit_Settings_Item_Icon)
-            textView.id = contextItemId
-            textView.text = "Hide Message"
-            textView.setCompoundDrawablesWithIntrinsicBounds(deleteIconId, 0, 0, 0)
-            textView.compoundDrawables[0].setTint(
-                ColorCompat.getThemedColor(
-                    layout.context,
-                    R.b.colorInteractiveNormal
-                )
-            )
-            textView.setOnClickListener {
-                val channelId = channelIdField.getLong(this)
-                val msgId = msgIdField.getLong(this)
+			val textView = TextView(layout.context, null, 0, R.i.UiKit_Settings_Item_Icon)
+			textView.id = contextItemId
+			textView.text = "Hide Message"
+			textView.setCompoundDrawablesWithIntrinsicBounds(deleteIconId, 0, 0, 0)
+			textView.compoundDrawables[0].setTint(
+				ColorCompat.getThemedColor(
+					layout.context,
+					R.b.colorInteractiveNormal
+				)
+			)
+			textView.setOnClickListener {
+				val channelId = channelIdField.getLong(this)
+				val msgId = msgIdField.getLong(this)
 
-                dismiss()
+				dismiss()
 
-                if (PluginManager.isPluginEnabled("MessageLogger")) {
-                    logger.info("Due to how this plugin works, MessageLogger needs to be disabled")
-                    PluginManager.disablePlugin("MessageLogger")
-                    StoreStream.getMessages().handleMessageDelete(ModelMessageDelete(channelId, msgId))
-                    PluginManager.enablePlugin("MessageLogger")
-                } else {
-                    StoreStream.getMessages().handleMessageDelete(ModelMessageDelete(channelId, msgId))
-                }
-            }
+				if (PluginManager.isPluginEnabled("MessageLogger")) {
+					logger.info("Due to how this plugin works, MessageLogger needs to be disabled")
+					PluginManager.disablePlugin("MessageLogger")
+					StoreStream.getMessages().handleMessageDelete(ModelMessageDelete(channelId, msgId))
+					PluginManager.enablePlugin("MessageLogger")
+				} else {
+					StoreStream.getMessages().handleMessageDelete(ModelMessageDelete(channelId, msgId))
+				}
+			}
 
-            for (index in 0 until layout.childCount) {
-                if (layout.getChildAt(index).id == deleteContextItemId) {
-                    layout.addView(textView, index + 1)
-                    return@after
-                }
-            }
+			for (index in 0 until layout.childCount) {
+				if (layout.getChildAt(index).id == deleteContextItemId) {
+					layout.addView(textView, index + 1)
+					return@after
+				}
+			}
 
-            layout.addView(textView) // backup in case delete btn is gone completely
-        }
-    }
+			layout.addView(textView) // backup in case delete btn is gone completely
+		}
+	}
 
-    override fun stop(context: Context) {
-        patcher.unpatchAll()
-    }
+	override fun stop(context: Context) {
+		patcher.unpatchAll()
+	}
 }

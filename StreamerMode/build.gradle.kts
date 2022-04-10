@@ -2,8 +2,8 @@ version = "1.2.3"
 description = "Hide identifiable information."
 
 aliucord {
-    changelog.set(
-        """
+	changelog.set(
+		"""
             # 1.2.3
             * Update to Discord 112104
 
@@ -27,5 +27,5 @@ aliucord {
             # 1.0.0
             * Released
         """.trimIndent()
-    )
+	)
 }

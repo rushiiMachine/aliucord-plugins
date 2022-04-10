@@ -15,62 +15,62 @@ import com.aliucord.patcher.Hook
 @Suppress("unused")
 @AliucordPlugin(requiresRestart = true)
 class NoUppercase : Plugin() {
-//    init {
-//        settingsTab = SettingsTab(
-//            NoUppercaseSettings::class.java,
-//            SettingsTab.Type.BOTTOM_SHEET
-//        ).withArgs(settings)
-//    }
+	//    init {
+	//        settingsTab = SettingsTab(
+	//            NoUppercaseSettings::class.java,
+	//            SettingsTab.Type.BOTTOM_SHEET
+	//        ).withArgs(settings)
+	//    }
 
-    override fun start(ctx: Context) {
-//        val headerIds = listOf(
-//            R.i.AppAlertDialogHeader,
-//            R.i.Feedback_SectionHeaderTextAppearance,
-//            R.i.FriendsList_ItemHeader_Title,
-//            R.i.Markdown_Header1,
-//            R.i.Stage_Section_HeaderTextAppearance,
-//            R.i.TooltipDefaultText,
-//            R.i.UiKit_Calls_ButtonCircle,
-//            R.i.UiKit_Chat_Embed_Header,
-//            R.i.UiKit_Chip_New,
-//            R.i.UiKit_Dialog_Title,
-//            R.i.UiKit_Search_Header,
-//            R.i.UiKit_Settings_Item_Header,
-//            R.i.UiKit_Tabs_TextAppearance,
-//            R.i.UiKit_TextAppearance_ListItem_Label,
-//            R.i.UiKit_TextView_H6,
-//            R.i.UiKit_TextView_NewBadge,
-//            R.i.UiKit_TextView_Tagged,
-//            R.i.UserProfile_Section_HeaderTextAppearance,
-//        )
+	override fun start(ctx: Context) {
+		//        val headerIds = listOf(
+		//            R.i.AppAlertDialogHeader,
+		//            R.i.Feedback_SectionHeaderTextAppearance,
+		//            R.i.FriendsList_ItemHeader_Title,
+		//            R.i.Markdown_Header1,
+		//            R.i.Stage_Section_HeaderTextAppearance,
+		//            R.i.TooltipDefaultText,
+		//            R.i.UiKit_Calls_ButtonCircle,
+		//            R.i.UiKit_Chat_Embed_Header,
+		//            R.i.UiKit_Chip_New,
+		//            R.i.UiKit_Dialog_Title,
+		//            R.i.UiKit_Search_Header,
+		//            R.i.UiKit_Settings_Item_Header,
+		//            R.i.UiKit_Tabs_TextAppearance,
+		//            R.i.UiKit_TextAppearance_ListItem_Label,
+		//            R.i.UiKit_TextView_H6,
+		//            R.i.UiKit_TextView_NewBadge,
+		//            R.i.UiKit_TextView_Tagged,
+		//            R.i.UserProfile_Section_HeaderTextAppearance,
+		//        )
 
-        try {
-            val cTextAppearanceAttributes = Class.forName("android.widget.TextView\$TextAppearanceAttributes")
-            val fmAllCaps = cTextAppearanceAttributes.getDeclaredField("mAllCaps")
-                .apply { isAccessible = true }
-            patcher.patch(TextView::class.java.getDeclaredMethod(
-                "readTextAppearance",
-                Context::class.java,
-                TypedArray::class.java,
-                cTextAppearanceAttributes,
-                java.lang.Boolean.TYPE
-            ), Hook {
-                fmAllCaps.set(it.args[2], false)
-            })
-        } catch (t: Throwable) {
-            logger.errorToast("[NoUppercase] Reinstall Aliucord", t)
-        }
+		try {
+			val cTextAppearanceAttributes = Class.forName("android.widget.TextView\$TextAppearanceAttributes")
+			val fmAllCaps = cTextAppearanceAttributes.getDeclaredField("mAllCaps")
+				.apply { isAccessible = true }
+			patcher.patch(TextView::class.java.getDeclaredMethod(
+				"readTextAppearance",
+				Context::class.java,
+				TypedArray::class.java,
+				cTextAppearanceAttributes,
+				java.lang.Boolean.TYPE
+			), Hook {
+				fmAllCaps.set(it.args[2], false)
+			})
+		} catch (t: Throwable) {
+			logger.errorToast("[NoUppercase] Reinstall Aliucord", t)
+		}
 
-//        val multiplier = settings.getFloat(TEXT_SIZE_KEY, DEFAULT_MULTIPLIER)
-//        patcher.after<TextView>(Context::class.java, AttributeSet::class.java, Integer.TYPE, Integer.TYPE) {
-//            if (headerIds.contains(it.args[3]))
-//                setTextSize(TypedValue.COMPLEX_UNIT_PX, textSize * multiplier)
-//        }
-    }
+		//        val multiplier = settings.getFloat(TEXT_SIZE_KEY, DEFAULT_MULTIPLIER)
+		//        patcher.after<TextView>(Context::class.java, AttributeSet::class.java, Integer.TYPE, Integer.TYPE) {
+		//            if (headerIds.contains(it.args[3]))
+		//                setTextSize(TypedValue.COMPLEX_UNIT_PX, textSize * multiplier)
+		//        }
+	}
 
-    override fun stop(context: Context) {
-        patcher.unpatchAll()
-    }
+	override fun stop(context: Context) {
+		patcher.unpatchAll()
+	}
 }
 
 //@SuppressLint("SetTextI18n")

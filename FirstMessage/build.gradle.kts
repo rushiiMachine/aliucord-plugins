@@ -2,8 +2,8 @@ version = "1.1.7"
 description = "Finds the first message from a user/channel. (/firstmessage)"
 
 aliucord {
-    changelog.set(
-        """
+	changelog.set(
+		"""
             # 1.1.7
             * Fix changelog
 
@@ -32,5 +32,5 @@ aliucord {
             # 1.0.0
             * Released
         """.trimIndent()
-    )
+	)
 }

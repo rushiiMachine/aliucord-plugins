@@ -18,68 +18,68 @@ import com.discord.views.CheckedSetting
 @Suppress("unused")
 @AliucordPlugin(requiresRestart = true)
 class NormalizeNames : Plugin() {
-    private val accentRegex = Regex("\\p{InCombiningDiacriticalMarks}+")
+	private val accentRegex = Regex("\\p{InCombiningDiacriticalMarks}+")
 
-    var normalizeDiacritics: Boolean by settings.delegate(false)
-    private lateinit var normalizer: Normalizer2
+	var normalizeDiacritics: Boolean by settings.delegate(false)
+	private lateinit var normalizer: Normalizer2
 
-    init {
-        settingsTab = SettingsTab(
-            NormalizeNamesSettings::class.java,
-            SettingsTab.Type.BOTTOM_SHEET
-        ).withArgs(this)
-    }
+	init {
+		settingsTab = SettingsTab(
+			NormalizeNamesSettings::class.java,
+			SettingsTab.Type.BOTTOM_SHEET
+		).withArgs(this)
+	}
 
-    fun updateNormalizer() {
-        normalizer =
-            if (normalizeDiacritics) Normalizer2.getNFDInstance()!!
-            else Normalizer2.getNFKCInstance()!!
-    }
+	fun updateNormalizer() {
+		normalizer =
+			if (normalizeDiacritics) Normalizer2.getNFDInstance()!!
+			else Normalizer2.getNFKCInstance()!!
+	}
 
-    private fun normalizeString(str: String): String {
-        var normalized = normalizer.normalize(str)
-        if (normalizeDiacritics)
-            normalized = normalized.replace(accentRegex, "")
-        return normalized
-    }
+	private fun normalizeString(str: String): String {
+		var normalized = normalizer.normalize(str)
+		if (normalizeDiacritics)
+			normalized = normalized.replace(accentRegex, "")
+		return normalized
+	}
 
-    override fun start(ctx: Context) {
-        updateNormalizer()
+	override fun start(ctx: Context) {
+		updateNormalizer()
 
-        patcher.after<User>("getUsername") {
-            if (it.result != null)
-                it.result = normalizeString(it.result as String)
-        }
+		patcher.after<User>("getUsername") {
+			if (it.result != null)
+				it.result = normalizeString(it.result as String)
+		}
 
-        patcher.after<GuildMember>("h") {
-            if (it.result != null)
-                it.result = normalizeString(it.result as String)
-        }
-    }
+		patcher.after<GuildMember>("h") {
+			if (it.result != null)
+				it.result = normalizeString(it.result as String)
+		}
+	}
 
-    override fun stop(context: Context) {
-        patcher.unpatchAll()
-    }
+	override fun stop(context: Context) {
+		patcher.unpatchAll()
+	}
 }
 
 @SuppressLint("SetTextI18n")
 class NormalizeNamesSettings(private val plugin: NormalizeNames) : BottomSheet() {
-    override fun onViewCreated(view: View, bundle: Bundle?) {
-        super.onViewCreated(view, bundle)
-        val ctx = view.context
+	override fun onViewCreated(view: View, bundle: Bundle?) {
+		super.onViewCreated(view, bundle)
+		val ctx = view.context
 
-        addView(
-            Utils.createCheckedSetting(
-                ctx, CheckedSetting.ViewType.SWITCH,
-                "Diacritics",
-                "Remove diacritics/accents on characters."
-            ).apply {
-                isChecked = plugin.normalizeDiacritics
-                setOnCheckedListener {
-                    plugin.normalizeDiacritics = it
-                    plugin.updateNormalizer()
-                    Utils.promptRestart()
-                }
-            })
-    }
+		addView(
+			Utils.createCheckedSetting(
+				ctx, CheckedSetting.ViewType.SWITCH,
+				"Diacritics",
+				"Remove diacritics/accents on characters."
+			).apply {
+				isChecked = plugin.normalizeDiacritics
+				setOnCheckedListener {
+					plugin.normalizeDiacritics = it
+					plugin.updateNormalizer()
+					Utils.promptRestart()
+				}
+			})
+	}
 }

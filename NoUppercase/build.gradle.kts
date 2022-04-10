@@ -2,8 +2,8 @@ version = "1.3.2"
 description = "Reverts uppercased text in various places."
 
 aliucord {
-    changelog.set(
-        """
+	changelog.set(
+		"""
             # 1.3.2
             * Apply to everything
             * Remove adjustable text size
@@ -27,5 +27,5 @@ aliucord {
             # 1.0.0
             * Released
         """.trimIndent()
-    )
+	)
 }

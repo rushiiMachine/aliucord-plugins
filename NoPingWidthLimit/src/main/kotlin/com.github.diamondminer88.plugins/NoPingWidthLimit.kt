@@ -16,44 +16,44 @@ import com.discord.widgets.home.*
 @Suppress("unused")
 @AliucordPlugin
 class NoPingWidthLimit : Plugin() {
-    private val channelMentionsId = Utils.getResId("channels_item_channel_mentions", "id")
+	private val channelMentionsId = Utils.getResId("channels_item_channel_mentions", "id")
 
-    override fun start(ctx: Context) {
-        patcher.after<WidgetHomeHeaderManager>(
-            "configure",
-            WidgetHome::class.java,
-            WidgetHomeModel::class.java,
-            WidgetHomeBinding::class.java
-        ) {
-            val homeModel = (it.args[1] as WidgetHomeModel)
-            if (homeModel.unreadCount < 100) return@after // comment out when testing
+	override fun start(ctx: Context) {
+		patcher.after<WidgetHomeHeaderManager>(
+			"configure",
+			WidgetHome::class.java,
+			WidgetHomeModel::class.java,
+			WidgetHomeBinding::class.java
+		) {
+			val homeModel = (it.args[1] as WidgetHomeModel)
+			if (homeModel.unreadCount < 100) return@after // comment out when testing
 
-            val widgetHome = (it.args[0] as WidgetHome)
-            val mentionsView = widgetHome.unreadCountView
+			val widgetHome = (it.args[0] as WidgetHome)
+			val mentionsView = widgetHome.unreadCountView
 
-            // testing
-//            mentionsView.text = "69420"
+			// testing
+			//            mentionsView.text = "69420"
 
-            mentionsView.layoutParams.width = DimenUtils.dpToPx(mentionsView.text.length * 7)
-        }
+			mentionsView.layoutParams.width = DimenUtils.dpToPx(mentionsView.text.length * 7)
+		}
 
-        patcher.after<WidgetChannelsListAdapter.ItemChannelText>(
-            "onConfigure",
-            Integer.TYPE,
-            ChannelListItem::class.java
-        ) {
-            val item = it.args[1] as ChannelListItemTextChannel
-            if (item.mentionCount < 100) return@after // comment out when testing
-            val mentionsView = this.itemView.findViewById<TextView>(channelMentionsId)
+		patcher.after<WidgetChannelsListAdapter.ItemChannelText>(
+			"onConfigure",
+			Integer.TYPE,
+			ChannelListItem::class.java
+		) {
+			val item = it.args[1] as ChannelListItemTextChannel
+			if (item.mentionCount < 100) return@after // comment out when testing
+			val mentionsView = this.itemView.findViewById<TextView>(channelMentionsId)
 
-//            mentionsView.text = "69420" // testing
+			//            mentionsView.text = "69420" // testing
 
-            val length = mentionsView.text.length
-            mentionsView.layoutParams.width = DimenUtils.dpToPx(length * 9)
-        }
-    }
+			val length = mentionsView.text.length
+			mentionsView.layoutParams.width = DimenUtils.dpToPx(length * 9)
+		}
+	}
 
-    override fun stop(context: Context) {
-        patcher.unpatchAll()
-    }
+	override fun stop(context: Context) {
+		patcher.unpatchAll()
+	}
 }
