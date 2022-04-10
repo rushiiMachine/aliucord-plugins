@@ -6,7 +6,7 @@ import android.content.res.TypedArray
 import android.widget.TextView
 import com.aliucord.annotations.AliucordPlugin
 import com.aliucord.entities.Plugin
-import com.aliucord.patcher.Hook
+import com.aliucord.patcher.after
 
 //private const val TEXT_SIZE_KEY = "textSizeMultiplier"
 //private const val DEFAULT_MULTIPLIER = 1f
@@ -44,21 +44,18 @@ class NoUppercase : Plugin() {
 		//            R.i.UserProfile_Section_HeaderTextAppearance,
 		//        )
 
-		try {
-			val cTextAppearanceAttributes = Class.forName("android.widget.TextView\$TextAppearanceAttributes")
-			val fmAllCaps = cTextAppearanceAttributes.getDeclaredField("mAllCaps")
-				.apply { isAccessible = true }
-			patcher.patch(TextView::class.java.getDeclaredMethod(
-				"readTextAppearance",
-				Context::class.java,
-				TypedArray::class.java,
-				cTextAppearanceAttributes,
-				java.lang.Boolean.TYPE
-			), Hook {
-				fmAllCaps.set(it.args[2], false)
-			})
-		} catch (t: Throwable) {
-			logger.errorToast("[NoUppercase] Reinstall Aliucord", t)
+		val cTextAppearanceAttributes = Class.forName("android.widget.TextView\$TextAppearanceAttributes")
+		val fmAllCaps = cTextAppearanceAttributes.getDeclaredField("mAllCaps")
+			.apply { isAccessible = true }
+
+		patcher.after<TextView>(
+			"readTextAppearance",
+			Context::class.java,
+			TypedArray::class.java,
+			cTextAppearanceAttributes,
+			java.lang.Boolean.TYPE
+		) {
+			fmAllCaps.set(it.args[2], false)
 		}
 
 		//        val multiplier = settings.getFloat(TEXT_SIZE_KEY, DEFAULT_MULTIPLIER)

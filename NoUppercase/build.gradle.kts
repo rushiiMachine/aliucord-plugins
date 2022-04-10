@@ -1,9 +1,12 @@
-version = "1.3.2"
-description = "Reverts uppercased text in various places."
+version = "1.3.3"
+description = "Reverts uppercased text in Discord."
 
 aliucord {
 	changelog.set(
 		"""
+			# 1.3.3
+			* Remove safety check for old Aliucord
+
             # 1.3.2
             * Apply to everything
             * Remove adjustable text size
