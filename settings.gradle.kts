@@ -1,3 +1,4 @@
+include(":AlternateReport")
 include(":TypingUsers")
 include(":CloneChannels")
 include(":CloseDMs")

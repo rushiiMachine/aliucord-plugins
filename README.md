@@ -131,3 +131,7 @@ Opens a clickable list of all the currently typing users by pressing on the bar.
 ### [ReplaceAllText](https://github.com/DiamondMiner88/aliucord-plugins/raw/builds/ReplaceAllText.zip)
 
 Replaces every single piece of text with what you want. YOU NEED TO REMEMBER HOW TO DISABLE THIS IN THE PLUGIN TAB BEFORE ENABLING IT.
+
+### [AlternateReport](https://github.com/DiamondMiner88/aliucord-plugins/raw/builds/AlternateReport.zip)
+
+Replaces the message report button with opening the report form.
