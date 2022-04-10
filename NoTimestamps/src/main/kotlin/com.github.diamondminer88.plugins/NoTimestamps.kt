@@ -28,7 +28,7 @@ class NoTimestamps : Plugin() {
 			ChatListEntry::class.java
 		) {
 			itemView.findViewById<TextView>(timestampId)
-				.visibility = View.GONE
+				?.visibility = View.GONE
 		}
 	}
 
