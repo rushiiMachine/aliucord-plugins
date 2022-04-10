@@ -135,3 +135,7 @@ Replaces every single piece of text with what you want. YOU NEED TO REMEMBER HOW
 ### [AlternateReport](https://github.com/DiamondMiner88/aliucord-plugins/raw/builds/AlternateReport.zip)
 
 Replaces the message report button with opening the report form.
+
+### [Insult](https://github.com/DiamondMiner88/aliucord-plugins/raw/builds/Insult.zip)
+
+Send insults with /insult

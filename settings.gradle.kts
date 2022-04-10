@@ -1,3 +1,4 @@
+include(":Insult")
 include(":AlternateReport")
 include(":TypingUsers")
 include(":CloneChannels")
