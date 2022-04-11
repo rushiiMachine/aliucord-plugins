@@ -62,6 +62,7 @@ class FriendsExporter : Plugin() {
 			writeText(friendsList!!)
 		}
 
+		friendsList = null
 		Utils.showToast("Saved to /Aliucord/friends/")
 	}
 
