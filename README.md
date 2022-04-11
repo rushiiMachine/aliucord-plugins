@@ -28,83 +28,63 @@ Download the plugins from [here](https://github.com/DiamondMiner88/aliucord-plug
 # Plugins
 
 ### [FirstMessage](https://github.com/DiamondMiner88/aliucord-plugins/raw/builds/FirstMessage.zip)
-
 Finds the first message from a user/channel. (/firstmessage)
 
 ### [OpenDebug](https://github.com/DiamondMiner88/aliucord-plugins/raw/builds/OpenDebug.zip)
-
 Open the debug log from the gift icon in the chat view and (toggleable) open debug log on start.
 
 ### [SplitMessages](https://github.com/DiamondMiner88/aliucord-plugins/raw/builds/SplitMessages.zip)
-
 Split messages longer than 2000/4000 characters into multiple messages.
 
 ### [ConfigurableStickerSizes](https://github.com/DiamondMiner88/aliucord-plugins/raw/builds/ConfigurableStickerSizes.zip)
-
 Makes sticker sizes configurable.
 
 ### [NoUppercase](https://github.com/DiamondMiner88/aliucord-plugins/raw/builds/NoUppercase.zip)
-
 Reverts uppercased headers in common places.
 
 ### [StreamerMode](https://github.com/DiamondMiner88/aliucord-plugins/raw/builds/StreamerMode.zip)
-
 Hide identifiable information. (Email, phone number, name, user discriminators)
 
 ### [NoNitroAvatars](https://github.com/DiamondMiner88/aliucord-plugins/raw/builds/NoNitroAvatars.zip)
-
 Hides per-server user avatars everywhere.
 
 ### [OpenProfileInReactions](https://github.com/DiamondMiner88/aliucord-plugins/raw/builds/OpenProfileInReactions.zip)
-
 Open users' profiles in reaction lists on click.
 
 ### [NoBuiltInCommands](https://github.com/DiamondMiner88/aliucord-plugins/raw/builds/NoBuiltInCommands.zip)
-
 Remove Discord's built-in slash commands.
 
 ### [HideMessages](https://github.com/DiamondMiner88/aliucord-plugins/raw/builds/HideMessages.zip)
-
 Delete messages locally until you restart. (Message context menu option)
 
 ### [FixBlockedReplies](https://github.com/DiamondMiner88/aliucord-plugins/raw/builds/FixBlockedReplies.zip)
-
 Show reply author, (optionally) show reply content, and fix clicking on them.
 
 ### [NoPingWidthLimit](https://github.com/DiamondMiner88/aliucord-plugins/raw/builds/NoPingWidthLimit.zip)
-
 Increase the max width of the ping count label.
 
 ### [BetterTm](https://github.com/DiamondMiner88/aliucord-plugins/raw/builds/BetterTm.zip)
-
 Replaces the TM emoji with one that's visible.
 
 ### [NoTimestamps](https://github.com/DiamondMiner88/aliucord-plugins/raw/builds/NoTimestamps.zip)
-
 Hide timestamps on messages.
 
 ### [SlashNick](https://github.com/DiamondMiner88/aliucord-plugins/raw/builds/SlashNick.zip)
-
 Bring the /nick command to mobile.
 
 ### [ClickableMentions](https://github.com/DiamondMiner88/aliucord-plugins/raw/builds/ClickableMentions.zip)
-
 Enable clicking user/channel mentions everywhere. (ex. embeds/channel topics)
 
 ### [Counters](https://github.com/DiamondMiner88/aliucord-plugins/raw/builds/Counters.zip)
-
 Show an servers/online friend count in your server list.
 
 ### [NormalizeNames](https://github.com/DiamondMiner88/aliucord-plugins/raw/builds/NormalizeNames.zip)
-
 Display nick/user names with some fancy chars reverted to normal.
 
 ### [AudioPlayer](https://github.com/DiamondMiner88/aliucord-plugins/raw/builds/AudioPlayer.zip) (WIP may cause crash)
-
 Play audio attachments directly in chat.
 
 ### [Gestures](https://github.com/DiamondMiner88/aliucord-plugins/raw/builds/Gestures.zip) (WIP)
-
 Add the following gestures to Discord:
 
 - Swipe left on chat input to paste
@@ -113,29 +93,25 @@ Add the following gestures to Discord:
 Note that this breaks selecting text but ¯\\\_(ツ)_/¯
 
 ### [CloseDMs](https://github.com/DiamondMiner88/aliucord-plugins/raw/builds/CloseDMs.zip)
-
 Shortcut to close DMs in the DM context menu.
 
 ### [CloneChannels](https://github.com/DiamondMiner88/aliucord-plugins/raw/builds/CloneChannels.zip)
-
 Quickly clone text channels in the context menu. (perms, name, topic, etc.)
 
 ### [TypingIndicators](https://github.com/DiamondMiner88/aliucord-plugins/raw/builds/TypingIndicators.zip)
-
 Show typing indicators in the channel list.
 
 ### [TypingUsers](https://github.com/DiamondMiner88/aliucord-plugins/raw/builds/TypingUsers.zip)
-
 Opens a clickable list of all the currently typing users by pressing on the bar.
 
 ### [ReplaceAllText](https://github.com/DiamondMiner88/aliucord-plugins/raw/builds/ReplaceAllText.zip)
-
 Replaces every single piece of text with what you want. YOU NEED TO REMEMBER HOW TO DISABLE THIS IN THE PLUGIN TAB BEFORE ENABLING IT.
 
 ### [AlternateReport](https://github.com/DiamondMiner88/aliucord-plugins/raw/builds/AlternateReport.zip)
-
 Replaces the message report button with opening the report form.
 
 ### [Insult](https://github.com/DiamondMiner88/aliucord-plugins/raw/builds/Insult.zip)
-
 Send insults with /insult
+
+### [FriendsExporter](https://github.com/DiamondMiner88/aliucord-plugins/raw/builds/FriendsExporter.zip)
+Export your friends list with /friendsexport

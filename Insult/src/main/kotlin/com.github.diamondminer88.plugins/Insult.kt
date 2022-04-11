@@ -14,8 +14,7 @@ class Insult : Plugin() {
 			"insult",
 			"Send an insult",
 		) {
-			val insult = Http.simpleGet("https://insult.mattbas.org/api/insult")
-			CommandResult(insult)
+			CommandResult(Http.simpleGet("https://insult.mattbas.org/api/insult"))
 		}
 	}
 

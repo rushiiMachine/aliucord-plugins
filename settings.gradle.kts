@@ -1,3 +1,4 @@
+include(":FriendsExporter")
 include(":Insult")
 include(":AlternateReport")
 include(":TypingUsers")
