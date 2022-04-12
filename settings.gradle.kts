@@ -1,3 +1,4 @@
+include(":1ClickDelete")
 include(":FriendsExporter")
 include(":Insult")
 include(":AlternateReport")

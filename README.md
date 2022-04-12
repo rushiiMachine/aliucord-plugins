@@ -115,3 +115,6 @@ Send insults with /insult
 
 ### [FriendsExporter](https://github.com/DiamondMiner88/aliucord-plugins/raw/builds/FriendsExporter.zip)
 Export your friends list with /friendsexport
+
+### [1ClickDelete](https://github.com/DiamondMiner88/aliucord-plugins/raw/builds/1ClickDelete.zip)
+Disable the delete confirmation on messages.
