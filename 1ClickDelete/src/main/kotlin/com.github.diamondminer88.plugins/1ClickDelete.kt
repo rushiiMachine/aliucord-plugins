@@ -24,6 +24,7 @@ class `1ClickDelete` : Plugin() {
 			requireView()
 				.findViewById<TextView>(reportBtnId)
 				.setOnClickListener {
+					dismiss()
 					StoreStream.getMessages().deleteMessage(model.message)
 				}
 		}
