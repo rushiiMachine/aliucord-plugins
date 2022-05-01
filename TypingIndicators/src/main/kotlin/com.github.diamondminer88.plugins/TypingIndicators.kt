@@ -3,6 +3,7 @@ package com.github.diamondminer88.plugins
 import android.content.Context
 import android.view.View
 import android.widget.RelativeLayout
+import com.aliucord.Constants
 import com.aliucord.Utils
 import com.aliucord.annotations.AliucordPlugin
 import com.aliucord.entities.Plugin
@@ -19,14 +20,20 @@ import com.discord.widgets.chat.overlay.ChatTypingModel
 import com.discord.widgets.chat.overlay.`ChatTypingModel$Companion$get$1`
 import rx.Observable
 import rx.Subscription
+import java.lang.reflect.Method
 
 @Suppress("unused")
 @AliucordPlugin
 class TypingIndicators : Plugin() {
 	private val typingDotsId = View.generateViewId()
 	private val allTypingDots = mutableMapOf<TypingDots, Subscription>()
+	private lateinit var mNewStopTypingDots: Method
 
 	override fun start(context: Context) {
+		if (Constants.DISCORD_VERSION >= 124012) {
+			mNewStopTypingDots = TypingDots::class.java.getDeclaredMethod("c")
+		}
+
 		val lp = RelativeLayout.LayoutParams(DimenUtils.dpToPx(24), RelativeLayout.LayoutParams.MATCH_PARENT)
 			.apply {
 				marginEnd = DimenUtils.dpToPx(16)
@@ -87,7 +94,10 @@ class TypingIndicators : Plugin() {
 					this as ChatTypingModel.Typing
 					Utils.mainThread.post {
 						if (typingUsers.isEmpty()) {
-							typingDots.b()
+							if (Constants.DISCORD_VERSION >= 124012) {
+								mNewStopTypingDots.invoke(typingDots)
+							}
+							else typingDots.b()
 							typingDots.visibility = View.GONE
 						} else {
 							typingDots.a(false)
