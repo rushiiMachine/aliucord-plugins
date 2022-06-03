@@ -27,13 +27,8 @@ import java.lang.reflect.Method
 class TypingIndicators : Plugin() {
 	private val typingDotsId = View.generateViewId()
 	private val allTypingDots = mutableMapOf<TypingDots, Subscription>()
-	private lateinit var mNewStopTypingDots: Method
 
 	override fun start(context: Context) {
-		if (Constants.DISCORD_VERSION >= 124012) {
-			mNewStopTypingDots = TypingDots::class.java.getDeclaredMethod("c")
-		}
-
 		val lp = RelativeLayout.LayoutParams(DimenUtils.dpToPx(24), RelativeLayout.LayoutParams.MATCH_PARENT)
 			.apply {
 				marginEnd = DimenUtils.dpToPx(16)
@@ -94,10 +89,7 @@ class TypingIndicators : Plugin() {
 					this as ChatTypingModel.Typing
 					Utils.mainThread.post {
 						if (typingUsers.isEmpty()) {
-							if (Constants.DISCORD_VERSION >= 124012) {
-								mNewStopTypingDots.invoke(typingDots)
-							}
-							else typingDots.b()
+							typingDots.c()
 							typingDots.visibility = View.GONE
 						} else {
 							typingDots.a(false)
@@ -110,7 +102,7 @@ class TypingIndicators : Plugin() {
 
 	override fun stop(context: Context) {
 		allTypingDots.keys.forEach {
-			it.b()
+			it.c()
 			it.visibility = View.GONE
 		}
 		allTypingDots.values.forEach(Subscription::unsubscribe)

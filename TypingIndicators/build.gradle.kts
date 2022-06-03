@@ -1,9 +1,12 @@
-version = "1.0.4"
+version = "1.0.5"
 description = "Show typing indicators in the channel list."
 
 aliucord {
 	changelog.set(
 		"""
+			# 1.0.5
+			* Remove compatibility for an older Discord version
+
 			# 1.0.4
 			* Update to Discord 124.12
 
