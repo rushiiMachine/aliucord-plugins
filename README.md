@@ -81,9 +81,6 @@ Show an servers/online friend count in your server list.
 ### [NormalizeNames](https://github.com/DiamondMiner88/aliucord-plugins/raw/builds/NormalizeNames.zip)
 Display nick/user names with some fancy chars reverted to normal.
 
-### [AudioPlayer](https://github.com/DiamondMiner88/aliucord-plugins/raw/builds/AudioPlayer.zip) (WIP may cause crash)
-Play audio attachments directly in chat.
-
 ### [Gestures](https://github.com/DiamondMiner88/aliucord-plugins/raw/builds/Gestures.zip) (WIP)
 Add the following gestures to Discord:
 
@@ -118,3 +115,6 @@ Export your friends list with /friendsexport
 
 ### [1ClickDelete](https://github.com/DiamondMiner88/aliucord-plugins/raw/builds/1ClickDelete.zip)
 Disable the delete confirmation on messages.
+
+### [AudioPlayer](https://github.com/DiamondMiner88/aliucord-plugins/raw/builds/AudioPlayer.zip)
+Play audio attachments directly in chat. (Still has multi file bugs don't @ me)

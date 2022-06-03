@@ -2,14 +2,12 @@ package com.github.diamondminer88.plugins
 
 import android.annotation.SuppressLint
 import android.content.Context
-import android.media.MediaMetadataRetriever
-import android.media.MediaPlayer
+import android.media.*
 import android.view.Gravity
 import android.view.View
 import android.widget.*
 import android.widget.FrameLayout.LayoutParams.MATCH_PARENT
 import android.widget.FrameLayout.LayoutParams.WRAP_CONTENT
-import androidx.annotation.MainThread
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import com.aliucord.Utils
@@ -22,6 +20,7 @@ import com.aliucord.wrappers.messages.AttachmentWrapper.Companion.filename
 import com.aliucord.wrappers.messages.AttachmentWrapper.Companion.url
 import com.discord.api.message.attachment.MessageAttachment
 import com.discord.app.AppActivity
+import com.discord.stores.StoreMessages
 import com.discord.utilities.textprocessing.MessageRenderContext
 import com.discord.widgets.chat.list.adapter.WidgetChatListAdapterItemAttachment
 import com.google.android.material.card.MaterialCardView
@@ -51,7 +50,9 @@ class AudioPlayer : Plugin() {
 
 	override fun start(context: Context) {
 		val p2 = DimenUtils.defaultPadding / 2
-		var onPauseListeners = mutableListOf<() -> Unit>()
+		var onPauseListener: (() -> Unit)? = null
+		var currentPlayerUnsubscribe: (() -> Unit)? = null
+		var currentPlayer: MediaPlayer? = null
 
 		// rotated triangle icon
 		val playIcon = ContextCompat.getDrawable(
@@ -68,13 +69,6 @@ class AudioPlayer : Plugin() {
 			com.yalantis.ucrop.R.c.ucrop_rotate
 		)
 
-		patcher.after<AppActivity>("onPause") {
-			onPauseListeners.forEach { it.invoke() }
-			if (onPauseListeners.size > 10) {
-				onPauseListeners = onPauseListeners.takeLast(10).toMutableList()
-			}
-		}
-
 		patcher.after<WidgetChatListAdapterItemAttachment>(
 			"configureFileData",
 			MessageAttachment::class.java,
@@ -90,7 +84,6 @@ class AudioPlayer : Plugin() {
 
 			if (card.findViewById<LinearLayout>(playerBarId) != null) return@after
 
-			var loadError: Throwable? = null
 			val duration = try {
 				MediaMetadataRetriever().use { retriever ->
 					retriever.setDataSource(messageAttachment.url, hashMapOf())
@@ -99,28 +92,14 @@ class AudioPlayer : Plugin() {
 					duration?.toLong()
 				}
 			} catch (e: Throwable) {
-				loadError = e
 				null
-			}
-
-			val player = try {
-				MediaPlayer().apply {
-					setDataSource(messageAttachment.url)
-				}
-			} catch (e: Throwable) {
-				loadError = e
-				null
-			}
-
-			if (loadError != null) {
-				logger.errorToast("AudioPlayer: Failed to load", loadError)
 			}
 
 			card.addView(LinearLayout(ctx, null, 0, R.i.UiKit_ViewGroup).apply {
 				id = playerBarId
 
 				// Invalid file, ignore
-				if (duration == null || loadError != null) {
+				if (duration == null) {
 					visibility = View.GONE
 					return@after
 				}
@@ -158,31 +137,35 @@ class AudioPlayer : Plugin() {
 				}
 
 				var isPrepared = false
+				var preparing = false
 				var playing = false
 
 				var timer: Timer? = null
 				fun scheduleUpdater() {
+					timer?.cancel()
 					timer = Timer()
 					timer!!.scheduleAtFixedRate(object : TimerTask() {
 						override fun run() {
 							if (!playing) return
 							Utils.mainThread.post {
 								progressView.text =
-									"${msToTime(player!!.currentPosition.toLong())} / ${msToTime(duration)}"
-								sliderView.progress = (500 * player.currentPosition / duration).toInt()
+									"${msToTime(currentPlayer!!.currentPosition.toLong())} / ${msToTime(duration)}"
+								sliderView.progress = (500 * currentPlayer!!.currentPosition / duration).toInt()
 							}
 						}
 					}, 2000, 250)
 				}
 
-				@MainThread
 				fun updatePlaying() {
+					if (currentPlayer == null)
+						return
+
 					if (playing) {
-						player!!.start()
+						currentPlayer!!.start()
 						scheduleUpdater()
 						buttonView.background = playIcon
 					} else {
-						player!!.pause()
+						currentPlayer!!.pause()
 						timer?.cancel()
 						timer?.purge()
 						timer = null
@@ -201,41 +184,71 @@ class AudioPlayer : Plugin() {
 							return
 						}
 						prevProgress = progress
-						player!!.seekTo((progress.div(500f) * duration).toInt())
+						currentPlayer!!.seekTo((progress.div(500f) * duration).toInt())
 						progressView.text =
-							"${msToTime(player.currentPosition.toLong())} / ${msToTime(duration)}"
+							"${msToTime(currentPlayer!!.currentPosition.toLong())} / ${msToTime(duration)}"
 					}
 				})
 
 				buttonView.setOnClickListener {
 					playing = !playing
 
-					if (!isPrepared) {
-						isPrepared = true
-						// TODO: set btn to loading icon
+					if (!isPrepared && !preparing) {
+						preparing = true
 						Utils.mainThread.post { buttonView.background = null }
-						player!!.setOnPreparedListener {
-							Utils.mainThread.post { updatePlaying() }
+
+						currentPlayer?.release()
+						currentPlayerUnsubscribe?.invoke()
+						onPauseListener = null
+
+						currentPlayer = MediaPlayer().apply {
+							setDataSource(messageAttachment.url)
+							setOnPreparedListener {
+								seekTo((sliderView.progress.div(500f) * duration).toInt())
+								Utils.mainThread.post { updatePlaying() }
+							}
+							setOnCompletionListener { player ->
+								playing = false
+								player.seekTo(0)
+								Utils.mainThread.post { buttonView.background = rewindIcon }
+							}
+							currentPlayerUnsubscribe = {
+								playing = false
+								Utils.mainThread.post { updatePlaying() }
+							}
+							onPauseListener = {
+								playing = false
+								Utils.mainThread.post { updatePlaying() }
+							}
+							prepare()
+							isPrepared = true
+							preparing = false
 						}
-						player.prepareAsync()
-					} else updatePlaying()
-				}
-
-				player!!.setOnCompletionListener {
-					playing = false
-					player.seekTo(0)
-					Utils.mainThread.post { buttonView.background = rewindIcon }
-				}
-
-				onPauseListeners.add {
-					playing = false
-					Utils.mainThread.post { updatePlaying() }
+					} else {
+						updatePlaying()
+					}
 				}
 
 				addView(buttonView)
 				addView(progressView)
 				addView(sliderView)
 			})
+		}
+
+		patcher.after<StoreMessages>("handleChannelSelected", Long::class.javaPrimitiveType!!) {
+			currentPlayerUnsubscribe?.invoke()
+			currentPlayerUnsubscribe = null
+			onPauseListener = null
+		}
+
+		patcher.after<AppActivity>("onCreate") {
+			currentPlayerUnsubscribe?.invoke()
+			currentPlayerUnsubscribe = null
+			onPauseListener = null
+		}
+
+		patcher.after<AppActivity>("onPause") {
+			onPauseListener?.invoke()
 		}
 	}
 
