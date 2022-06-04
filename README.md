@@ -118,3 +118,6 @@ Disable the delete confirmation on messages.
 
 ### [AudioPlayer](https://github.com/DiamondMiner88/aliucord-plugins/raw/builds/AudioPlayer.zip)
 Play audio attachments directly in chat. (Still has multi file bugs don't @ me)
+
+### [AttachmentPickerSizes](https://github.com/DiamondMiner88/aliucord-plugins/raw/builds/AttachmentPickerSizes.zip)
+Add upload sizes to the attachment picker.
