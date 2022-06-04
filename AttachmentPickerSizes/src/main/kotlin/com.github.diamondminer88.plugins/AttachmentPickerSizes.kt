@@ -74,7 +74,6 @@ class AttachmentPickerSizes : Plugin() {
 			?.statSize
 			?.let { size -> getReadableSize(size) }
 
-
 		layout.addView(CardView(layout.context).apply {
 			id = labelId
 

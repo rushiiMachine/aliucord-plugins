@@ -3,6 +3,7 @@ package com.github.diamondminer88.plugins
 import android.annotation.SuppressLint
 import android.content.Context
 import android.media.*
+import android.os.Bundle
 import android.view.Gravity
 import android.view.View
 import android.widget.*
@@ -241,7 +242,7 @@ class AudioPlayer : Plugin() {
 			onPauseListener = null
 		}
 
-		patcher.after<AppActivity>("onCreate") {
+		patcher.after<AppActivity>("onCreate", Bundle::class.java) {
 			currentPlayerUnsubscribe?.invoke()
 			currentPlayerUnsubscribe = null
 			onPauseListener = null
