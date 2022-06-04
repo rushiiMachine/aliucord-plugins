@@ -31,6 +31,7 @@ class FriendsExporter : Plugin() {
 				.map { (id, user) -> "${user.username}#${user.discriminator} ($id)" }
 				.joinToString("\n")
 				.also { friendsList = it }
+				.replace("""(^> |\*|_|~)""".toRegex()) { "\\${it.value}" }
 
 			CommandResult(
 				content,
