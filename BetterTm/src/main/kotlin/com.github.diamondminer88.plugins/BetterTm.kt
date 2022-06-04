@@ -14,15 +14,15 @@ import com.discord.views.CheckedSetting
 
 const val BASE_URL = "https://raw.githubusercontent.com/DiamondMiner88/aliucord-plugins/master/BetterTm/"
 
-const val TM_EMOJI_URI = "res:///2131823862"
+const val TM_EMOJI_URI = "res:///2131823865"
 const val TM_URL = BASE_URL + "tm.png"
 const val TM_ORIGINAL_URL = BASE_URL + "tm_original.png"
 
-const val R_EMOJI_URI = "res:///2131824085"
+const val R_EMOJI_URI = "res:///2131824088"
 const val R_URL = BASE_URL + "r.png"
 const val R_ORIGINAL_URL = BASE_URL + "r_original.png"
 
-const val C_EMOJI_URI = "res:///2131824084"
+const val C_EMOJI_URI = "res:///2131824087"
 const val C_URL = BASE_URL + "c.png"
 const val C_ORIGINAL_URL = BASE_URL + "c_original.png"
 
@@ -49,7 +49,7 @@ class BetterTm : Plugin() {
 			Integer.TYPE,
 			java.lang.Boolean.TYPE
 		), PreHook {
-			//            logger.info(it.args[0] as String)
+			// logger.info(it.args[0] as String)
 
 			it.args[0] = when (it.args[0]) {
 				TM_EMOJI_URI -> TM_URL orOriginal TM_ORIGINAL_URL

@@ -1,9 +1,12 @@
-version = "1.2.1"
+version = "1.2.2"
 description = "Replaces the TM, R, and C emoji with one that's more visible."
 
 aliucord {
 	changelog.set(
 		"""
+			# 1.2.2
+			* Fix target resource IDs
+
             # 1.2.1
             * Fix changelog
 
