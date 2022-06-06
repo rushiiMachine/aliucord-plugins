@@ -32,7 +32,7 @@ class NoPingWidthLimit : Plugin() {
 			val mentionsView = widgetHome.unreadCountView
 
 			// testing
-			//            mentionsView.text = "69420"
+			//			mentionsView.text = "69420"
 
 			mentionsView.layoutParams.width = DimenUtils.dpToPx(mentionsView.text.length * 7)
 		}
@@ -46,7 +46,7 @@ class NoPingWidthLimit : Plugin() {
 			if (item.mentionCount < 100) return@after // comment out when testing
 			val mentionsView = this.itemView.findViewById<TextView>(channelMentionsId)
 
-			//            mentionsView.text = "69420" // testing
+			//			mentionsView.text = "69420" // testing
 
 			val length = mentionsView.text.length
 			mentionsView.layoutParams.width = DimenUtils.dpToPx(length * 9)

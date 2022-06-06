@@ -10,15 +10,15 @@ aliucord {
 			# 1.0.4
 			* Works well enough for me fuck this
 
-            # 1.0.3
-            * Support more audio formats
+			# 1.0.3
+			* Support more audio formats
 
-            # 1.0.2
-            * Fix crash?
+			# 1.0.2
+			* Fix crash?
 
-            # 1.0.1
-            * Released
-        """.trimIndent()
+			# 1.0.1
+			* Released
+		""".trimIndent()
 	)
 	author("Zt", 289556910426816513L)
 }

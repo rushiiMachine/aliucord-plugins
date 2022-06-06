@@ -105,27 +105,27 @@ class ClickableMentions : Plugin() {
 }
 
 // -------------------------------------- future reference patches --------------------------------------
-//        patcher.instead<WidgetChatListAdapterItemEmbed.Model>(
-//            "createRenderContext",
-//            Context::class.java,
-//            WidgetChatListAdapter.EventHandler::class.java
-//        ) {
-//            val ctx = it.args[0] as Context
-//            val urlHandler = it.args[1] as WidgetChatListAdapter.EventHandler
-//            MessageRenderContext(
-//                ctx,
-//                myId,
-//                embedEntry.allowAnimatedEmojis,
-//                userNames,
-//                channelNames,
-//                roles,
-//                0,
-//                null,
-//                `WidgetChatListAdapterItemEmbed$Model$createRenderContext$1`(urlHandler),
-//                0,
-//                0,
-//                null,
-//                userClickHandler,
-//                makeChannelClickHandler(ctx)
-//            )
-//        }
+//		patcher.instead<WidgetChatListAdapterItemEmbed.Model>(
+//			"createRenderContext",
+//			Context::class.java,
+//			WidgetChatListAdapter.EventHandler::class.java
+//		) {
+//			val ctx = it.args[0] as Context
+//			val urlHandler = it.args[1] as WidgetChatListAdapter.EventHandler
+//			MessageRenderContext(
+//				ctx,
+//				myId,
+//				embedEntry.allowAnimatedEmojis,
+//				userNames,
+//				channelNames,
+//				roles,
+//				0,
+//				null,
+//				`WidgetChatListAdapterItemEmbed$Model$createRenderContext$1`(urlHandler),
+//				0,
+//				0,
+//				null,
+//				userClickHandler,
+//				makeChannelClickHandler(ctx)
+//			)
+//		}

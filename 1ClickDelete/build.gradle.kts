@@ -7,8 +7,8 @@ aliucord {
 			# 1.0.1
 			* Dismiss menu after click
 
-            # 1.0.0
-            * Released
-        """.trimIndent()
+			# 1.0.0
+			* Released
+		""".trimIndent()
 	)
 }

@@ -5,14 +5,14 @@ aliucord {
 	excludeFromUpdaterJson.set(true)
 	changelog.set(
 		"""
-            # 1.0.2
-            * Fix changelog
+			# 1.0.2
+			* Fix changelog
 
-            # 1.0.1
-            * Update patches
+			# 1.0.1
+			* Update patches
 
-            # 1.0.0
-            * Released
-        """.trimIndent()
+			# 1.0.0
+			* Released
+		""".trimIndent()
 	)
 }

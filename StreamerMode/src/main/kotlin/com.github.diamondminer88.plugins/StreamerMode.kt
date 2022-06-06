@@ -227,38 +227,38 @@ class StreamerModeSettings(settings: SettingsAPI) : BottomSheet() {
 
 //private val profileHeaderPrimaryUsername = Utils.getResId("username_text", "id")
 //private val profileHeaderSecondaryUsername =
-//    Utils.getResId("user_profile_header_secondary_name", "id")
+//	Utils.getResId("user_profile_header_secondary_name", "id")
 //private val userActionsDialogUserName = Utils.getResId("user_actions_dialog_user_name", "id")
 
-//        patcher.patch(
-//            c.a.a.b.a.b::class.java.getDeclaredMethod("onViewBound", View::class.java),
-//            Hook {
-//                val username = (it.args[0] as View).findViewById<TextView>(userActionsDialogUserName)
-//                username.text = username.text.dropLast(5)
-//            })
+//		patcher.patch(
+//			c.a.a.b.a.b::class.java.getDeclaredMethod("onViewBound", View::class.java),
+//			Hook {
+//				val username = (it.args[0] as View).findViewById<TextView>(userActionsDialogUserName)
+//				username.text = username.text.dropLast(5)
+//			})
 
-//        patcher.patch(
-//            UserProfileHeaderView::class.java.getDeclaredMethod(
-//                "updateViewState",
-//                UserProfileHeaderViewModel.ViewState.Loaded::class.java
-//            ), Hook {
-//                val obj = it.thisObject as UserProfileHeaderView
-//                val secondary =
-//                    obj.findViewById<com.discord.utilities.view.text.SimpleDraweeSpanTextView>(
-//                        profileHeaderSecondaryUsername
-//                    )
+//		patcher.patch(
+//			UserProfileHeaderView::class.java.getDeclaredMethod(
+//				"updateViewState",
+//				UserProfileHeaderViewModel.ViewState.Loaded::class.java
+//			), Hook {
+//				val obj = it.thisObject as UserProfileHeaderView
+//				val secondary =
+//					obj.findViewById<com.discord.utilities.view.text.SimpleDraweeSpanTextView>(
+//						profileHeaderSecondaryUsername
+//					)
 //
-//                if (secondary.length() == 0) {
-//                    // nickname not present, adjust primary
-//                    val primary =
-//                        obj.findViewById<com.facebook.drawee.span.SimpleDraweeSpanTextView>(
-//                            profileHeaderPrimaryUsername
-//                        )
-//                    val len = primary.i.length
-//                    primary.i.delete(len - 5, len)
-//                    primary.setDraweeSpanStringBuilder(primary.i)
-//                } else {
-//                    // nickname present, adjust secondary
-//                    secondary.text = secondary.text.dropLast(5)
-//                }
-//            })
+//				if (secondary.length() == 0) {
+//					// nickname not present, adjust primary
+//					val primary =
+//						obj.findViewById<com.facebook.drawee.span.SimpleDraweeSpanTextView>(
+//							profileHeaderPrimaryUsername
+//						)
+//					val len = primary.i.length
+//					primary.i.delete(len - 5, len)
+//					primary.setDraweeSpanStringBuilder(primary.i)
+//				} else {
+//					// nickname present, adjust secondary
+//					secondary.text = secondary.text.dropLast(5)
+//				}
+//			})

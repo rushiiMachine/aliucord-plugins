@@ -29,8 +29,8 @@ class NoNitroAvatars : Plugin() {
 			it.args[9] = null
 
 			// debugging
-			//            if (!it.args.contains("a server av hash")) return@before
-			//            it.args.forEach { Logger().info(":" + it?.toString() + ":") }
+			//			if (!it.args.contains("a server av hash")) return@before
+			//			it.args.forEach { Logger().info(":" + it?.toString() + ":") }
 		}
 	}
 

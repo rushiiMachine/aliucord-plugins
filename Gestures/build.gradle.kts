@@ -5,8 +5,8 @@ aliucord {
 	excludeFromUpdaterJson.set(true)
 	changelog.set(
 		"""
-            # 1.0.0
-            * Released
-        """.trimIndent()
+			# 1.0.0
+			* Released
+		""".trimIndent()
 	)
 }

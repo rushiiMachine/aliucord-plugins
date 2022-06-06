@@ -7,17 +7,17 @@ aliucord {
 			# 1.2.2
 			* Fix target resource IDs
 
-            # 1.2.1
-            * Fix changelog
+			# 1.2.1
+			* Fix changelog
 
-            # 1.2.0
-            * Add original emojis as an option
+			# 1.2.0
+			* Add original emojis as an option
 
-            # 1.1.0
-            * Add Registered Trademark & Copyright emoji
+			# 1.1.0
+			* Add Registered Trademark & Copyright emoji
 
-            # 1.0.0
-            * Released
-        """.trimIndent()
+			# 1.0.0
+			* Released
+		""".trimIndent()
 	)
 }

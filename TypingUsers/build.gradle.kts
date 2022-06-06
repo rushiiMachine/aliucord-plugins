@@ -4,8 +4,8 @@ description = "Opens a clickable list of all the currently typing users by press
 aliucord {
 	changelog.set(
 		"""
-            # 1.0.0
-            * Released
-        """.trimIndent()
+			# 1.0.0
+			* Released
+		""".trimIndent()
 	)
 }

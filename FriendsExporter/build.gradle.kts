@@ -7,8 +7,8 @@ aliucord {
 			# 1.0.1
 			* Escape markdown when printing in chat
 
-            # 1.0.0
-            * Released
-        """.trimIndent()
+			# 1.0.0
+			* Released
+		""".trimIndent()
 	)
 }
