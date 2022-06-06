@@ -3,6 +3,7 @@ package com.github.diamondminer88.plugins
 import android.content.Context
 import android.graphics.Color
 import android.icu.text.DecimalFormat
+import android.net.Uri
 import android.view.*
 import android.widget.TextView
 import androidx.cardview.widget.CardView
@@ -29,6 +30,9 @@ class AttachmentPickerSizes : Plugin() {
 	private val attachmentItemId = Utils.getResId("attachment_item", "id")
 	private val transparentBlack = Color.argb(210, 0, 0, 0)
 	private val labelId = View.generateViewId()
+
+	// content url -> formatted size string
+	private val cachedSizes = hashMapOf<Uri, String?>()
 
 	override fun start(context: Context) {
 		patcher.after<AttachmentPreviewAdapter<*>>(
@@ -69,10 +73,12 @@ class AttachmentPickerSizes : Plugin() {
 		if (layout.findViewById<View>(labelId) != null)
 			return
 
-		val size = Utils.appActivity.contentResolver
-			.openFileDescriptor(media.uri, "r")
-			?.statSize
-			?.let { size -> getReadableSize(size) }
+		val size = cachedSizes.computeIfAbsent(media.uri) {
+			Utils.appActivity.contentResolver
+				.openFileDescriptor(it, "r")
+				?.statSize
+				?.let { size -> getReadableSize(size) }
+		}
 
 		layout.addView(CardView(layout.context).apply {
 			id = labelId
@@ -97,7 +103,7 @@ class AttachmentPickerSizes : Plugin() {
 		})
 	}
 
-	private fun getReadableSize(sizeBytes: Long): String? {
+	private fun getReadableSize(sizeBytes: Long): String {
 		if (sizeBytes <= 0) return "0"
 		val units = arrayOf("B", "KB", "MB", "GB", "TB")
 		val digitGroups = (log10(sizeBytes.toDouble()) / log10(1024.0)).toInt()
