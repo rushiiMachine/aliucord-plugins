@@ -29,7 +29,7 @@ typealias MediaCursorAdapterViewHolder = b.b.a.d.h.a
 class AttachmentPickerSizes : Plugin() {
 	private val attachmentItemId = Utils.getResId("attachment_item", "id")
 	private val transparentBlack = Color.argb(210, 0, 0, 0)
-	private val labelId = View.generateViewId()
+	private val sizeTextId = View.generateViewId()
 
 	// content url -> formatted size string
 	private val cachedSizes = hashMapOf<Uri, String?>()
@@ -70,9 +70,6 @@ class AttachmentPickerSizes : Plugin() {
 	}
 
 	private fun bindSizeTag(layout: ViewGroup, media: Media) {
-		if (layout.findViewById<View>(labelId) != null)
-			return
-
 		val size = cachedSizes.computeIfAbsent(media.uri) {
 			Utils.appActivity.contentResolver
 				.openFileDescriptor(it, "r")
@@ -80,9 +77,12 @@ class AttachmentPickerSizes : Plugin() {
 				?.let { size -> getReadableSize(size) }
 		}
 
-		layout.addView(CardView(layout.context).apply {
-			id = labelId
+		layout.findViewById<TextView>(sizeTextId)?.apply {
+			text = size
+			return
+		}
 
+		layout.addView(CardView(layout.context).apply {
 			if (size == null) {
 				visibility = View.GONE
 				return@apply
@@ -96,6 +96,7 @@ class AttachmentPickerSizes : Plugin() {
 			setCardBackgroundColor(transparentBlack)
 
 			addView(TextView(layout.context, null, 0, R.i.UiKit_TextAppearance_MaterialEditText_Label).apply {
+				id = sizeTextId
 				text = size
 				setTextColor(Color.WHITE)
 				setPadding(5.dp, 2.dp, 5.dp, 2.dp)
