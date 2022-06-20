@@ -122,3 +122,6 @@ Play audio attachments directly in chat. (Still has multi file bugs don't @ me)
 
 ### [AttachmentPickerSizes](https://github.com/DiamondMiner88/aliucord-plugins/raw/builds/AttachmentPickerSizes.zip)
 Add upload sizes to the attachment picker.
+
+### [ReactionQueue](https://github.com/DiamondMiner88/aliucord-plugins/raw/builds/ReactionQueue.zip)
+Queue up reactions to avoid hitting the ratelimit.
