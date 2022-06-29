@@ -3,9 +3,12 @@ package com.github.diamondminer88.plugins
 import android.content.Context
 import com.aliucord.annotations.AliucordPlugin
 import com.aliucord.entities.Plugin
+import com.aliucord.patcher.before
 import com.aliucord.patcher.instead
 import com.aliucord.utils.RxUtils.await
+import com.discord.models.domain.emoji.Emoji
 import com.discord.utilities.rest.RestAPI
+import com.discord.widgets.chat.list.actions.WidgetChatListActions
 import de.robv.android.xposed.XC_MethodHook
 import de.robv.android.xposed.XposedBridge
 import rx.Observable
@@ -57,6 +60,13 @@ class ReactionQueue : Plugin() {
 		) {
 			handleHook(it)
 			Observable<Void> {}
+		}
+
+		patcher.before<WidgetChatListActions>(
+			"addReaction",
+			Emoji::class.java,
+		) {
+			dismiss()
 		}
 	}
 
