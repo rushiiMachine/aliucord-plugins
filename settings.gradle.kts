@@ -1,3 +1,4 @@
+include(":NoBadges")
 include(":ReactionQueue")
 include(":1ClickDelete")
 include(":FriendsExporter")
