@@ -73,8 +73,7 @@ class AttachmentPickerSizes : Plugin() {
 		val size = cachedSizes.computeIfAbsent(media.uri) {
 			Utils.appActivity.contentResolver
 				.openFileDescriptor(it, "r")
-				?.statSize
-				?.let { size -> getReadableSize(size) }
+				?.use { fd -> getReadableSize(fd.statSize) }
 		}
 
 		layout.findViewById<TextView>(sizeTextId)?.apply {
