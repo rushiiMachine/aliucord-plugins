@@ -52,7 +52,6 @@ class ConfigurableStickerSizes : Plugin() {
 				height = stickerSize
 				width = stickerSize
 			}
-
 		}
 	}
 
