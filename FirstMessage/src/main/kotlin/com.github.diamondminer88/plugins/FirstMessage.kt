@@ -5,20 +5,14 @@ import com.aliucord.*
 import com.aliucord.annotations.AliucordPlugin
 import com.aliucord.api.CommandsAPI.CommandResult
 import com.aliucord.entities.Plugin
-import com.aliucord.utils.ReflectUtils
 import com.discord.api.channel.Channel
 import com.discord.api.commands.ApplicationCommandType
 import com.discord.api.message.MessageTypes
-import com.discord.stores.StoreStream
-import com.discord.utilities.analytics.AnalyticSuperProperties
-import com.discord.utilities.rest.RestAPI
-import com.google.gson.Gson
 import java.util.*
 
 @Suppress("unused")
 @AliucordPlugin
 class FirstMessage : Plugin() {
-	private val gson = Gson()
 	private val cmdMsgNotFound =
 		CommandResult("This user has not sent a message!", null, false)
 	private val cmdGuildOnly =
@@ -150,14 +144,17 @@ class FirstMessage : Plugin() {
 		val minIdParam = if (minId != null) "min_id=$minId" else ""
 
 		val data = try {
-			sendAuthenticatedGETRequest<Map<String, *>>("https://discord.com/api/v9/guilds/$guildId/messages/search?$userParam$minIdParam&include_nsfw=true&sort_by=timestamp&sort_order=asc&offset=0$channelParam")
+			Http.Request
+				.newDiscordRequest("https://discord.com/api/v9/guilds/$guildId/messages/search?$userParam$minIdParam&include_nsfw=true&sort_by=timestamp&sort_order=asc&offset=0$channelParam")
+				.execute()
+				.json(Map::class.java)
 		} catch (e: Error) {
 			logger.error(e)
 			return null
 		}
 
-		val messages =
-			(data["messages"] as List<List<Map<String, *>>>?)?.flatten() ?: emptyList()
+		val messages = (data["messages"] as List<List<Map<String, *>>>?)
+			?.flatten() ?: emptyList()
 
 		for (message in messages) {
 			if (message["type"] == MessageTypes.USER_JOIN.toDouble()) continue
@@ -181,29 +178,18 @@ class FirstMessage : Plugin() {
 		val minIdParam = if (minId != null) "min_id=$minId" else ""
 
 		val data = try {
-			sendAuthenticatedGETRequest<Map<String, *>>("https://discord.com/api/v9/channels/${dmId}/messages/search?$userParam$minIdParam&include_nsfw=true&sort_by=timestamp&sort_order=asc&offset=0")
+			Http.Request
+				.newDiscordRequest("https://discord.com/api/v9/channels/${dmId}/messages/search?$userParam$minIdParam&include_nsfw=true&sort_by=timestamp&sort_order=asc&offset=0")
+				.execute()
+				.json(Map::class.java)
 		} catch (e: Error) {
 			logger.error(e)
 			return null
 		}
 
-		return (data["messages"] as List<List<Map<String, *>>>?)?.get(0)?.get(0)
+		return (data["messages"] as List<List<Map<String, *>>>?)
+			?.get(0)
+			?.get(0)
 			?.get("id") as String?
-	}
-
-	// this is used for the search functionality
-	@Suppress("UNCHECKED_CAST")
-	private fun <T : Map<String, *>> sendAuthenticatedGETRequest(url: String): T {
-		val token = ReflectUtils.getField(StoreStream.getAuthentication(), "authToken") as String?
-		val req = Http.Request(url, "GET")
-			.setHeader("Authorization", token)
-			.setHeader("User-Agent", RestAPI.AppHeadersProvider.INSTANCE.userAgent)
-			.setHeader(
-				"X-Super-Properties",
-				AnalyticSuperProperties.INSTANCE.superPropertiesStringBase64
-			)
-			.setHeader("Accept", "*/*")
-
-		return gson.f(req.execute().text(), Map::class.java) as T
 	}
 }
