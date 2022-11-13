@@ -24,7 +24,6 @@ class ClickableMentions : Plugin() {
 	}
 
 	private val userClickHandler: (Long) -> Unit = {
-		logger.info("here")
 		val adapter = WidgetChatList.`access$getAdapter$p`(Utils.widgetChatList)
 		if (adapter.fragmentManager == null) {
 			logger.errorToast("Failed to get fragmentManager")

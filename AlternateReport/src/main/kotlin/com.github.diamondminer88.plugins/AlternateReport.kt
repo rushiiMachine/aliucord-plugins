@@ -27,14 +27,13 @@ class AlternateReport : Plugin() {
 			requireView()
 				.findViewById<TextView>(reportBtnId)
 				.setOnClickListener {
-					val msgUrl = "https://discord.com/channels/${model.message.channelId}/${model.message.id}"
+					val msgUrl = "https://discord.com/channels/${model.guild?.id ?: "@me"}/${model.message.channelId}/${model.message.id}"
 
 					Utils.setClipboard("Message Link", msgUrl)
 					Utils.showToast("Copied url to Clipboard!")
 
 					val intent = Intent(Intent.ACTION_VIEW, Uri.parse(REPORT_FORM_URL))
 					startActivity(intent)
-					logger.info("started")
 				}
 		}
 	}
