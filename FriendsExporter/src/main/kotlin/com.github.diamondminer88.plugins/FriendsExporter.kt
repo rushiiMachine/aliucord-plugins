@@ -28,7 +28,7 @@ class FriendsExporter : Plugin() {
 				.let { StoreStream.getUsers().getUsers(it, true) }
 
 			val content = friends
-				.map { (id, user) -> "${user.username}#${user.discriminator} ($id)" }
+				.map { (id, user) -> "${user.username}#${user.discriminator.toString().padStart(4, '0')} ($id)" }
 				.joinToString("\n")
 				.also { friendsList = it }
 				.replace("""(^> |\*|_|~)""".toRegex()) { "\\${it.value}" }
