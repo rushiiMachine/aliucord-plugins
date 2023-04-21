@@ -11,6 +11,7 @@ import android.widget.FrameLayout.LayoutParams.MATCH_PARENT
 import android.widget.FrameLayout.LayoutParams.WRAP_CONTENT
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
+import com.aliucord.Http
 import com.aliucord.Utils
 import com.aliucord.annotations.AliucordPlugin
 import com.aliucord.entities.Plugin
@@ -26,6 +27,7 @@ import com.discord.utilities.textprocessing.MessageRenderContext
 import com.discord.widgets.chat.list.adapter.WidgetChatListAdapterItemAttachment
 import com.google.android.material.card.MaterialCardView
 import com.lytefast.flexinput.R
+import java.io.File
 import java.util.*
 
 @Suppress("unused")
@@ -85,22 +87,22 @@ class AudioPlayer : Plugin() {
 
 			if (card.findViewById<LinearLayout>(playerBarId) != null) return@after
 
-			val duration = try {
+			var duration: Long = try {
 				MediaMetadataRetriever().use { retriever ->
 					retriever.setDataSource(messageAttachment.url, hashMapOf())
 					val duration = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION)
 					retriever.release()
-					duration?.toLong()
+					duration?.toLong() ?: 0L
 				}
 			} catch (e: Throwable) {
-				null
+				-1L
 			}
 
 			card.addView(LinearLayout(ctx, null, 0, R.i.UiKit_ViewGroup).apply {
 				id = playerBarId
 
 				// Invalid file, ignore
-				if (duration == null) {
+				if (duration == -1L) {
 					visibility = View.GONE
 					return@after
 				}
@@ -122,7 +124,7 @@ class AudioPlayer : Plugin() {
 				}
 
 				val progressView = TextView(ctx, null, 0, R.i.UiKit_TextView).apply {
-					text = "0:00 / " + msToTime(duration)
+					text = "0:00 / " + if (duration != 0L) msToTime(duration) else "??"
 					setPadding(p2, p2, p2, p2)
 				}
 
@@ -147,7 +149,7 @@ class AudioPlayer : Plugin() {
 					timer = Timer()
 					timer!!.scheduleAtFixedRate(object : TimerTask() {
 						override fun run() {
-							if (!playing) return
+							if (!playing || duration == 0L) return
 							Utils.mainThread.post {
 								progressView.text =
 									"${msToTime(currentPlayer!!.currentPosition.toLong())} / ${msToTime(duration)}"
@@ -201,29 +203,42 @@ class AudioPlayer : Plugin() {
 						currentPlayer?.release()
 						currentPlayerUnsubscribe?.invoke()
 						onPauseListener = null
+						var url = messageAttachment.url
+						currentPlayer = MediaPlayer()
 
-						currentPlayer = MediaPlayer().apply {
-							setDataSource(messageAttachment.url)
-							setOnPreparedListener {
-								seekTo((sliderView.progress.div(500f) * duration).toInt())
-								Utils.mainThread.post { updatePlaying() }
+						Utils.threadPool.execute {
+
+							if (messageAttachment.filename.endsWith(".ogg")) {
+								var file = File(ctx.cacheDir, "audio.ogg")
+								file.deleteOnExit()
+								Http.simpleDownload(url, file)
+								url = file.absolutePath
 							}
-							setOnCompletionListener { player ->
-								playing = false
-								player.seekTo(0)
-								Utils.mainThread.post { buttonView.background = rewindIcon }
+
+							currentPlayer?.apply {
+								setDataSource(url)
+								setOnPreparedListener {
+									seekTo((sliderView.progress.div(500f) * duration).toInt())
+									Utils.mainThread.post { updatePlaying() }
+									duration = it.duration.toLong()
+								}
+								setOnCompletionListener { player ->
+									playing = false
+									player.seekTo(0)
+									Utils.mainThread.post { buttonView.background = rewindIcon }
+								}
+								currentPlayerUnsubscribe = {
+									playing = false
+									Utils.mainThread.post { updatePlaying() }
+								}
+								onPauseListener = {
+									playing = false
+									Utils.mainThread.post { updatePlaying() }
+								}
+								prepare()
+								isPrepared = true
+								preparing = false
 							}
-							currentPlayerUnsubscribe = {
-								playing = false
-								Utils.mainThread.post { updatePlaying() }
-							}
-							onPauseListener = {
-								playing = false
-								Utils.mainThread.post { updatePlaying() }
-							}
-							prepare()
-							isPrepared = true
-							preparing = false
 						}
 					} else {
 						updatePlaying()

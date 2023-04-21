@@ -1,9 +1,12 @@
-version = "1.0.5"
+version = "1.0.6"
 description = "Play audio attachments directly in chat."
 
 aliucord {
 	changelog.set(
 		"""
+			# 1.0.6
+			* Fix crash on ogg files
+
 			# 1.0.5
 			* Fix broken onPause hook
 
