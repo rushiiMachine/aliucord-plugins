@@ -12,7 +12,7 @@ import com.aliucord.widgets.BottomSheet
 import com.discord.utilities.images.MGImages
 import com.discord.views.CheckedSetting
 
-const val BASE_URL = "https://raw.githubusercontent.com/DiamondMiner88/aliucord-plugins/master/BetterTm/"
+const val BASE_URL = "https://raw.githubusercontent.com/rushiiMachine/aliucord-plugins/master/BetterTm/"
 
 const val TM_EMOJI_URI = "res:///2131823865"
 const val TM_URL = BASE_URL + "tm.png"
