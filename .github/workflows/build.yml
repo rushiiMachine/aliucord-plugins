@@ -13,11 +13,11 @@ on:
 
 jobs:
   build:
-    timeout-minutes: 5
-    runs-on: ubuntu-20.04
+    timeout-minutes: 10
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@master
+        uses: actions/checkout@v4
         with:
           path: "src"
 
@@ -35,7 +35,10 @@ jobs:
           cache: gradle
 
       - name: Setup Android SDK
-        uses: android-actions/setup-android@v2
+        uses: android-actions/setup-android@v3
+        with:
+          cmdline-tools-version: 9862592 # 10.0 is the last version working with JDK 11
+          log-accepted-android-sdk-licenses: false
 
       - name: Build Plugins
         run: |
