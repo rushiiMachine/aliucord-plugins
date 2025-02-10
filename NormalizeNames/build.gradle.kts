@@ -4,6 +4,9 @@ description = "Display nick/user names with some fancy chars reverted to normal.
 aliucord {
 	changelog.set(
 		"""
+			# 1.1.5
+			* Normalize user global names
+
 			# 1.1.4
 			* Discord 115104
 

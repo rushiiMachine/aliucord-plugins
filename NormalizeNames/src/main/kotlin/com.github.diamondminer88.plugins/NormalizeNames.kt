@@ -10,6 +10,7 @@ import com.aliucord.annotations.AliucordPlugin
 import com.aliucord.entities.Plugin
 import com.aliucord.patcher.after
 import com.aliucord.settings.delegate
+import com.aliucord.utils.ReflectUtils
 import com.aliucord.widgets.BottomSheet
 import com.discord.api.guildmember.GuildMember
 import com.discord.api.user.User
@@ -30,12 +31,6 @@ class NormalizeNames : Plugin() {
 		).withArgs(this)
 	}
 
-	fun updateNormalizer() {
-		normalizer =
-			if (normalizeDiacritics) Normalizer2.getNFDInstance()!!
-			else Normalizer2.getNFKCInstance()!!
-	}
-
 	private fun normalizeString(str: String): String {
 		var normalized = normalizer.normalize(str)
 		if (normalizeDiacritics)
@@ -43,8 +38,13 @@ class NormalizeNames : Plugin() {
 		return normalized
 	}
 
+	@Suppress("UNCHECKED_CAST")
 	override fun start(ctx: Context) {
-		updateNormalizer()
+		normalizer = if (normalizeDiacritics) {
+			Normalizer2.getNFDInstance()!!
+		} else {
+			Normalizer2.getNFKCInstance()!!
+		}
 
 		patcher.after<User>("getUsername") {
 			if (it.result != null)
@@ -55,6 +55,16 @@ class NormalizeNames : Plugin() {
 			if (it.result != null)
 				it.result = normalizeString(it.result as String)
 		}
+
+		// Normalize user global names when they're added to a private cache by Aliucore core
+		val originalGlobalNames = ReflectUtils.getField(Class.forName("com.aliucord.coreplugins.rn.PatchesKt"), null, "globalNames")
+		val globalNamesInterceptor = object : HashMap<Long, String>() {
+			override fun put(key: Long, value: String): String? {
+				return super.put(key, normalizeString(value))
+			}
+		}
+		ReflectUtils.setFinalField(Class.forName("com.aliucord.coreplugins.rn.PatchesKt"), null, "globalNames", globalNamesInterceptor)
+		globalNamesInterceptor.putAll(originalGlobalNames as Map<Long, String>)
 	}
 
 	override fun stop(context: Context) {
@@ -77,7 +87,6 @@ class NormalizeNamesSettings(private val plugin: NormalizeNames) : BottomSheet()
 				isChecked = plugin.normalizeDiacritics
 				setOnCheckedListener {
 					plugin.normalizeDiacritics = it
-					plugin.updateNormalizer()
 					Utils.promptRestart()
 				}
 			})
