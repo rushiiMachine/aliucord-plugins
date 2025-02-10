@@ -1,9 +1,12 @@
-version = "1.1.8"
+version = "1.1.9"
 description = "Finds the first message from a user/channel. (/firstmessage)"
 
 aliucord {
 	changelog.set(
 		"""
+			# 1.1.9
+			* Support threads
+
 			# 1.1.8
 			* Use Aliucord auth request function
 
