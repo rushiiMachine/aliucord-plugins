@@ -59,6 +59,11 @@ class HideMessages : Plugin() {
 					PluginManager.disablePlugin("MessageLogger")
 					StoreStream.getMessages().handleMessageDelete(ModelMessageDelete(channelId, msgId))
 					PluginManager.enablePlugin("MessageLogger")
+				} else if (PluginManager.isPluginEnabled("SimpleMessageLogger")) {
+					logger.info("Due to how this plugin works, SimpleMessageLogger needs to be disabled")
+					PluginManager.disablePlugin("SimpleMessageLogger")
+					StoreStream.getMessages().handleMessageDelete(ModelMessageDelete(channelId, msgId))
+					PluginManager.enablePlugin("SimpleMessageLogger")
 				} else {
 					StoreStream.getMessages().handleMessageDelete(ModelMessageDelete(channelId, msgId))
 				}
