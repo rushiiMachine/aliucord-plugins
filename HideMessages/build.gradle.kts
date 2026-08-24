@@ -1,9 +1,12 @@
-version = "1.0.2"
+version = "1.0.3"
 description = "Delete messages locally until you restart."
 
 aliucord {
 	changelog.set(
 		"""
+			# 1.0.3
+			* Auto-disable SimpleMessageLogger when necessary
+
 			# 1.0.2
 			* Fix changelog
 
